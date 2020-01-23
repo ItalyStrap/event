@@ -1,0 +1,46 @@
+{
+    "name": "italystrap/event",
+    "description": "Event Handler for WordPress",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "overclokk",
+            "email": "info@overclokk.net",
+            "homepage": "https://www.italystrap.com",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php" : ">=7.2"
+    },
+    "require-dev": {
+        "lucatume/wp-browser": "~2.2",
+        "lucatume/function-mocker-le": "^1.0",
+        "italystrap/debug": "~2.0",
+        "wp-coding-standards/wpcs": "^2.1",
+        "phpcompatibility/php-compatibility": "*",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
+        "phpstan/phpstan": "^0.11.16",
+        "szepeviktor/phpstan-wordpress": "^0.3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ItalyStrap\\Event\\": "src/"
+        }
+    },
+    "scripts": {
+        "check": [
+            ".\\vendor\\bin\\phpcs -p --standard=PHPCompatibility src",
+            ".\\vendor\\bin\\phpcs -p --standard=WordPress src"
+        ],
+        "test": [
+            "test"
+        ]
+    },
+    "support"    : {
+        "issues": "https://github.com/ItalyStrap/event/issues",
+        "source": "https://github.com/ItalyStrap/event"
+    }
+}
