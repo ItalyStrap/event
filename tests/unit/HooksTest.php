@@ -152,4 +152,47 @@ class HooksTest extends \Codeception\Test\Unit {
 
 		$this->assertEquals( 1, $calls );
 	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldReturnCurrentHook() {
+		$sut = $this->getInstance();
+
+		$hook_name = 'hook_name';
+
+		// phpcs:ignore -- Method from Codeception
+		FunctionMockerLe\define('current_filter', function () use (&$calls, $hook_name) {
+			$calls++;
+			return $hook_name;
+		});
+
+		$this->assertEquals( $hook_name, $sut->currentHook(), '' );
+		$this->assertEquals( 1, $calls );
+	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldHasListener() {
+		$sut = $this->getInstance();
+
+		$return_val = true;
+
+		$args = [
+			'event',
+			function () {
+			},
+		];
+
+		// phpcs:ignore -- Method from Codeception
+		FunctionMockerLe\define('has_filter', function () use (&$calls, $return_val, $args) {
+			$calls++;
+			Assert::assertEquals($args, func_get_args());
+			return $return_val;
+		});
+
+		$this->assertEquals( $return_val, $sut->hasListener(...$args), '' );
+		$this->assertEquals( 1, $calls );
+	}
 }
