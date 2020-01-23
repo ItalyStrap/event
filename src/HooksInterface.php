@@ -7,7 +7,7 @@ namespace ItalyStrap\Event;
  * Interface HooksInterface
  * @package ItalyStrap\Event
  */
-interface HooksInterface
-{
+interface HooksInterface {
+
 
 }
