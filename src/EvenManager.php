@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Event;
 
+use ItalyStrap\Event\SubscriberInterface as Subscriber;
 use InvalidArgumentException;
 use function get_class;
 use function is_array;
@@ -13,8 +14,8 @@ use function sprintf;
  * Class EvenManager
  * @package ItalyStrap\Event
  */
-class EvenManager
-{
+class EvenManager {
+
 	/**
 	 * @var Hooks
 	 */
@@ -34,9 +35,9 @@ class EvenManager
 	 * The event manager adds the given subscriber to the list of event listeners
 	 * for all the events that it wants to listen to.
 	 *
-	 * @param SubscriberInterface $subscriber
+	 * @param Subscriber $subscriber
 	 */
-	public function add( SubscriberInterface $subscriber ) {
+	public function add( Subscriber $subscriber ): void {
 		$map = $this->assertSubscriberIsNotEmpty( $subscriber );
 		foreach ( $map as $event_name => $parameters ) {
 			$this->addSubscriberListener( $subscriber, $event_name, $parameters );
@@ -47,40 +48,13 @@ class EvenManager
 	 * Adds the given subscriber listener to the list of event listeners
 	 * that listen to the given event.
 	 *
-	 * @param SubscriberInterface $subscriber
+	 * @param Subscriber $subscriber
 	 * @param string               $event_name
 	 * @param string|array         $parameters
 	 */
-	private function addSubscriberListener( SubscriberInterface $subscriber, string $event_name, $parameters ): void {
-
+	private function addSubscriberListener( Subscriber $subscriber, string $event_name, $parameters ): void {
 		$callable = $this->buildCallable( $subscriber, $parameters );
-
-		$args = [
-			$parameters[ Keys::PRIORITY ] ?? 10,
-			$parameters[ Keys::ACCEPTED_ARGS ] ?? 1,
-		];
-
-		$this->hooks->addListener( $event_name, $callable, ...$args );
-	}
-
-	/**
-	 * Adds the given subscriber listener to the list of event listeners
-	 * that listen to the given event.
-	 *
-	 * @param SubscriberInterface $subscriber
-	 * @param string               $event_name
-	 * @param string|array         $parameters
-	 */
-	private function removeSubscriberListener( SubscriberInterface $subscriber, string $event_name, $parameters ): void {
-
-		$callable = $this->buildCallable( $subscriber, $parameters );
-
-		$args = [
-			$parameters[ Keys::PRIORITY ] ?? 10,
-			$parameters[ Keys::ACCEPTED_ARGS ] ?? 1,
-		];
-
-		$this->hooks->removeListener( $event_name, $callable, ...$args );
+		$this->hooks->addListener( $event_name, $callable, ...$this->buildParameters( $parameters ) );
 	}
 
 	/**
@@ -89,19 +63,33 @@ class EvenManager
 	 * The event manager removes the given subscriber from the list of event listeners
 	 * for all the events that it wants to listen to.
 	 *
-	 * @param SubscriberInterface $subscriber
+	 * @param Subscriber $subscriber
 	 */
-	public function remove( SubscriberInterface $subscriber ) {
-		foreach ( $subscriber->getSubscribedEvents() as $event_name => $parameters ) {
+	public function remove( Subscriber $subscriber ): void {
+		$map = $this->assertSubscriberIsNotEmpty( $subscriber );
+		foreach ( $map as $event_name => $parameters ) {
 			$this->removeSubscriberListener( $subscriber, $event_name, $parameters );
 		}
 	}
 
 	/**
-	 * @param SubscriberInterface $subscriber
+	 * Adds the given subscriber listener to the list of event listeners
+	 * that listen to the given event.
+	 *
+	 * @param Subscriber $subscriber
+	 * @param string               $event_name
+	 * @param string|array         $parameters
+	 */
+	private function removeSubscriberListener( Subscriber $subscriber, string $event_name, $parameters ): void {
+		$callable = $this->buildCallable( $subscriber, $parameters );
+		$this->hooks->removeListener( $event_name, $callable, ...$this->buildParameters( $parameters ) );
+	}
+
+	/**
+	 * @param Subscriber $subscriber
 	 * @return array
 	 */
-	private function assertSubscriberIsNotEmpty( SubscriberInterface $subscriber ): array {
+	private function assertSubscriberIsNotEmpty( Subscriber $subscriber ): array {
 		if ( empty( $map = $subscriber->getSubscribedEvents() ) ) {
 			throw new InvalidArgumentException(
 				sprintf(
@@ -115,11 +103,11 @@ class EvenManager
 	}
 
 	/**
-	 * @param SubscriberInterface $subscriber
+	 * @param Subscriber $subscriber
 	 * @param string|array $parameters
-	 * @return array
+	 * @return callable
 	 */
-	private function buildCallable( SubscriberInterface $subscriber, $parameters ): callable {
+	private function buildCallable( Subscriber $subscriber, $parameters ): callable {
 		$callable = null;
 		if ( is_string( $parameters ) ) {
 			$callable = [$subscriber, $parameters];
@@ -127,5 +115,16 @@ class EvenManager
 			$callable = [$subscriber, $parameters[ Keys::CALLBACK ]];
 		}
 		return $callable;
+	}
+
+	/**
+	 * @param mixed $parameters
+	 * @return array
+	 */
+	private function buildParameters( $parameters ): array {
+		return [
+			$parameters[ Keys::PRIORITY ] ?? 10,
+			$parameters[ Keys::ACCEPTED_ARGS ] ?? 1,
+		];
 	}
 }

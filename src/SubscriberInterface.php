@@ -7,8 +7,8 @@ namespace ItalyStrap\Event;
  * Interface SubscriberInterface
  * @package ItalyStrap\Event
  */
-interface SubscriberInterface
-{
+interface SubscriberInterface {
+
 	/**
 	 * Returns an array of hooks that this subscriber wants to register with
 	 * the WordPress plugin API.
@@ -40,5 +40,5 @@ interface SubscriberInterface
 	 *
 	 * @return array
 	 */
-	public function getSubscribedEvents(): array ;
+	public function getSubscribedEvents(): array;
 }

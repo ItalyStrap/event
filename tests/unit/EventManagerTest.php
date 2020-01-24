@@ -16,12 +16,12 @@ use Prophecy\Argument;
  * Class EventManagerTest
  * @package ItalyStrap\Tests
  */
-class EventManagerTest extends Unit
-{
-    /**
-     * @var \UnitTester
-     */
-    protected $tester;
+class EventManagerTest extends Unit {
+
+	/**
+	 * @var \UnitTester
+	 */
+	protected $tester;
 
 	/**
 	 * @var \Prophecy\Prophecy\ObjectProphecy
@@ -48,22 +48,20 @@ class EventManagerTest extends Unit
 	}
 
 	// phpcs:ignore -- Method from Codeception
-	protected function _before()
-    {
-    	$this->hooks = $this->prophesize( Hooks::class );
+	protected function _before() {
+		$this->hooks = $this->prophesize( Hooks::class );
 		$this->subscriber = $this->prophesize( SubscriberInterface::class );
-    }
+	}
 
 	// phpcs:ignore -- Method from Codeception
-    protected function _after()
-    {
-    }
+    protected function _after() {
+	}
 
 	private function getInstance() {
 		$sut = new EvenManager( $this->getHooks() );
 		$this->assertInstanceOf( EvenManager::class, $sut, '' );
 		return $sut;
-    }
+	}
 
 	/**
 	 * @test
@@ -146,7 +144,6 @@ class EventManagerTest extends Unit
 				$sub_args['hook_name'][Keys::ACCEPTED_ARGS] ?? 1,
 				'Should be default accepted args'
 			);
-
 		});
 
 		$sut->add( $this->getSubscriber() );
@@ -187,7 +184,6 @@ class EventManagerTest extends Unit
 				$sub_args['hook_name'][Keys::ACCEPTED_ARGS] ?? 1,
 				'Should be default accepted args'
 			);
-
 		});
 
 		$sut->remove( $this->getSubscriber() );
