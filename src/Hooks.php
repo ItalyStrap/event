@@ -73,7 +73,7 @@ class Hooks implements HooksInterface {
 	 *
 	 * @return string|bool
 	 */
-	public function currentHook() {
+	public function currentHookName() {
 		return \current_filter();
 	}
 
