@@ -53,8 +53,11 @@ class EvenManager {
 	 * @param string|array         $parameters
 	 */
 	private function addSubscriberListener( Subscriber $subscriber, string $event_name, $parameters ): void {
-		$callable = $this->buildCallable( $subscriber, $parameters );
-		$this->hooks->addListener( $event_name, $callable, ...$this->buildParameters( $parameters ) );
+		$this->hooks->addListener(
+			$event_name,
+			$this->buildCallable( $subscriber, $parameters ),
+			...$this->buildParameters( $parameters )
+		);
 	}
 
 	/**
@@ -81,8 +84,11 @@ class EvenManager {
 	 * @param string|array         $parameters
 	 */
 	private function removeSubscriberListener( Subscriber $subscriber, string $event_name, $parameters ): void {
-		$callable = $this->buildCallable( $subscriber, $parameters );
-		$this->hooks->removeListener( $event_name, $callable, ...$this->buildParameters( $parameters ) );
+		$this->hooks->removeListener(
+			$event_name,
+			$this->buildCallable( $subscriber, $parameters ),
+			...$this->buildParameters( $parameters )
+		);
 	}
 
 	/**

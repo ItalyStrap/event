@@ -144,7 +144,7 @@ class EventManagerTest extends Unit {
 				$sub_args['hook_name'][Keys::ACCEPTED_ARGS] ?? 1,
 				'Should be default accepted args'
 			);
-		});
+		})->shouldBeCalled();
 
 		$sut->add( $this->getSubscriber() );
 	}
@@ -184,7 +184,7 @@ class EventManagerTest extends Unit {
 				$sub_args['hook_name'][Keys::ACCEPTED_ARGS] ?? 1,
 				'Should be default accepted args'
 			);
-		});
+		})->shouldBeCalled();
 
 		$sut->remove( $this->getSubscriber() );
 	}
