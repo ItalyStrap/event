@@ -46,11 +46,11 @@ class Hooks implements HooksInterface {
 	 * Executes all the callbacks registered with the given hook.
 	 *
 	 * @param string $tag    The name of the action to be executed.
-	 * @param mixed  ...$arg Optional. Additional arguments which are passed on to the
+	 * @param mixed  ...$args Optional. Additional arguments which are passed on to the
 	 *                       functions hooked to the action. Default empty.
 	 * @return void
 	 */
-	public function execute( string $tag, ...$arg ) {
+	public function execute( string $tag, ...$args ) {
 		\do_action( ...\func_get_args() );
 	}
 

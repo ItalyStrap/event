@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Tests;
 
+use Codeception\TestCase\WPTestCase;
+use ItalyStrap\Event\SubscriberInterface;
+
 /**
  * Class IntegrationTest
  * @package ItalyStrap\Tests
  */
-class IntegrationTest extends \Codeception\TestCase\WPTestCase {
+class IntegrationTest extends WPTestCase {
 
 	/**
 	 * @var \WpunitTester
@@ -30,8 +33,31 @@ class IntegrationTest extends \Codeception\TestCase\WPTestCase {
 
 	// Tests
 	public function testItWorks() {
-		$manager = new \ItalyStrap\Event\EvenManager( new \ItalyStrap\Event\Hooks() );
 
-		$manager->add();
+		$hooks = new \ItalyStrap\Event\Hooks();
+		$manager = new \ItalyStrap\Event\EvenManager( $hooks );
+
+		$subscriber = new class implements SubscriberInterface {
+
+			/**
+			 * @inheritDoc
+			 */
+			public function getSubscribedEvents(): array {
+				return [
+					'event_name'	=> 'method'
+				];
+			}
+
+			public function method() {
+				codecept_debug( \func_num_args() );
+				codecept_debug( \func_get_args() );
+				echo 'Ciao';
+			}
+		};
+
+		$manager->add( $subscriber );
+
+		$this->expectOutputString( 'Ciao' );
+		$hooks->execute( 'event_name', 'value passed', 'other', 2, 3 );
 	}
 }

@@ -16,6 +16,9 @@ use function sprintf;
  */
 class EvenManager {
 
+	private const ARGS = 1;
+	private const ORDER = 10;
+
 	/**
 	 * @var Hooks
 	 */
@@ -129,8 +132,8 @@ class EvenManager {
 	 */
 	private function buildParameters( $parameters ): array {
 		return [
-			$parameters[ Keys::PRIORITY ] ?? 10,
-			$parameters[ Keys::ACCEPTED_ARGS ] ?? 1,
+			$parameters[ Keys::PRIORITY ] ?? self::ORDER,
+			$parameters[ Keys::ACCEPTED_ARGS ] ?? self::ARGS,
 		];
 	}
 }
