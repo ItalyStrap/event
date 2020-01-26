@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace ItalyStrap\Tests;
 
 use Codeception\TestCase\WPTestCase;
+use ItalyStrap\Event\EventManager;
+use ItalyStrap\Event\Hooks;
 use ItalyStrap\Event\SubscriberInterface;
 
 /**
@@ -17,9 +19,22 @@ class IntegrationTest extends WPTestCase {
 	 */
 	protected $tester;
 
+	/**
+	 * @var Hooks
+	 */
+	private $hooks;
+
+	/**
+	 * @var EventManager
+	 */
+	private $manager;
+
 	public function setUp(): void {
 		// Before...
 		parent::setUp();
+
+		$this->hooks = new Hooks();
+		$this->manager = new EventManager( $this->hooks );
 
 		// Your set up methods here.
 	}
@@ -34,9 +49,6 @@ class IntegrationTest extends WPTestCase {
 	// Tests
 	public function testItWorks() {
 
-		$hooks = new \ItalyStrap\Event\Hooks();
-		$manager = new \ItalyStrap\Event\EvenManager( $hooks );
-
 		$subscriber = new class implements SubscriberInterface {
 
 			/**
@@ -49,15 +61,35 @@ class IntegrationTest extends WPTestCase {
 			}
 
 			public function method() {
-				codecept_debug( \func_num_args() );
-				codecept_debug( \func_get_args() );
+//				codecept_debug( \func_num_args() );
+//				codecept_debug( \func_get_args() );
 				echo 'Ciao';
 			}
 		};
 
-		$manager->add( $subscriber );
+		$this->manager->add( $subscriber );
 
 		$this->expectOutputString( 'Ciao' );
-		$hooks->execute( 'event_name', 'value passed', 'other', 2, 3 );
+		$this->hooks->execute( 'event_name', 'value passed', 'other', 2, 3 );
+	}
+
+	public function testSomeThing() {
+		$this->hooks->addListener( 'test', function () {
+			codecept_debug( __METHOD__ );
+		}, 10, 1 );
+
+		$this->hooks->execute( 'test' );
+	}
+
+	private function configExample() {
+
+		$config = [
+			'subscribers'	=> [
+				Subscriber::class,
+			],
+			'listeners'	=> [
+				Listener::class
+			],
+		];
 	}
 }

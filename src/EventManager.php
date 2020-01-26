@@ -14,7 +14,7 @@ use function sprintf;
  * Class EvenManager
  * @package ItalyStrap\Event
  */
-class EvenManager {
+class EventManager {
 
 	private const ARGS = 1;
 	private const ORDER = 10;

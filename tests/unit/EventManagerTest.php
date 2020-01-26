@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace ItalyStrap\Tests;
 
 use Codeception\Test\Unit;
-use ItalyStrap\Event\EvenManager;
+use ItalyStrap\Event\EventManager;
 use ItalyStrap\Event\Hooks;
 use ItalyStrap\Event\Keys;
 use ItalyStrap\Event\SubscriberInterface;
@@ -58,8 +58,8 @@ class EventManagerTest extends Unit {
 	}
 
 	private function getInstance() {
-		$sut = new EvenManager( $this->getHooks() );
-		$this->assertInstanceOf( EvenManager::class, $sut, '' );
+		$sut = new EventManager( $this->getHooks() );
+		$this->assertInstanceOf( EventManager::class, $sut, '' );
 		return $sut;
 	}
 
