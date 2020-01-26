@@ -6,6 +6,7 @@ namespace ItalyStrap\Tests;
 use Codeception\TestCase\WPTestCase;
 use ItalyStrap\Event\EventManager;
 use ItalyStrap\Event\Hooks;
+use ItalyStrap\Event\Keys;
 use ItalyStrap\Event\SubscriberInterface;
 
 /**
@@ -83,12 +84,42 @@ class IntegrationTest extends WPTestCase {
 
 	private function configExample() {
 
+		$test = [
+			'hook_name => callback'					=> [
+				[
+					'hook_name' 			=> 'callback'
+				]
+			],
+			'hook_name => [callback|priority]'		=> [
+				[
+					'hook_name' => [
+						Keys::CALLBACK		=> 'callback',
+						Keys::PRIORITY		=> 20,
+					]
+				]
+			],
+			'hook_name => [callback|priority|args]'	=> [
+				[
+					'hook_name' => [
+						Keys::CALLBACK		=> 'callback',
+						Keys::PRIORITY		=> 20,
+						Keys::ACCEPTED_ARGS	=> 6,
+					]
+				]
+			],
+		];
+
 		$config = [
 			'subscribers'	=> [
 				Subscriber::class,
 			],
 			'listeners'	=> [
-				Listener::class
+				Listener::class 	=> [
+					'event_name'	=> '',
+					'method'	=> '',
+					'priority'	=> '',
+					'args'	=> '',
+				]
 			],
 		];
 	}

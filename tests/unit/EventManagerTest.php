@@ -86,7 +86,8 @@ class EventManagerTest extends Unit {
 		return [
 			'hook_name => callback'					=> [
 				[
-					'hook_name' 			=> 'callback'
+					'hook_name' 			=> 'callback',
+					'hook_name1' 			=> 'callback',
 				]
 			],
 			'hook_name => [callback|priority]'		=> [
@@ -94,7 +95,11 @@ class EventManagerTest extends Unit {
 					'hook_name' => [
 						Keys::CALLBACK		=> 'callback',
 						Keys::PRIORITY		=> 20,
-					]
+					],
+					'hook_name1' => [
+						Keys::CALLBACK		=> 'callback',
+						Keys::PRIORITY		=> 20,
+					],
 				]
 			],
 			'hook_name => [callback|priority|args]'	=> [
@@ -103,7 +108,12 @@ class EventManagerTest extends Unit {
 						Keys::CALLBACK		=> 'callback',
 						Keys::PRIORITY		=> 20,
 						Keys::ACCEPTED_ARGS	=> 6,
-					]
+					],
+					'hook_name1' => [
+						Keys::CALLBACK		=> 'callback',
+						Keys::PRIORITY		=> 20,
+						Keys::ACCEPTED_ARGS	=> 6,
+					],
 				]
 			],
 		];
@@ -114,6 +124,7 @@ class EventManagerTest extends Unit {
 	 * @dataProvider subscriberProvider()
 	 */
 	public function itShouldAddSubscriber( $sub_args ) {
+		$test = $this;
 		$sut = $this->getInstance();
 
 		$this->subscriber->getSubscribedEvents()->willReturn($sub_args);
@@ -123,27 +134,8 @@ class EventManagerTest extends Unit {
 			Argument::type( 'callable' ),
 			Argument::type( 'int' ),
 			Argument::type( 'int' )
-		)->will(function ( $args ) use ($sub_args) {
-
-			Assert::assertEquals( $args[0], \array_keys( $sub_args )[0], 'Both should are "hook_name"' );
-
-			Assert::assertEquals(
-				$args[1][1],
-				$sub_args['hook_name'][Keys::CALLBACK] ?? $sub_args['hook_name'],
-				'Should be callback name'
-			);
-
-			Assert::assertEquals(
-				$args[2],
-				$sub_args['hook_name'][Keys::PRIORITY] ?? 10,
-				'Should be default priority'
-			);
-
-			Assert::assertEquals(
-				$args[3],
-				$sub_args['hook_name'][Keys::ACCEPTED_ARGS] ?? 1,
-				'Should be default accepted args'
-			);
+		)->will(function ( $args ) use ( $sub_args, $test ) {
+			$test->assertArgsPassedAreCorrect(  $args, $sub_args  );
 		})->shouldBeCalled();
 
 		$sut->add( $this->getSubscriber() );
@@ -154,6 +146,7 @@ class EventManagerTest extends Unit {
 	 * @dataProvider subscriberProvider()
 	 */
 	public function itShouldRemoveSubscriber( $sub_args ) {
+		$test = $this;
 		$sut = $this->getInstance();
 
 		$this->subscriber->getSubscribedEvents()->willReturn($sub_args);
@@ -163,29 +156,49 @@ class EventManagerTest extends Unit {
 			Argument::type( 'callable' ),
 			Argument::type( 'int' ),
 			Argument::type( 'int' )
-		)->will(function ( $args ) use ($sub_args) {
-
-			Assert::assertEquals( $args[0], \array_keys( $sub_args )[0], 'Both should are "hook_name"' );
-
-			Assert::assertEquals(
-				$args[1][1],
-				$sub_args['hook_name'][Keys::CALLBACK] ?? $sub_args['hook_name'],
-				'Should be callback name'
-			);
-
-			Assert::assertEquals(
-				$args[2],
-				$sub_args['hook_name'][Keys::PRIORITY] ?? 10,
-				'Should be default priority'
-			);
-
-			Assert::assertEquals(
-				$args[3],
-				$sub_args['hook_name'][Keys::ACCEPTED_ARGS] ?? 1,
-				'Should be default accepted args'
-			);
+		)->will(function ( $args ) use ( $sub_args, $test ) {
+			$test->assertArgsPassedAreCorrect(  $args, $sub_args  );
 		})->shouldBeCalled();
 
 		$sut->remove( $this->getSubscriber() );
+	}
+
+	/**
+	 * @param $args
+	 * @param $sub_args
+	 */
+	private function assertArgsPassedAreCorrect( $args, $sub_args ): void {
+
+		/**
+		 * $args[0] Is the 'event_name'
+		 * $args[1] Is the callback
+		 * $args[2] Is the priority
+		 * $args[3] Is the number of passed arguments
+		 */
+
+		$event_name = $args[ 0 ];
+		$called_method = $args[ 1 ][ 1 ];
+		$priority = $args[ 2 ];
+		$accepted_args = $args[ 3 ];
+
+		Assert::assertArrayHasKey( $event_name, $sub_args, 'Both should be the "event_name"' );
+
+		Assert::assertEquals(
+			$called_method,
+			$sub_args[ $event_name ][ Keys::CALLBACK ] ?? $sub_args[ $event_name ],
+			'Should be callback name'
+		);
+
+		Assert::assertEquals(
+			$priority,
+			$sub_args[ $event_name ][ Keys::PRIORITY ] ?? 10, // 10 is the default priority
+			'Should be default priority'
+		);
+
+		Assert::assertEquals(
+			$accepted_args,
+			$sub_args[ $event_name ][ Keys::ACCEPTED_ARGS ] ?? 1, // 1 is the defaul number of passed argument
+			'Should be default accepted args'
+		);
 	}
 }
