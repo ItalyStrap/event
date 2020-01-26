@@ -63,7 +63,7 @@ class ProxyTest extends WPTestCase {
 
 		$hooks = new Hooks();
 		$event_manager = new EventManager( $hooks );
-		$event_manager->add( $subscriber );
+		$event_manager->addSubscriber( $subscriber );
 
 		$hooks->execute( 'event' );
 	}

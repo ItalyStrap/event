@@ -68,7 +68,7 @@ class IntegrationTest extends WPTestCase {
 			}
 		};
 
-		$this->manager->add( $subscriber );
+		$this->manager->addSubscriber( $subscriber );
 
 		$this->expectOutputString( 'Ciao' );
 		$this->hooks->execute( 'event_name', 'value passed', 'other', 2, 3 );
@@ -80,12 +80,13 @@ class IntegrationTest extends WPTestCase {
 		}, 10, 1 );
 
 		$this->hooks->execute( 'test' );
+
+
+		codecept_debug( 'Implements:' );
+		codecept_debug( \class_implements( Subscriber::class ) );
 	}
 
 	private function useCases() {
-
-
-
 
 		$this->hooks->filter( 'event_name', '' );
 	}

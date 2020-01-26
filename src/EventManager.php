@@ -40,7 +40,7 @@ class EventManager {
 	 *
 	 * @param Subscriber $subscriber
 	 */
-	public function add( Subscriber $subscriber ): void {
+	public function addSubscriber( Subscriber $subscriber ): void {
 		$map = $this->assertSubscriberIsNotEmpty( $subscriber );
 		foreach ( $map as $event_name => $parameters ) {
 			$this->addSubscriberListener( $subscriber, $event_name, $parameters );
@@ -71,7 +71,7 @@ class EventManager {
 	 *
 	 * @param Subscriber $subscriber
 	 */
-	public function remove( Subscriber $subscriber ): void {
+	public function removeSubscriber( Subscriber $subscriber ): void {
 		$map = $this->assertSubscriberIsNotEmpty( $subscriber );
 		foreach ( $map as $event_name => $parameters ) {
 			$this->removeSubscriberListener( $subscriber, $event_name, $parameters );

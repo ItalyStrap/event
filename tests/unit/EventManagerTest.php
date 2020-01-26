@@ -79,7 +79,7 @@ class EventManagerTest extends Unit {
 		$this->subscriber->getSubscribedEvents()->willReturn([]);
 
 		$this->expectException( \InvalidArgumentException::class );
-		$sut->add( $this->getSubscriber() );
+		$sut->addSubscriber( $this->getSubscriber() );
 	}
 
 	public function subscriberProvider() {
@@ -138,7 +138,7 @@ class EventManagerTest extends Unit {
 			$test->assertArgsPassedAreCorrect(  $args, $sub_args  );
 		})->shouldBeCalled();
 
-		$sut->add( $this->getSubscriber() );
+		$sut->addSubscriber( $this->getSubscriber() );
 	}
 
 	/**
@@ -160,7 +160,7 @@ class EventManagerTest extends Unit {
 			$test->assertArgsPassedAreCorrect(  $args, $sub_args  );
 		})->shouldBeCalled();
 
-		$sut->remove( $this->getSubscriber() );
+		$sut->removeSubscriber( $this->getSubscriber() );
 	}
 
 	/**
