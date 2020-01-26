@@ -123,7 +123,7 @@ class EventManagerTest extends Unit {
 	 * @test
 	 * @dataProvider subscriberProvider()
 	 */
-	public function itShouldAddSubscriber( $sub_args ) {
+	public function itShouldAddSubscriberWith( $sub_args ) {
 		$test = $this;
 		$sut = $this->getInstance();
 
@@ -145,7 +145,7 @@ class EventManagerTest extends Unit {
 	 * @test
 	 * @dataProvider subscriberProvider()
 	 */
-	public function itShouldRemoveSubscriber( $sub_args ) {
+	public function itShouldRemoveSubscriberWith( $sub_args ) {
 		$test = $this;
 		$sut = $this->getInstance();
 
