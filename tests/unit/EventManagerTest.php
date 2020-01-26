@@ -84,32 +84,32 @@ class EventManagerTest extends Unit {
 
 	public function subscriberProvider() {
 		return [
-			'hook_name => callback'					=> [
+			'event_name => callback'					=> [
 				[
-					'hook_name' 			=> 'callback',
-					'hook_name1' 			=> 'callback',
+					'event_name' 			=> 'callback',
+					'event_name1' 			=> 'callback',
 				]
 			],
-			'hook_name => [callback|priority]'		=> [
+			'event_name => [callback|priority]'		=> [
 				[
-					'hook_name' => [
+					'event_name' => [
 						Keys::CALLBACK		=> 'callback',
 						Keys::PRIORITY		=> 20,
 					],
-					'hook_name1' => [
+					'event_name1' => [
 						Keys::CALLBACK		=> 'callback',
 						Keys::PRIORITY		=> 20,
 					],
 				]
 			],
-			'hook_name => [callback|priority|args]'	=> [
+			'event_name => [callback|priority|args]'	=> [
 				[
-					'hook_name' => [
+					'event_name' => [
 						Keys::CALLBACK		=> 'callback',
 						Keys::PRIORITY		=> 20,
 						Keys::ACCEPTED_ARGS	=> 6,
 					],
-					'hook_name1' => [
+					'event_name1' => [
 						Keys::CALLBACK		=> 'callback',
 						Keys::PRIORITY		=> 20,
 						Keys::ACCEPTED_ARGS	=> 6,

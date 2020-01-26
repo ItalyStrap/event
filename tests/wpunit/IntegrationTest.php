@@ -82,6 +82,14 @@ class IntegrationTest extends WPTestCase {
 		$this->hooks->execute( 'test' );
 	}
 
+	private function useCases() {
+
+
+
+
+		$this->hooks->filter( 'event_name', '' );
+	}
+
 	private function configExample() {
 
 		$test = [
