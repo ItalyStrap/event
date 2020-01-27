@@ -3,10 +3,13 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Tests;
 
+use Auryn\Injector;
 use Codeception\TestCase\WPTestCase;
 use ItalyStrap\Event\EventManager;
 use ItalyStrap\Event\Hooks;
+use ItalyStrap\Event\SubscriberInterface;
 use ProxyManager\Factory\LazyLoadingValueHolderFactory;
+use ProxyManager\Proxy\LazyLoadingInterface;
 
 // phpcs:disable
 require_once codecept_data_dir( 'fixtures/classes.php' );
@@ -23,6 +26,8 @@ class ProxyTest extends WPTestCase {
 		// Before...
 		parent::setUp();
 
+
+
 		// Your set up methods here.
 	}
 
@@ -35,36 +40,47 @@ class ProxyTest extends WPTestCase {
 
 	// tests
 	public function testSomeFeature() {
-//		$factory = new LazyLoadingValueHolderFactory();
-//
-//		/** @var SomeCLass $proxy */
-//		$proxy = $factory->createProxy(
-//			SomeCLass::class,
-//			function (& $wrappedObject, $proxy, $method, $parameters, & $initializer) {
-//				$wrappedObject = new SomeCLass(); // instantiation logic here
-//				$initializer   = null; // turning off further lazy initialization
-//			}
-//		);
-//
-//		codecept_debug( $proxy->doSomething() );
 
+		$injector = new Injector();
 		$factory = new LazyLoadingValueHolderFactory();
+		$hooks = new Hooks();
+		$event_manager = new EventManager( $hooks );
+
+		/** @var string $class_name */
+		$class_name = Subscriber::class;
+
 		/** @var Subscriber $subscriber */
 		$subscriber = $factory->createProxy(
-			Subscriber::class,
-			function (&$wrappedObject, $subscriber, $method, $parameters, &$initializer) {
-				$wrappedObject = new Subscriber(); // instantiation logic here
+			$class_name,
+			function (
+				&$wrappedObject,
+				LazyLoadingInterface $subscriber,
+				$method,
+				$parameters,
+				&$initializer
+			) use (
+				$injector,
+				$class_name
+			) {
+				$wrappedObject = $injector->make( $class_name ); // instantiation logic here
 				$initializer   = null; // turning off further lazy initialization
-				codecept_debug( $subscriber );
-				codecept_debug( $method );
-				codecept_debug( $parameters );
 			}
 		);
 
-		$hooks = new Hooks();
-		$event_manager = new EventManager( $hooks );
-		$event_manager->addSubscriber( $subscriber );
+//		$proxy_subscriber = new SubscriberServiceProvider( $subscriber );
+		$proxy_subscriber = $injector
+			->share(SubscriberServiceProvider::class )
+			->make( SubscriberServiceProvider::class, [
+			':subscriber'	=> $subscriber,
+		] );
 
-		$hooks->execute( 'event' );
+		codecept_debug( 'executed from: ' . __METHOD__ );
+		$event_manager->addSubscriber( $proxy_subscriber );
+		codecept_debug( 'executed from: ' . __METHOD__ );
+
+//		$event_manager->removeSubscriber( $proxy_subscriber );
+		$event_manager->removeSubscriber( $injector->make( SubscriberServiceProvider::class ) );
+		$hooks->execute( 'event', 'Value from the event' );
+		codecept_debug( 'executed from: ' . __METHOD__ );
 	}
 }

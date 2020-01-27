@@ -34,6 +34,9 @@ class IntegrationTest extends WPTestCase {
 		// Before...
 		parent::setUp();
 
+		global $wp_filter;
+		$wp_filter = [];
+
 		$this->hooks = new Hooks();
 		$this->manager = new EventManager( $this->hooks );
 
@@ -43,12 +46,14 @@ class IntegrationTest extends WPTestCase {
 	public function tearDown(): void {
 		// Your tear down methods here.
 
+		global $wp_filter;
+		$wp_filter = [];
 		// Then...
 		parent::tearDown();
 	}
 
 	// Tests
-	public function testItWorks() {
+	private function testItWorks() {
 
 		$subscriber = new class implements SubscriberInterface {
 
@@ -74,13 +79,19 @@ class IntegrationTest extends WPTestCase {
 		$this->hooks->execute( 'event_name', 'value passed', 'other', 2, 3 );
 	}
 
-	public function testSomeThing() {
+	private function testSomeThing() {
 		$this->hooks->addListener( 'test', function () {
 			codecept_debug( __METHOD__ );
 		}, 10, 1 );
 
 		$this->hooks->execute( 'test' );
 
+		global $wp_filter;
+
+//		foreach ( $wp_filter['test'][10] as $key => $value ) {
+//			codecept_debug( $key );
+//			codecept_debug( $value );
+//		}
 
 		codecept_debug( 'Implements:' );
 		codecept_debug( \class_implements( Subscriber::class ) );
