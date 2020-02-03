@@ -9,6 +9,8 @@
 
 WordPress Event API the OOP way
 
+**It is still a WIP**
+
 ## Table Of Contents
 
 * [Installation](#installation)
