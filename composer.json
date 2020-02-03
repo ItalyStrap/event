@@ -1,6 +1,6 @@
 {
     "name": "italystrap/event",
-    "description": "Event Handler for WordPress",
+    "description": "WordPress Event API the OOP way",
     "type": "library",
     "license": "MIT",
     "authors": [
