@@ -29,4 +29,15 @@ Domain Path: Domain Path
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-require( __DIR__ . '/vendor/autoload.php' );
+if ( ! \function_exists( 'd_footer' ) ) {
+	function d_footer( ...$args ) {
+		\add_action( 'shutdown', function () use ( $args ) {
+			d( ...$args );
+		} );
+	}
+}
+
+add_action( 'plugins_loaded', function () {
+	require( __DIR__ . '/vendor/autoload.php' );
+	require 'example.php';
+} );
