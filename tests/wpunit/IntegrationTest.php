@@ -4,11 +4,18 @@ declare(strict_types=1);
 namespace ItalyStrap\Tests;
 
 use Codeception\TestCase\WPTestCase;
+use ItalyStrap\Config\ConfigFactory;
+use ItalyStrap\Empress\AurynResolver;
+use ItalyStrap\Empress\Injector;
 use ItalyStrap\Event\EventManager;
+use ItalyStrap\Event\EventResolverExtension;
 use ItalyStrap\Event\Hooks;
 use ItalyStrap\Event\Keys;
 use ItalyStrap\Event\SubscriberInterface;
 
+// phpcs:disable
+require_once codecept_data_dir( '/fixtures/classes.php' );
+// phpcs:enable
 /**
  * Class IntegrationTest
  * @package ItalyStrap\Tests
@@ -52,8 +59,23 @@ class IntegrationTest extends WPTestCase {
 		parent::tearDown();
 	}
 
-	// Tests
-	private function testItWorks() {
+	/**
+	 * @test
+	 */
+	public function itShouldOutputTextOnEventName() {
+
+		$this->hooks->addListener( 'event_name', function () {
+			echo 'Value printed';
+		}, 10, 1 );
+
+		$this->expectOutputString( 'Value printed' );
+		$this->hooks->execute( 'event_name' );
+	}
+
+	/**
+	 * @test
+	 */
+	public function subscriberShouldEchoTextWhenEventIsExecuted() {
 
 		$subscriber = new class implements SubscriberInterface {
 
@@ -67,39 +89,35 @@ class IntegrationTest extends WPTestCase {
 			}
 
 			public function method() {
-//				codecept_debug( \func_num_args() );
-//				codecept_debug( \func_get_args() );
-				echo 'Ciao';
+				echo 'Value printed';
 			}
 		};
 
 		$this->manager->addSubscriber( $subscriber );
 
-		$this->expectOutputString( 'Ciao' );
-		$this->hooks->execute( 'event_name', 'value passed', 'other', 2, 3 );
+		$this->expectOutputString( 'Value printed' );
+		$this->hooks->execute( 'event_name' );
 	}
 
-	private function testSomeThing() {
-		$this->hooks->addListener( 'test', function () {
-			codecept_debug( __METHOD__ );
-		}, 10, 1 );
+	/**
+	 * @test
+	 */
+	public function itShouldPrintText() {
+		$injector = new Injector();
+		$dependencies = ConfigFactory::make([
+			EventResolverExtension::KEY	=> [
+				Subscriber::class,
+			],
+		]);
+		$empress = new AurynResolver( $injector, $dependencies );
 
-		$this->hooks->execute( 'test' );
+		$event_resolver = $injector->make( EventResolverExtension::class, [
+			':config'	=> ConfigFactory::make([]),
+		] );
 
-		global $wp_filter;
+		$empress->extend( $event_resolver );
 
-//		foreach ( $wp_filter['test'][10] as $key => $value ) {
-//			codecept_debug( $key );
-//			codecept_debug( $value );
-//		}
-
-		codecept_debug( 'Implements:' );
-		codecept_debug( \class_implements( Subscriber::class ) );
-	}
-
-	private function useCases() {
-
-		$this->hooks->filter( 'event_name', '' );
+		$empress->resolve();
 	}
 
 	private function configExample() {

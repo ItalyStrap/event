@@ -40,7 +40,6 @@ class Subscriber implements SubscriberInterface {
 	 * @inheritDoc
 	 */
 	public function getSubscribedEvents(): array {
-		codecept_debug('executed from: ' . __METHOD__ );
 		return [
 			'event'	=> 'method',
 		];
@@ -50,51 +49,6 @@ class Subscriber implements SubscriberInterface {
 		codecept_debug( $this->stdClass );
 		codecept_debug('executed from: ');
 		codecept_debug( __METHOD__ );
-	}
-}
-
-class SubscriberFactory {
-	/**
-	 * @var Injector
-	 */
-	private $injector;
-	/**
-	 * @var LazyLoadingValueHolderFactory
-	 */
-	private $proxy;
-
-	/**
-	 * SubscriberFactory constructor.
-	 * @param Injector $injector
-	 * @param LazyLoadingValueHolderFactory $proxy
-	 */
-	public function __construct( Injector $injector, LazyLoadingValueHolderFactory $proxy ) {
-		$this->injector = $injector;
-		$this->proxy = $proxy;
-	}
-
-	/**
-	 * @return object
-	 */
-	public function make(): object {
-
-		$proxy_subscriber = $this->proxy->createProxy(
-			Subscriber::class,
-			function (
-				&$wrappedObject,
-				LazyLoadingInterface $proxy_subscriber,
-				$method,
-				$parameters,
-				&$initializer
-			) {
-				$wrappedObject = $this->injector->make( Subscriber::class ); // instantiation logic here
-				$initializer   = null; // turning off further lazy initialization
-			}
-		);
-
-		codecept_debug( 'Called from' . __METHOD__ );
-
-		return $proxy_subscriber;
 	}
 }
 
