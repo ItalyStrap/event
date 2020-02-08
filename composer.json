@@ -33,6 +33,9 @@
             "ItalyStrap\\Event\\": "src/"
         }
     },
+    "suggest": {
+        "italystrap/empress": "Config driven for Auryn Injector the OOP way"
+    },
     "scripts": {
         "check": [
             ".\\vendor\\bin\\phpcs -p --standard=PHPCompatibility src",
