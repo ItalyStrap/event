@@ -31,8 +31,6 @@ class Subscriber implements SubscriberInterface {
 	 * @param \stdClass $stdClass
 	 */
 	public function __construct( \stdClass $stdClass  ) {
-		codecept_debug( 'executed from: ' . __METHOD__ );
-		codecept_debug( $stdClass );
 		$this->stdClass = $stdClass;
 	}
 
@@ -45,10 +43,8 @@ class Subscriber implements SubscriberInterface {
 		];
 	}
 
-	public function method(...$args) {
-		codecept_debug( $this->stdClass );
-		codecept_debug('executed from: ');
-		codecept_debug( __METHOD__ );
+	public function method() {
+		echo 'Some text';
 	}
 }
 
