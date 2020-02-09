@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ItalyStrap\Tests;
 
 use Codeception\TestCase\WPTestCase;
+use ItalyStrap\Event\Hooks;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
@@ -34,22 +35,38 @@ class Psr14IntegrationTest extends WPTestCase {
 	private $listener;
 
 	/**
-	 * @return EventDispatcherInterface
+	 * @return object
 	 */
-	public function getEvent(): EventDispatcherInterface {
+	public function getEventDispatcher() {
 		return $this->event_dispatcher;
 	}
 
 	public function setUp(): void {
 		// Before...
 		parent::setUp();
-		$this->event_dispatcher = new class implements  EventDispatcherInterface {
+		$this->event_dispatcher = new class extends Hooks implements EventDispatcherInterface {
+
+			public function addListener(
+				string $event_name,
+				callable $listener,
+				int $priority = parent::ORDER,
+				int $accepted_args = parent::ARGS
+			) {
+				codecept_debug($event_name);
+				parent::addListener( $event_name, $listener, $priority, $accepted_args );
+			}
 
 			/**
 			 * @inheritDoc
 			 */
 			public function dispatch( object $event ) {
-				// TODO: Implement dispatch() method.
+
+				if ( $event instanceof StoppableEventInterface && $event->isPropagationStopped() ) {
+					return $event;
+				}
+
+				$this->execute( \get_class( $event ), $event );
+				return $event;
 			}
 		};
 
@@ -59,7 +76,7 @@ class Psr14IntegrationTest extends WPTestCase {
 			 * @inheritDoc
 			 */
 			public function isPropagationStopped(): bool {
-				// TODO: Implement isPropagationStopped() method.
+				return false;
 			}
 		};
 
@@ -86,9 +103,15 @@ class Psr14IntegrationTest extends WPTestCase {
 	 * @test
 	 */
 	public function event() {
-		$sut = $this->getEvent();
+		$sut = $this->getEventDispatcher();
 
-		$sut->dispatch( new class {
-		} );
+		codecept_debug(\get_class($this->event));
+		codecept_debug(\get_class($this->event));
+
+		$sut->addListener( \get_class($this->event), function ( $event ) {
+			codecept_debug( $event );
+		});
+
+		$sut->dispatch( $this->event );
 	}
 }

@@ -9,8 +9,8 @@ namespace ItalyStrap\Event;
  */
 class Hooks implements HooksInterface {
 
-	private const ARGS = 3;
-	private const ORDER = 10;
+	protected const ARGS = 3;
+	protected const ORDER = 10;
 
 	/**
 	 * Adds the given event listener to the list of event listeners
@@ -50,7 +50,7 @@ class Hooks implements HooksInterface {
 	 *                       functions hooked to the action. Default empty.
 	 * @return void
 	 */
-	public function execute( string $tag, ...$args ) {
+	public function execute( string $tag, ...$args ): void {
 		\do_action( ...\func_get_args() );
 	}
 
