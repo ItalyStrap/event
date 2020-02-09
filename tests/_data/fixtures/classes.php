@@ -73,9 +73,8 @@ class SubscriberServiceProvider extends Subscriber implements SubscriberInterfac
 		return parent::getSubscribedEvents();
 	}
 
-	public function method( ...$args ) {
-		codecept_debug( $args );
-		$this->subscriber->method( ...$args );
+	public function method() {
+		$this->subscriber->method();
 	}
 }
 

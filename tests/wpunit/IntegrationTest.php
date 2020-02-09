@@ -103,7 +103,9 @@ class IntegrationTest extends WPTestCase {
 	 * @test
 	 */
 	public function itShouldPrintText() {
+
 		$injector = new Injector();
+		$injector->share($injector);
 		$dependencies = ConfigFactory::make([
 			AurynResolver::SHARING	=> [
 				Hooks::class,
@@ -113,14 +115,13 @@ class IntegrationTest extends WPTestCase {
 				Subscriber::class,
 			],
 		]);
-		$empress = new AurynResolver( $injector, $dependencies );
 
 		$event_resolver = $injector->make( EventResolverExtension::class, [
 			':config'	=> ConfigFactory::make([]),
 		] );
 
+		$empress = new AurynResolver( $injector, $dependencies );
 		$empress->extend( $event_resolver );
-
 		$empress->resolve();
 
 		$this->expectOutputString( 'Some text' );
