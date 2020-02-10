@@ -17,13 +17,13 @@ class Hooks implements HooksInterface {
 	 * that listen to the given event.
 	 *
 	 * @param string   $event_name
-	 * @param callable $listener
+	 * @param string|callable $listener
 	 * @param int      $priority
 	 * @param int      $accepted_args
 	 */
 	public function addListener(
 		string $event_name,
-		callable $listener,
+		$listener,
 		int $priority = self::ORDER,
 		int $accepted_args = self::ARGS
 	) {
@@ -35,10 +35,10 @@ class Hooks implements HooksInterface {
 	 * that listen to the given event.
 	 *
 	 * @param string   $event_name
-	 * @param callable $listener
+	 * @param string|callable $listener
 	 * @param int      $priority
 	 */
-	public function removeListener( string $event_name, callable $listener, int $priority = self::ORDER ) {
+	public function removeListener( string $event_name, $listener, int $priority = self::ORDER ) {
 		\remove_filter( ...\func_get_args() );
 	}
 

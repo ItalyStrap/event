@@ -5,11 +5,13 @@ namespace ItalyStrap\Tests;
 
 use Codeception\TestCase\WPTestCase;
 use ItalyStrap\Event\Hooks;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 
+// phpcs:disable
+require_once codecept_data_dir( '/fixtures/psr-14.php' );
+// phpcs:enable
 /**
  * Class Psr14IntegrationTest
  * @package ItalyStrap\Tests
@@ -44,40 +46,9 @@ class Psr14IntegrationTest extends WPTestCase {
 	public function setUp(): void {
 		// Before...
 		parent::setUp();
-		$this->event_dispatcher = new class extends Hooks implements EventDispatcherInterface {
+		$this->event_dispatcher = new HooksDispatcher();
 
-			/**
-			 * @inheritDoc
-			 */
-			public function dispatch( object $event ) {
-
-				if ( $event instanceof StoppableEventInterface && $event->isPropagationStopped() ) {
-					$this->removeAllListener( \get_class( $event ) );
-					return $event;
-				}
-
-				$this->execute( \get_class( $event ), $event );
-				return $event;
-			}
-		};
-
-		$this->event = new class implements StoppableEventInterface {
-
-			public $value = 0;
-
-			private $propagationStopped = false;
-
-			public function stopPropagation(): void {
-				$this->propagationStopped = true;
-			}
-
-			/**
-			 * @inheritDoc
-			 */
-			public function isPropagationStopped(): bool {
-				return $this->propagationStopped;
-			}
-		};
+		$this->event = new EventFirst();
 
 		$this->listener = new class implements ListenerProviderInterface {
 
@@ -104,14 +75,12 @@ class Psr14IntegrationTest extends WPTestCase {
 	public function event() {
 		$sut = $this->getEventDispatcher();
 
-		$sut->addListener( \get_class($this->event), function ( object $event ) {
-			$event->value = 42;
-			$event->stopPropagation();
-		});
+		$sut->addListener( \get_class($this->event), __NAMESPACE__ . '\listener_one' );
 
+		/** @var object $event */
 		$event = $sut->dispatch( $this->event );
 
 		$this->assertEquals( 42, $event->value, '' );
-		$this->assertTrue( $this->event->isPropagationStopped(), '' );
+//		$this->assertTrue( $event->isPropagationStopped(), '' );
 	}
 }
