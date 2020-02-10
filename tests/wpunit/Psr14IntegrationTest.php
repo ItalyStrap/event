@@ -65,17 +65,17 @@ class Psr14IntegrationTest extends WPTestCase {
 
 			public $value = 0;
 
-			private $propagation = false;
+			private $propagationStopped = false;
 
 			public function stopPropagation(): void {
-				$this->propagation = true;
+				$this->propagationStopped = true;
 			}
 
 			/**
 			 * @inheritDoc
 			 */
 			public function isPropagationStopped(): bool {
-				return $this->propagation;
+				return $this->propagationStopped;
 			}
 		};
 
