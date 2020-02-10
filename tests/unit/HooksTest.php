@@ -195,4 +195,30 @@ class HooksTest extends \Codeception\Test\Unit {
 		$this->assertEquals( $return_val, $sut->hasListener(...$args), '' );
 		$this->assertEquals( 1, $calls );
 	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldRemoveAllListener() {
+		$sut = $this->getInstance();
+
+		$return_val = true;
+
+		$args = [
+			'event',
+			function () {
+			},
+		];
+
+		// phpcs:ignore -- Method from Codeception
+		FunctionMockerLe\define('remove_all_filters', function ( string $event_name ) use (&$calls, $return_val, $args): bool {
+			$calls++;
+			Assert::assertEquals( $args[0], $event_name );
+			return $return_val;
+		});
+
+		$this->assertEquals( $return_val, $sut->removeAllListener($args[0]), '' );
+		$this->assertTrue( $sut->removeAllListener($args[0]), '' );
+		$this->assertEquals( 2, $calls );
+	}
 }

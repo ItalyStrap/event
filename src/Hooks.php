@@ -43,6 +43,17 @@ class Hooks implements HooksInterface {
 	}
 
 	/**
+	 * Remove all of the listener from an event.
+	 *
+	 * @param string $tag
+	 * @param bool $priority
+	 * @return true
+	 */
+	public function removeAllListener( string $tag, $priority = false ) {
+		return \remove_all_filters( $tag, $priority );
+	}
+
+	/**
 	 * Executes all the callbacks registered with the given hook.
 	 *
 	 * @param string $tag    The name of the action to be executed.

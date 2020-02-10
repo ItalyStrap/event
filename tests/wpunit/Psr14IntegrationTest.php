@@ -52,7 +52,7 @@ class Psr14IntegrationTest extends WPTestCase {
 			public function dispatch( object $event ) {
 
 				if ( $event instanceof StoppableEventInterface && $event->isPropagationStopped() ) {
-					\remove_all_filters( \get_class( $event ) );
+					$this->removeAllListener( \get_class( $event ) );
 					return $event;
 				}
 
@@ -104,7 +104,7 @@ class Psr14IntegrationTest extends WPTestCase {
 	public function event() {
 		$sut = $this->getEventDispatcher();
 
-		$sut->addListener( \get_class($this->event), function ( $event ) {
+		$sut->addListener( \get_class($this->event), function ( object $event ) {
 			$event->value = 42;
 			$event->stopPropagation();
 		});
