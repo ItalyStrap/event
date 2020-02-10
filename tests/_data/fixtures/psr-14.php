@@ -35,8 +35,7 @@ class HooksDispatcher extends Hooks implements EventDispatcherInterface {
 		int $priority = self::ORDER,
 		int $accepted_args = self::ARGS
 	) {
-		$event_holder = new EventHolder( $listener );
-		$callback = [ $event_holder, 'execute'];
+		$callback = [ new EventHolder( $listener ), 'execute'];
 		parent::addListener( $event_name, $callback, $priority, $accepted_args );
 	}
 
