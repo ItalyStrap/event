@@ -46,16 +46,6 @@ class Psr14IntegrationTest extends WPTestCase {
 		parent::setUp();
 		$this->event_dispatcher = new class extends Hooks implements EventDispatcherInterface {
 
-			public function addListener(
-				string $event_name,
-				callable $listener,
-				int $priority = parent::ORDER,
-				int $accepted_args = parent::ARGS
-			) {
-				codecept_debug($event_name);
-				parent::addListener( $event_name, $listener, $priority, $accepted_args );
-			}
-
 			/**
 			 * @inheritDoc
 			 */
