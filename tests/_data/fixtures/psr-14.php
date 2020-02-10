@@ -29,38 +29,36 @@ class EventHolder {
 
 class HooksDispatcher extends Hooks implements EventDispatcherInterface {
 
-	public function addListener( string $event_name, callable $listener, int $priority = self::ORDER, int $accepted_args = self::ARGS ) {
-
-//		$callback = function ( object $event ) use ( $listener ) {
-//			if ( $event instanceof StoppableEventInterface && $event->isPropagationStopped() ) {
-//				return;
-//			}
-//
-//			$listener( $event );
-//		};
-
+	public function addListener(
+		string $event_name,
+		callable $listener,
+		int $priority = self::ORDER,
+		int $accepted_args = self::ARGS
+	) {
 		$event_holder = new EventHolder( $listener );
-
 		$callback = [ $event_holder, 'execute'];
-		codecept_debug( spl_object_hash($event_holder) );
-
 		parent::addListener( $event_name, $callback, $priority, $accepted_args );
 	}
+
+//	public function removeListener( string $event_name, callable $listener, int $priority = self::ORDER ) {
+//		global $wp_filter;
+//
+//		if ( ! isset( $wp_filter[ $event_name ][ $priority ] ) ) {
+//			return;
+//		}
+//
+//		foreach ( (array) $wp_filter[ $event_name ][ $priority ] as $method_name_regstered => $value ) {
+//
+//			codecept_debug( $method_name_regstered );
+//			codecept_debug( $value );
+//		}
+//	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function dispatch( object $event ) {
-//		codecept_debug('BEFORE DISPATCH');
-//		if ( $event instanceof StoppableEventInterface && $event->isPropagationStopped() ) {
-//			codecept_debug('INSIDE isPropagationStopped CHECK');
-//			$this->removeAllListener( \get_class( $event ) );
-//			return $event;
-//		}
-//		codecept_debug('AFTER isPropagationStopped CHECK');
-
 		$this->execute( \get_class( $event ), $event );
-//		codecept_debug('AFTER DISPATCH');
 		return $event;
 	}
 }

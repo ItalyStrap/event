@@ -84,17 +84,21 @@ class Psr14IntegrationTest extends WPTestCase {
 		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_false_and_stop_propagation' );
 		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_77' );
 
-		$sut->removeListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42' );
+//		$sut->removeListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42' );
 
 //		codecept_debug($wp_filter);
-		codecept_debug($wp_filter[EventFirst::class]->callbacks);
+//		codecept_debug($wp_filter[EventFirst::class]->callbacks);
 //		codecept_debug($wp_actions);
 
 		$event = new EventFirst();
 
 		/** @var object $event */
 		$sut->dispatch( $event );
-		$sut->dispatch( $event );
+
+		$this->assertEquals( false, $event->value, '' );
+		$this->assertTrue( $event->isPropagationStopped(), '' );
+
+		$event = $sut->dispatch( new EventFirst() );
 
 		$this->assertEquals( false, $event->value, '' );
 		$this->assertTrue( $event->isPropagationStopped(), '' );
