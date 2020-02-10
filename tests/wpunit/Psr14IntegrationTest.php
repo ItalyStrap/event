@@ -65,11 +65,17 @@ class Psr14IntegrationTest extends WPTestCase {
 
 			public $value = 0;
 
+			private $propagation = false;
+
+			public function stopPropagation(): void {
+				$this->propagation = true;
+			}
+
 			/**
 			 * @inheritDoc
 			 */
 			public function isPropagationStopped(): bool {
-				return false;
+				return $this->propagation;
 			}
 		};
 
@@ -100,10 +106,12 @@ class Psr14IntegrationTest extends WPTestCase {
 
 		$sut->addListener( \get_class($this->event), function ( $event ) {
 			$event->value = 42;
+			$event->stopPropagation();
 		});
 
 		$event = $sut->dispatch( $this->event );
 
 		$this->assertEquals( 42, $event->value, '' );
+		$this->assertTrue( $this->event->isPropagationStopped(), '' );
 	}
 }
