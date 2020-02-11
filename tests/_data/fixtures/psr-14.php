@@ -11,7 +11,7 @@ use Psr\EventDispatcher\StoppableEventInterface;
 
 interface ListenerHolderInterface {
 	public function listener(): callable;
-	public function nullListener();
+	public function nullListener(): void ;
 	public function execute( object $event );
 }
 
@@ -30,7 +30,7 @@ class ListenerHolder implements ListenerHolderInterface {
 		$this->listener = $listener;
 	}
 
-	public function nullListener() {
+	public function nullListener(): void {
 		$this->listener = function ( object $event ) {};
 	}
 
@@ -118,21 +118,21 @@ class EventFirst implements StoppableEventInterface {
 	}
 };
 
-function listener_change_value_to_42( object $event ) {
+function listener_change_value_to_42( object $event ): void {
 	$event->value = 42;
 }
 
-function listener_change_value_to_false_and_stop_propagation( object $event ) {
+function listener_change_value_to_false_and_stop_propagation( object $event ): void {
 	$event->value = false;
 	$event->stopPropagation();
 }
 
-function listener_change_value_to_77( object $event ) {
+function listener_change_value_to_77( object $event ): void {
 	$event->value = 77;
 }
 
 class ListenerChangeValueToText {
-	public function changeText( object $event ) {
+	public function changeText( object $event ): void {
 		$event->value = get_text();
 	}
 }

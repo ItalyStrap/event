@@ -26,6 +26,8 @@
         "szepeviktor/phpstan-wordpress": "^0.3.0",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
+        "fig/event-dispatcher-util": "^1.0",
+        "crell/tukio": "^1.0",
         "italystrap/empress": "~1.0"
     },
     "autoload": {

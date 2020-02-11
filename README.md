@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/packagist/l/italystrap/event.svg)](https://packagist.org/packages/italystrap/event)
 ![PHP from Packagist](https://img.shields.io/packagist/php-v/italystrap/event)
 
-WordPress Event API the OOP way
+WordPress plus Psr-14 Event API the OOP way
 
 **It is still a WIP**
 
