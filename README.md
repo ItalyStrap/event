@@ -321,7 +321,7 @@ $hooks->execute( 'event' );
 
 // $hooks will be the same instance because you have share in the above code
 ```
-You can find more information about the (Empress\AurynResolver here)[https://github.com/ItalyStrap/empress]
+You can find more information about the (EmpressAurynResolver here)[https://github.com/ItalyStrap/empress]
 
 ## Contributing
 

@@ -116,6 +116,22 @@ class EventManagerTest extends Unit {
 					],
 				]
 			],
+			'event_name => [[callback|priority|args]]'	=> [
+				[
+					'event_name' => [
+						[
+							Keys::CALLBACK		=> 'onCallback',
+							Keys::PRIORITY		=> 10,
+							Keys::ACCEPTED_ARGS	=> 6,
+						],
+						[
+							Keys::CALLBACK		=> 'onCallback',
+							Keys::PRIORITY		=> 20,
+							Keys::ACCEPTED_ARGS	=> 6,
+						],
+					],
+				]
+			],
 		];
 	}
 
@@ -183,21 +199,44 @@ class EventManagerTest extends Unit {
 
 		Assert::assertArrayHasKey( $event_name, $sub_args, 'Both should be the "event_name"' );
 
+		if ( isset( $sub_args[ $event_name ][0] ) && is_array( $sub_args[ $event_name ][0] ) ) {
+			foreach ( $sub_args[ $event_name ] as $arg ) {
+				$this->assertValueFromArrayAreCorrect(
+					[$event_name => $arg],
+					$called_method,
+					$event_name,
+					$arg[Keys::PRIORITY],
+					$arg[Keys::ACCEPTED_ARGS]
+				);
+			}
+			return;
+		}
+
+		$this->assertValueFromArrayAreCorrect( $sub_args, $called_method, $event_name, $priority, $accepted_args );
+	}
+
+	private function assertValueFromArrayAreCorrect(
+		$args,
+		$called_method,
+		$event_name,
+		$priority,
+		$accepted_args
+	): void {
 		Assert::assertEquals(
 			$called_method,
-			$sub_args[ $event_name ][ Keys::CALLBACK ] ?? $sub_args[ $event_name ],
+			$args[ $event_name ][ Keys::CALLBACK ] ?? $args[ $event_name ],
 			'Should be callback name'
 		);
 
 		Assert::assertEquals(
 			$priority,
-			$sub_args[ $event_name ][ Keys::PRIORITY ] ?? 10, // 10 is the default priority
+			$args[ $event_name ][ Keys::PRIORITY ] ?? 10, // 10 is the default priority
 			'Should be default priority'
 		);
 
 		Assert::assertEquals(
 			$accepted_args,
-			$sub_args[ $event_name ][ Keys::ACCEPTED_ARGS ] ?? 1, // 1 is the defaul number of passed argument
+			$args[ $event_name ][ Keys::ACCEPTED_ARGS ] ?? 1, // 1 is the defaul number of passed argument
 			'Should be default accepted args'
 		);
 	}
