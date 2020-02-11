@@ -1,6 +1,7 @@
 {
     "name": "italystrap/event",
-    "description": "WordPress Event API the OOP way",
+    "description": "WordPress and Psr-14 Event API the OOP way",
+    "keywords": ["psr", "psr-14", "events", "WordPress", "plugin API", "hook", "hooks"],
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -13,7 +14,8 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "php" : ">=7.2"
+        "php" : ">=7.2",
+        "psr/log": "^1.1"
     },
     "require-dev": {
         "lucatume/wp-browser": "~2.2",
