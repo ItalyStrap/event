@@ -5,15 +5,33 @@ declare(strict_types=1);
 namespace ItalyStrap\Tests;
 
 use ItalyStrap\Event\Hooks;
+use ProxyManager\Factory\LazyLoadingValueHolderFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 
-class EventHolder {
+interface ListenerHolderInterface {
+	public function listener(): callable;
+	public function nullListener();
+	public function execute( object $event );
+}
+
+class ListenerHolder implements ListenerHolderInterface {
 
 	private $listener;
 
+	/**
+	 * @return callable
+	 */
+	public function listener(): callable {
+		return $this->listener;
+	}
+
 	public function __construct( callable $listener ) {
 		$this->listener = $listener;
+	}
+
+	public function nullListener() {
+		$this->listener = function ( object $event ) {};
 	}
 
 	public function execute( object $event ) {
@@ -27,31 +45,51 @@ class EventHolder {
 	}
 }
 
+class ListenerHolderFactory {
+	public function makeListenerHolder( callable $listener ): ListenerHolderInterface {
+		return new ListenerHolder( $listener );
+	}
+}
+
 class HooksDispatcher extends Hooks implements EventDispatcherInterface {
+
+	/**
+	 * @var array
+	 */
+	private $wp_filter;
+
+	/**
+	 * @var ListenerHolderFactory
+	 */
+	private $factory;
+
+	public function __construct( array &$wp_filter, ListenerHolderFactory $factory ) {
+		$this->wp_filter = &$wp_filter;
+		$this->factory = $factory;
+	}
 
 	public function addListener(
 		string $event_name,
 		callable $listener,
-		int $priority = self::ORDER,
-		int $accepted_args = self::ARGS
+		int $priority = parent::ORDER,
+		int $accepted_args = parent::ARGS
 	) {
-		$callback = [ new EventHolder( $listener ), 'execute'];
+		$callback = [ $this->factory->makeListenerHolder( $listener ), 'execute'];
 		parent::addListener( $event_name, $callback, $priority, $accepted_args );
 	}
 
-//	public function removeListener( string $event_name, callable $listener, int $priority = self::ORDER ) {
-//		global $wp_filter;
-//
-//		if ( ! isset( $wp_filter[ $event_name ][ $priority ] ) ) {
-//			return;
-//		}
-//
-//		foreach ( (array) $wp_filter[ $event_name ][ $priority ] as $method_name_regstered => $value ) {
-//
-//			codecept_debug( $method_name_regstered );
-//			codecept_debug( $value );
-//		}
-//	}
+	public function removeListener( string $event_name, callable $listener, int $priority = parent::ORDER ) {
+
+		if ( ! isset( $this->wp_filter[ $event_name ][ $priority ] ) ) {
+			return;
+		}
+
+		foreach ( (array) $this->wp_filter[ $event_name ][ $priority ] as $method_name_registered => $value ) {
+			if ( $value['function'][0]->listener() === $listener ) {
+				$value['function'][0]->nullListener();
+			}
+		}
+	}
 
 	/**
 	 * @inheritDoc
@@ -82,7 +120,6 @@ class EventFirst implements StoppableEventInterface {
 
 function listener_change_value_to_42( object $event ) {
 	$event->value = 42;
-//	$event->stopPropagation();
 }
 
 function listener_change_value_to_false_and_stop_propagation( object $event ) {
@@ -92,7 +129,6 @@ function listener_change_value_to_false_and_stop_propagation( object $event ) {
 
 function listener_change_value_to_77( object $event ) {
 	$event->value = 77;
-//	$event->stopPropagation();
 }
 
 class ListenerChangeValueToText {
