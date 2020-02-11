@@ -167,7 +167,7 @@ class HooksTest extends \Codeception\Test\Unit {
 			return $hook_name;
 		});
 
-		$this->assertEquals( $hook_name, $sut->currentHookName(), '' );
+		$this->assertEquals( $hook_name, $sut->currentEventName(), '' );
 		$this->assertEquals( 1, $calls );
 	}
 

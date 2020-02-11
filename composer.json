@@ -37,6 +37,9 @@
             "ItalyStrap\\Event\\": "src/"
         }
     },
+    "provide": {
+        "psr/event-dispatcher-implementation": "1.0"
+    },
     "suggest": {
         "italystrap/empress": "Config driven for Auryn Injector the OOP way"
     },
