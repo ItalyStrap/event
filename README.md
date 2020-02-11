@@ -227,7 +227,101 @@ This library is very similar to the
 
 ## Advanced Usage
 
-> TODO
+```php
+use ItalyStrap\Config\ConfigFactory;
+use ItalyStrap\Empress\AurynResolver;
+use ItalyStrap\Empress\Injector;
+use ItalyStrap\Event\EventManager;
+use ItalyStrap\Event\EventResolverExtension;
+use ItalyStrap\Event\Hooks;
+use ItalyStrap\Event\Keys;
+use ItalyStrap\Event\SubscriberInterface;
+
+// From Subscriber.php
+class Subscriber implements SubscriberInterface {
+
+	public $check = 0;
+
+	/**
+	 * @var \stdClass
+	 */
+	private $stdClass;
+
+	/**
+	 * Subscriber constructor.
+	 * @param \stdClass $stdClass
+	 */
+	public function __construct( \stdClass $stdClass  ) {
+		$this->stdClass = $stdClass;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getSubscribedEvents(): array {
+		return [
+			'event'	=> 'method',
+		];
+	}
+
+	public function method() {
+		echo 'Some text';
+	}
+}
+
+// From boostrap.php
+
+// Create a new InjectorContainer
+$injector = new Injector();
+
+// This is optional, you could share the injector instance
+$injector->share($injector);
+
+// Now it's time to create a configuration for dependencies
+$dependencies = ConfigFactory::make([
+    // Share the instancies of the Hooks and EventManager better than singleton
+    AurynResolver::SHARING	=> [
+        Hooks::class,
+        EventManager::class,
+    ],
+    // Now add in the array all your subscribers
+    EventResolverExtension::KEY	=> [
+        Subscriber::class,
+    ],
+]);
+
+// This wil instantiate the EventResolverExtension::class
+$event_resolver = $injector->make( EventResolverExtension::class, [
+    // In the configuration object you can pass a key value pair for adding or not listener at runtime
+    ':config'	=> ConfigFactory::make([
+        'option_key_for_subscriber' => Subscriber::class
+    ]),
+] );
+
+// Create the object for the AurynResolver::class
+$empress = new AurynResolver( $injector, $dependencies );
+
+// Is the same as above if you want to use Auryn and you have shared the Auryn instance:
+$empress = $injector->make( AurynResolver::class, [
+    ':dependencies'  => $dependencies
+] );
+
+// Pass the $event_resolver object created earlier
+$empress->extend( $event_resolver );
+
+// When you are ready call the resolve() method for autowiring your application
+$empress->resolve();
+
+
+$this->expectOutputString( 'Some text' );
+( $injector->make( Hooks::class ) )->execute( 'event' );
+// or
+$hooks = $injector->make( Hooks::class );
+$hooks->execute( 'event' );
+
+// $hooks will be the same instance because you have share in the above code
+```
+You can find more information about the (Empress\AurynResolver here)[https://github.com/ItalyStrap/empress]
 
 ## Contributing
 
