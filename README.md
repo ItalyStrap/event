@@ -63,7 +63,7 @@ $filtered_value = $hooks->filter( 'event_name', $value );
 ```
 
 Ok, so, for now it is very straightforward, you will use it like you use the WordPress Plugin API but more OOP oriented,
-you can inject the Hooks::class.
+you can inject the Hooks::class into yours classes.
 
 ```php
 use ItalyStrap\Event\Hooks;
@@ -88,6 +88,124 @@ class MyClass {
 
 $my_class = new MyClass( $hooks );
 $my_class->doSomeStuffWithHooks();
+```
+
+What about the event manager?
+Here a simple example:
+
+```php
+use ItalyStrap\Event\Hooks;
+use ItalyStrap\Event\EventManager;
+use ItalyStrap\Event\SubscriberInterface;
+
+// Your class must implements the ItalyStrap\Event\SubscriberInterface
+class MyClassSubscriber implements SubscriberInterface {
+    public function getSubscribedEvents(): array {
+        return ['event_name' => 'methodName'];
+    }
+    
+    public function methodName(/* may be with some arguments if you use the ::filter() method */){
+        // Do some stuff with hooks
+    }
+}
+
+$subscriber = new MyClassSubscriber();
+
+$hooks = new Hooks();
+$event_manager = new EventManager( $hooks );
+$event_manager->addSubscriber( $subscriber );
+
+// It will execute the subscriber MyClassSubscriber::methodName
+$hooks->execute( 'event_name' );
+// or
+$hooks->filter( 'event_name', $some_value );
+```
+A subscriber is a class that implements SubscriberInterface interface and could be the listener itself
+passing a reference to the event/events and method/methods to execute.
+
+The `ItalyStrap\Event\SubscriberInterface::getSubscribedEvents()` must return an array like those:
+
+```php
+
+return ['event_name' => 'method_name'];
+return [
+            'event_name' =>
+            [
+                KEYS::CALLBACK	=> 'method_name',
+                KEYS::PRIORITY	=> $priority,
+            ]
+        ];
+return [
+           'event_name' =>
+           [
+               KEYS::CALLBACK	    => 'method_name',
+               KEYS::PRIORITY	    => $priority,
+               KEYS::ACCEPTED_ARGS	=> $accepted_args
+           ]
+       ];
+
+```
+
+In case the subscriber has a lot of events to subscribe to it is better to separate the busines logic in
+another class an then use the subscriber to do the registration like this:
+
+```php
+use ItalyStrap\Event\Hooks;
+use ItalyStrap\Event\EventManager;
+use ItalyStrap\Event\SubscriberInterface;
+
+class MyBusinessLogic {
+    public function methodOne() {
+        // Do some stuff
+    }
+    public function methodTwo() {
+        // Do some stuff
+    }
+    public function methodThree() {
+        // Do some stuff
+    }
+}
+
+class MyClassSubscriber implements SubscriberInterface {
+    /**
+     * @var MyBusinessLogic 
+     */
+    private $logic;
+    public function __construct( MyBusinessLogic $logic ) {
+        $this->logic = $logic;
+    }
+
+    public function getSubscribedEvents(): array {
+        return [
+            'event_name' => 'onEventName',
+            'event_name2' => 'onEventName2',
+            'event_name3' => 'onEventName3',
+        ];
+    }
+    
+    public function onEventName(/* may be with some arguments if you use the ::filter() method */){
+        $this->logic->methodOne();
+    }
+    
+    public function onEventName2(/* may be with some arguments if you use the ::filter() method */){
+        $this->logic->methodTwo();
+    }
+    
+    public function onEventName3(/* may be with some arguments if you use the ::filter() method */){
+        $this->logic->methodThree();
+    }
+}
+$logic = new MyBusinessLogic();
+$subscriber = new MyClassSubscriber( $logic );
+
+$hooks = new Hooks();
+$event_manager = new EventManager( $hooks );
+$event_manager->addSubscriber( $subscriber );
+
+// It will execute the subscriber MyClassSubscriber::methodName
+$hooks->execute( 'event_name' );
+// or
+$hooks->filter( 'event_name', $some_value );
 ```
 
 ## Advanced Usage

@@ -21,20 +21,20 @@ interface SubscriberInterface {
 	 *
 	 * For instance:
 	 *
-	 *  * ['hook_name' => 'method_name']
+	 *  * ['event_name' => 'method_name']
 	 *  * [
-	 * 		'hook_name' =>
+	 * 		'event_name' =>
 	 * 		[
 	 * 			KEYS::CALLBACK	=> 'method_name',
-	 * 			KEYS::PRIORITY	=> $priority
+	 * 			KEYS::PRIORITY	=> $priority,
 	 * 		]
 	 * 	  ]
 	 *  * [
-	 * 		'hook_name' =>
+	 * 		'event_name' =>
 	 * 		[
 	 * 			KEYS::CALLBACK		=> 'method_name',
 	 * 			KEYS::PRIORITY		=> $priority,
-	 * 			KEYS::ACCEPTED_ARGS	=> $accepted_args
+	 * 			KEYS::ACCEPTED_ARGS	=> $accepted_args,
 	 * 		]
 	 * 	  ]
 	 *
