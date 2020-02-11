@@ -126,18 +126,26 @@ passing a reference to the event/events and method/methods to execute.
 The `ItalyStrap\Event\SubscriberInterface::getSubscribedEvents()` must return an array like those:
 
 ```php
-
+// Just one event => method
 return ['event_name' => 'method_name'];
+
+// Multiple events => methods
 return [
-            'event_name' =>
-            [
+    'event_name' => 'method_name',
+    'event_name2' => 'method_name2'
+];
+
+// Event with method and priority (for multiple events the logic is the same as above)
+return [
+            'event_name' => [
                 KEYS::CALLBACK	=> 'method_name',
                 KEYS::PRIORITY	=> $priority,
             ]
         ];
+
+// Event with method, priority and accepted args (for multiple events the logic is the same as above)
 return [
-           'event_name' =>
-           [
+           'event_name' => [
                KEYS::CALLBACK	    => 'method_name',
                KEYS::PRIORITY	    => $priority,
                KEYS::ACCEPTED_ARGS	=> $accepted_args
