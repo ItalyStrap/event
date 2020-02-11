@@ -48,4 +48,13 @@ This code is licensed under the [MIT](LICENSE).
 
 ## Credits
 
-> TODO
+### For the Event implementation
+
+* (Carl Alexander)[https://carlalexander.ca/designing-system-wordpress-event-management/]
+* (Carl Alexander)[https://carlalexander.ca/mediator-pattern-wordpress/]
+
+### For the EventDispatcher implementation
+
+* (Symfony)[https://symfony.com/doc/current/components/event_dispatcher.html]
+* (Larry Garfield)[https://github.com/Crell/Tukio]
+* (Timothy Jacobs)[https://github.com/iron-bound-designs/psr-14-wp]

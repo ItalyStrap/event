@@ -1,7 +1,7 @@
 {
     "name": "italystrap/event",
     "description": "WordPress and Psr-14 Event API the OOP way",
-    "keywords": ["psr", "psr-14", "events", "WordPress", "plugin API", "hook", "hooks"],
+    "keywords": ["psr", "psr-14", "event", "events", "WordPress", "plugin API", "hook", "hooks"],
     "type": "library",
     "license": "MIT",
     "authors": [
