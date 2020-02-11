@@ -30,7 +30,65 @@ This package adheres to the [SemVer](http://semver.org/) specification and will 
 
 ## Basic Usage
 
-> TODO
+The Hooks::class is a wrapper around the (WordPress Plugin API)[https://developer.wordpress.org/plugins/hooks/]
+
+### Simple example for actions
+
+```php
+use ItalyStrap\Event\Hooks;
+
+$hooks = new Hooks();
+// Listen for `event_name`
+$hooks->addListener( 'event_name', function () { echo 'Event Called'; }, 10 );
+
+// This will echo 'Event Called' on `event_name`
+$hooks->execute( 'event_name' );
+```
+
+### Simple example for filters
+
+```php
+use ItalyStrap\Event\Hooks;
+
+$hooks = new Hooks();
+// Listen for `event_name`
+$hooks->addListener( 'event_name', function ( array $value ) {
+    // Do your stuff here in the same ways you do with filters
+    return $value;
+}, 10 );
+
+$value = [ 'some-key' => 'some-value' ];
+// This will filters '$value' on `event_name`
+$filtered_value = $hooks->filter( 'event_name', $value );
+```
+
+Ok, so, for now it is very straightforward, you will use it like you use the WordPress Plugin API but more OOP oriented,
+you can inject the Hooks::class.
+
+```php
+use ItalyStrap\Event\Hooks;
+use ItalyStrap\Event\HooksInterface;
+
+$hooks = new Hooks();
+
+class MyClass {
+
+    /**
+     * @var HooksInterface 
+     */
+    private $hooks;
+    public function __construct( HooksInterface $hooks ) {
+        $this->hooks = $hooks;
+    }
+
+    public function doSomeStuffWithHooks() {
+        // Do your stuff here with hooks
+    }
+}
+
+$my_class = new MyClass( $hooks );
+$my_class->doSomeStuffWithHooks();
+```
 
 ## Advanced Usage
 
