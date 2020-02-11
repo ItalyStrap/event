@@ -142,7 +142,7 @@ return [
 return [
             'event_name' => [
                 KEYS::CALLBACK	=> 'method_name',
-                KEYS::PRIORITY	=> $priority,
+                KEYS::PRIORITY	=> $priority, // 10 default
             ],
             // ... more event => method
         ];
@@ -151,9 +151,26 @@ return [
 return [
            'event_name' => [
                KEYS::CALLBACK	    => 'method_name',
-               KEYS::PRIORITY	    => $priority,
-               KEYS::ACCEPTED_ARGS	=> $accepted_args
+               KEYS::PRIORITY	    => $priority, // 10 default
+               KEYS::ACCEPTED_ARGS	=> $accepted_args // 3 default
            ],
+            // ... more event => method
+       ];
+
+// Event with methods, priority and accepted args (for multiple events the logic is the same as above)
+return [
+           'event_name' => [
+                [
+                    KEYS::CALLBACK	    => 'method_name',
+                    KEYS::PRIORITY	    => $priority, // 10 default
+                    KEYS::ACCEPTED_ARGS	=> $accepted_args // 3 default
+                ],
+                [
+                    KEYS::CALLBACK	    => 'method_name2',
+                    KEYS::PRIORITY	    => $priority, // 10 default
+                    KEYS::ACCEPTED_ARGS	=> $accepted_args // 3 default
+                ],
+            ],
             // ... more event => method
        ];
 
