@@ -90,6 +90,8 @@ $my_class = new MyClass( $hooks );
 $my_class->doSomeStuffWithHooks();
 ```
 
+### The Event Manager
+
 What about the event manager?
 Here a simple example:
 
@@ -121,7 +123,7 @@ $hooks->execute( 'event_name' );
 $hooks->filter( 'event_name', $some_value );
 ```
 A subscriber is a class that implements SubscriberInterface interface and could be the listener itself
-passing a reference to the event/events and method/methods to execute.
+passing a reference to the event/events and method/methods to execute to a given action/filter.
 
 The `ItalyStrap\Event\SubscriberInterface::getSubscribedEvents()` must return an array like those:
 
@@ -133,6 +135,7 @@ return ['event_name' => 'method_name'];
 return [
     'event_name' => 'method_name',
     'event_name2' => 'method_name2'
+    // ... more event => method
 ];
 
 // Event with method and priority (for multiple events the logic is the same as above)
@@ -140,7 +143,8 @@ return [
             'event_name' => [
                 KEYS::CALLBACK	=> 'method_name',
                 KEYS::PRIORITY	=> $priority,
-            ]
+            ],
+            // ... more event => method
         ];
 
 // Event with method, priority and accepted args (for multiple events the logic is the same as above)
@@ -149,13 +153,14 @@ return [
                KEYS::CALLBACK	    => 'method_name',
                KEYS::PRIORITY	    => $priority,
                KEYS::ACCEPTED_ARGS	=> $accepted_args
-           ]
+           ],
+            // ... more event => method
        ];
 
 ```
 
-In case the subscriber has a lot of events to subscribe to it is better to separate the busines logic in
-another class an then use the subscriber to do the registration like this:
+In case the subscriber has a lot of events to subscribe to it is better to separate the business logic in
+another class an then use the subscriber to do the registration of the other class like this:
 
 ```php
 use ItalyStrap\Event\Hooks;
@@ -215,6 +220,10 @@ $hooks->execute( 'event_name' );
 // or
 $hooks->filter( 'event_name', $some_value );
 ```
+Why? (Separation of concern)[https://en.wikipedia.org/wiki/Separation_of_concerns]
+
+This library is very similar to the
+(Symfony Event Dispatcher)[https://symfony.com/doc/current/components/event_dispatcher.html]
 
 ## Advanced Usage
 
