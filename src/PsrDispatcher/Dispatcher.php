@@ -37,6 +37,7 @@ class Dispatcher extends Hooks implements EventDispatcherInterface {
 		int $priority = parent::ORDER,
 		int $accepted_args = parent::ARGS
 	) {
+		/** @var callable $callback */
 		$callback = [ $this->factory->makeListenerHolder( $listener ), 'execute'];
 		parent::addListener( $event_name, $callback, $priority, $accepted_args );
 	}
