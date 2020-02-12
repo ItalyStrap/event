@@ -38,7 +38,7 @@ class Dispatcher extends Hooks implements EventDispatcherInterface {
 		int $accepted_args = parent::ARGS
 	) {
 		/** @var callable $callback */
-		$callback = [ $this->factory->makeListenerHolder( $listener ), 'execute'];
+		$callback = $this->factory->buildListenerHolderCallable( $listener );
 		parent::addListener( $event_name, $callback, $priority, $accepted_args );
 	}
 
@@ -52,6 +52,13 @@ class Dispatcher extends Hooks implements EventDispatcherInterface {
 		}
 
 		foreach ( (array) $this->wp_filter[ $event_name ][ $priority ] as $method_name_registered => $value ) {
+			if ( ! $value['function'][0] instanceof ListenerHolderInterface ) {
+				throw new \RuntimeException( \sprintf(
+					'The callable is not an instance of %s',
+					ListenerHolderInterface::class
+				) );
+			}
+
 			if ( $value['function'][0]->listener() === $listener ) {
 				$value['function'][0]->nullListener();
 			}
