@@ -28,7 +28,7 @@ class EventManager {
 	 * EvenManager constructor.
 	 * @param Hooks $hooks
 	 */
-	public function __construct( Hooks $hooks ) {
+	public function __construct( HooksInterface $hooks ) {
 		$this->hooks = $hooks;
 	}
 

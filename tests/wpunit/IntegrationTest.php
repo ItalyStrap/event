@@ -10,6 +10,7 @@ use ItalyStrap\Empress\Injector;
 use ItalyStrap\Event\EventManager;
 use ItalyStrap\Event\EventResolverExtension;
 use ItalyStrap\Event\Hooks;
+use ItalyStrap\Event\HooksInterface;
 use ItalyStrap\Event\Keys;
 use ItalyStrap\Event\SubscriberInterface;
 
@@ -126,15 +127,20 @@ class IntegrationTest extends WPTestCase {
 		$injector = new Injector();
 		$injector->share($injector);
 		$dependencies = ConfigFactory::make([
-			AurynResolver::SHARING	=> [
-				Hooks::class,
-				EventManager::class,
+			AurynResolver::ALIASES	=> [
+				HooksInterface::class	=> Hooks::class,
 			],
+//			AurynResolver::SHARING	=> [
+//				HooksInterface::class,
+//				EventManager::class,
+//			],
 			EventResolverExtension::KEY	=> [
 				Subscriber::class,
 			],
 		]);
 
+
+		$injector->alias(HooksInterface::class, Hooks::class);
 		$event_resolver = $injector->make( EventResolverExtension::class, [
 			':config'	=> ConfigFactory::make([]),
 		] );
