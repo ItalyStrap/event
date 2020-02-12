@@ -4,9 +4,10 @@ declare(strict_types=1);
 namespace ItalyStrap\Tests;
 
 use Codeception\TestCase\WPTestCase;
+use ItalyStrap\Event\PsrDispatcher\Dispatcher;
+use ItalyStrap\Event\PsrDispatcher\ListenerHolderFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
-use Psr\EventDispatcher\StoppableEventInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 // phpcs:disable
@@ -38,7 +39,7 @@ class Psr14IntegrationTest extends WPTestCase {
 	 */
 	public function getEventDispatcher() {
 		global $wp_filter;
-		return new HooksDispatcher( $wp_filter, new ListenerHolderFactory() );
+		return new Dispatcher( $wp_filter, new ListenerHolderFactory() );
 	}
 
 	public function setUp(): void {

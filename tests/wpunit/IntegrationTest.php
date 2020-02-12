@@ -84,19 +84,38 @@ class IntegrationTest extends WPTestCase {
 			 */
 			public function getSubscribedEvents(): array {
 				return [
-					'event_name'	=> 'method'
+					'event_name'	=> 'method',
+					'other_event_name'	=> [
+						[
+							Keys::CALLBACK		=> 'onCallback',
+							Keys::PRIORITY		=> 10,
+							Keys::ACCEPTED_ARGS	=> 6,
+						],
+						[
+							Keys::CALLBACK		=> 'onCallback',
+							Keys::PRIORITY		=> 20,
+							Keys::ACCEPTED_ARGS	=> 6,
+						],
+					],
 				];
 			}
 
 			public function method() {
 				echo 'Value printed';
 			}
+
+			public function onCallback() {
+				echo 'Value printed';
+			}
 		};
 
 		$this->manager->addSubscriber( $subscriber );
-
+//
 		$this->expectOutputString( 'Value printed' );
 		$this->hooks->execute( 'event_name' );
+
+//		$this->expectOutputString( 'Value printed' );
+//		$this->hooks->execute( 'other_event_name' );
 	}
 
 	/**
