@@ -126,26 +126,34 @@ class IntegrationTest extends WPTestCase {
 
 		$injector = new Injector();
 		$injector->share($injector);
+
+		$injector->alias(HooksInterface::class, Hooks::class);
+		$injector->share( HooksInterface::class );
+		$injector->share( EventManager::class );
+		$event_resolver = $injector->make( EventResolverExtension::class, [
+			':config'	=> ConfigFactory::make([
+				Subscriber::class	=> false
+			]),
+		] );
+
 		$dependencies = ConfigFactory::make([
-			AurynResolver::ALIASES	=> [
-				HooksInterface::class	=> Hooks::class,
-			],
+//			AurynResolver::ALIASES	=> [
+//				HooksInterface::class	=> Hooks::class,
+//			],
 //			AurynResolver::SHARING	=> [
 //				HooksInterface::class,
 //				EventManager::class,
 //			],
 			EventResolverExtension::KEY	=> [
 				Subscriber::class,
+//				Subscriber::class	=> false,
 			],
 		]);
 
-
-		$injector->alias(HooksInterface::class, Hooks::class);
-		$event_resolver = $injector->make( EventResolverExtension::class, [
-			':config'	=> ConfigFactory::make([]),
+//		$empress = new AurynResolver( $injector, $dependencies );
+		$empress = $injector->make( AurynResolver::class, [
+			':dependencies'	=> $dependencies
 		] );
-
-		$empress = new AurynResolver( $injector, $dependencies );
 		$empress->extend( $event_resolver );
 		$empress->resolve();
 
