@@ -1,0 +1,85 @@
+<?php
+declare(strict_types=1);
+
+namespace ItalyStrap\Tests;
+
+use Codeception\Test\Unit;
+use ItalyStrap\Event\PsrDispatcher\DebugDispatcher;
+use Prophecy\Argument;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
+use stdClass;
+
+class DebugDispatcherTest extends Unit {
+
+	/**
+	 * @var \UnitTester
+	 */
+	protected $tester;
+	/**
+	 * @var \Prophecy\Prophecy\ObjectProphecy
+	 */
+	private $dispatcher;
+
+	/**
+	 * @return EventDispatcherInterface
+	 */
+	public function getDispatcher(): EventDispatcherInterface {
+		return $this->dispatcher->reveal();
+	}
+
+	/**
+	 * @return LoggerInterface
+	 */
+	public function getLogger(): LoggerInterface {
+		return $this->logger->reveal();
+	}
+	/**
+	 * @var \Prophecy\Prophecy\ObjectProphecy
+	 */
+	private $logger;
+
+	// phpcs:ignore -- Method from Codeception
+	protected function _before() {
+		$this->dispatcher = $this->prophesize( EventDispatcherInterface::class );
+		$this->logger = $this->prophesize( LoggerInterface::class );
+	}
+
+	// phpcs:ignore -- Method from Codeception
+	protected function _after() {
+	}
+
+	/**
+	 * @return DebugDispatcher
+	 */
+	private function getInstance() {
+		$sut = new DebugDispatcher(
+			$this->getDispatcher(),
+			$this->getLogger()
+		);
+		$this->assertInstanceOf( EventDispatcherInterface::class, $sut, '' );
+		return $sut;
+	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldBeInstantiable() {
+		$sut = $this->getInstance();
+	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldDispatchAndRecordLog() {
+		$sut = $this->getInstance();
+
+		$this->logger
+			->debug( Argument::type('string'), Argument::type('array') )
+			->shouldBeCalled();
+
+		$this->dispatcher->dispatch( Argument::type('object') )->shouldBeCalled();
+
+		$sut->dispatch( new stdClass() );
+	}
+}

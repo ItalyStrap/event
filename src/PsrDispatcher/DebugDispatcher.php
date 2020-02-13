@@ -14,6 +14,8 @@ use function get_class;
  */
 class DebugDispatcher implements EventDispatcherInterface {
 
+	const M_DEBUG = 'Processing event of type {type}.';
+
 	/**
 	 * @var EventDispatcherInterface
 	 */
@@ -25,7 +27,7 @@ class DebugDispatcher implements EventDispatcherInterface {
 	protected $logger;
 
 	/**
-	 * DebugEventDispatcher constructor.
+	 * DebugDispatcher constructor.
 	 *
 	 * @param EventDispatcherInterface $dispatcher The dispatcher to wrap and for which to log errors.
 	 * @param LoggerInterface $logger The logger service through which to log.
@@ -36,7 +38,7 @@ class DebugDispatcher implements EventDispatcherInterface {
 	}
 
 	public function dispatch(object $event) {
-		$this->logger->debug('Processing event of type {type}.', ['type' => get_class($event), 'event' => $event]);
+		$this->logger->debug(self::M_DEBUG, ['type' => get_class($event), 'event' => $event]);
 		return $this->dispatcher->dispatch($event);
 	}
 }

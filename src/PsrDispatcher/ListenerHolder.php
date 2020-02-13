@@ -35,7 +35,7 @@ class ListenerHolder implements ListenerHolderInterface {
 	 * @inheritDoc
 	 */
 	public function nullListener(): void {
-		$this->listener = function ( object $event ) {
+		$this->listener = function ( object $event ): void {
 		};
 	}
 
