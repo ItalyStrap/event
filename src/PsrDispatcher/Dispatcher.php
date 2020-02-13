@@ -39,7 +39,7 @@ class Dispatcher extends Hooks implements EventDispatcherInterface {
 	) {
 		/** @var callable $callback */
 		$callback = $this->factory->buildCallable( $listener );
-		parent::addListener( $event_name, $callback, $priority, $accepted_args );
+		return parent::addListener( $event_name, $callback, $priority, $accepted_args );
 	}
 
 	/**
@@ -48,7 +48,7 @@ class Dispatcher extends Hooks implements EventDispatcherInterface {
 	public function removeListener( string $event_name, callable $listener, int $priority = parent::ORDER ) {
 
 		if ( ! isset( $this->wp_filter[ $event_name ][ $priority ] ) ) {
-			return;
+			return false;
 		}
 
 		foreach ( (array) $this->wp_filter[ $event_name ][ $priority ] as $method_name_registered => $value ) {
@@ -63,6 +63,8 @@ class Dispatcher extends Hooks implements EventDispatcherInterface {
 				$value['function'][0]->nullListener();
 			}
 		}
+
+		return true;
 	}
 
 	/**

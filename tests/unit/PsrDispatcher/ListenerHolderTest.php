@@ -59,10 +59,17 @@ class ListenerHolderTest extends \Codeception\Test\Unit {
 	 * @test
 	 */
 	public function itShouldReturnVoidListener() {
+		$event = new \stdClass();
+		$event->value = 0;
+
 		$listener = static function ( object $event ) {
+			$event->value = 42;
 		};
 		$sut = $this->getInstance( $listener );
-		$this->assertNotSame( $listener, $sut->nullListener(), '' );
+		$sut->nullListener();
+		$sut->execute( $event );
+
+		$this->assertEmpty( $event->value, '' );
 	}
 
 	/**

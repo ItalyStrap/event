@@ -145,4 +145,53 @@ class DispatcherTest extends \Codeception\Test\Unit {
 
 		$sut->removeListener( $eventName, $listener );
 	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldReturnBeforeRemoveListener() {
+
+		global $wp_filter;
+		$eventObj = new stdClass();
+		$eventName = get_class( $eventObj );
+
+		$listener = static function (object $event) {
+			//No called here
+		};
+
+		$listener_holder = $this->prophesize( ListenerHolderInterface::class );
+		$listener_holder->listener()->shouldNotBeCalled();
+
+		$wp_filter[$eventName][10] = null;
+
+		$sut = $this->getInstance();
+
+		$this->assertFalse( $sut->removeListener( $eventName, $listener ), '' );
+	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldThrownErrorOnRemoveListenerIfIsNotListenerHolderInterface() {
+
+		global $wp_filter;
+		$eventObj = new stdClass();
+		$eventName = get_class( $eventObj );
+
+		$listener = static function (object $event) {
+			//No called here
+		};
+
+		$listener_holder = $this->prophesize( stdClass::class );
+
+		$wp_filter[$eventName][10][\uniqid()]['function'] = [
+			$listener_holder->reveal(),
+			'execute'
+		];
+
+		$sut = $this->getInstance();
+
+		$this->expectException( \RuntimeException::class );
+		$sut->removeListener( $eventName, $listener );
+	}
 }
