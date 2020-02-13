@@ -14,16 +14,16 @@ class Dispatcher extends Hooks implements EventDispatcherInterface {
 	private $wp_filter;
 
 	/**
-	 * @var ListenerHolderFactory
+	 * @var CallableFactoryInterface
 	 */
 	private $factory;
 
 	/**
 	 * Dispatcher constructor.
 	 * @param array $wp_filter
-	 * @param ListenerHolderFactory $factory
+	 * @param CallableFactoryInterface $factory
 	 */
-	public function __construct( array &$wp_filter, ListenerHolderFactory $factory ) {
+	public function __construct( array &$wp_filter, CallableFactoryInterface $factory ) {
 		$this->wp_filter = &$wp_filter;
 		$this->factory = $factory;
 	}
@@ -38,7 +38,7 @@ class Dispatcher extends Hooks implements EventDispatcherInterface {
 		int $accepted_args = parent::ARGS
 	) {
 		/** @var callable $callback */
-		$callback = $this->factory->buildListenerHolderCallable( $listener );
+		$callback = $this->factory->buildCallable( $listener );
 		parent::addListener( $event_name, $callback, $priority, $accepted_args );
 	}
 

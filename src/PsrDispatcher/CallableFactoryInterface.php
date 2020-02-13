@@ -7,13 +7,11 @@ namespace ItalyStrap\Event\PsrDispatcher;
  * Class ListenerHolderFactory
  * @package ItalyStrap\Event\PsrDispatcher
  */
-class ListenerHolderFactory {
+interface CallableFactoryInterface {
 
 	/**
 	 * @param callable $listener
 	 * @return callable
 	 */
-	public function buildListenerHolderCallable( callable $listener ): callable {
-		return [new ListenerHolder( $listener ), 'execute'];
-	}
+	public function buildCallable( callable $listener ): callable;
 }

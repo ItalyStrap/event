@@ -21,6 +21,15 @@ class HooksTest extends \Codeception\Test\Unit {
 
 	// phpcs:ignore -- Method from Codeception
 	protected function _before() {
+		FunctionMockerLe\undefineAll([
+			'do_action',
+			'add_filter',
+			'remove_filter',
+			'apply_filters',
+			'current_filter',
+			'has_filter',
+			'remove_all_filters'
+		]);
 	}
 
 	// phpcs:ignore -- Method from Codeception
