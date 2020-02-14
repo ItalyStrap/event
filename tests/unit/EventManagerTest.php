@@ -240,4 +240,21 @@ class EventManagerTest extends Unit {
 			'Should be default accepted args'
 		);
 	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldThrownIfParameterOfSubscriberIsNotValid() {
+		$test = $this;
+		$sut = $this->getInstance();
+
+		$this->subscriber->getSubscribedEvents()->willReturn([
+			'event_name' 			=> [new \stdClass()],
+		]);
+
+		$this->hooks->addListener()->shouldNotBeCalled();
+
+		$this->expectException( \RuntimeException::class );
+		$sut->addSubscriber( $this->getSubscriber() );
+	}
 }

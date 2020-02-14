@@ -89,12 +89,12 @@ class IntegrationTest extends WPTestCase {
 					'other_event_name'	=> [
 						[
 							Keys::CALLBACK		=> 'onCallback',
-							Keys::PRIORITY		=> 10,
+							Keys::PRIORITY		=> 20,
 							Keys::ACCEPTED_ARGS	=> 6,
 						],
 						[
 							Keys::CALLBACK		=> 'onCallback',
-							Keys::PRIORITY		=> 20,
+							Keys::PRIORITY		=> 10,
 							Keys::ACCEPTED_ARGS	=> 6,
 						],
 					],
@@ -105,18 +105,18 @@ class IntegrationTest extends WPTestCase {
 				echo 'Value printed';
 			}
 
-			public function onCallback() {
-				echo 'Value printed';
+			public function onCallback( string $filtered ) {
+				return $filtered . ' Value printed';
 			}
 		};
 
 		$this->manager->addSubscriber( $subscriber );
-//
+
 		$this->expectOutputString( 'Value printed' );
 		$this->hooks->execute( 'event_name' );
 
-//		$this->expectOutputString( 'Value printed' );
-//		$this->hooks->execute( 'other_event_name' );
+		$filtered = (string) $this->hooks->filter( 'other_event_name', '' );
+		$this->assertStringContainsString( 'Value printed Value printed', $filtered, '' );
 	}
 
 	/**

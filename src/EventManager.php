@@ -20,13 +20,13 @@ class EventManager {
 	private const ORDER = 10;
 
 	/**
-	 * @var Hooks
+	 * @var HooksInterface
 	 */
 	private $hooks;
 
 	/**
 	 * EvenManager constructor.
-	 * @param Hooks $hooks
+	 * @param HooksInterface $hooks
 	 */
 	public function __construct( HooksInterface $hooks ) {
 		$this->hooks = $hooks;
@@ -131,11 +131,18 @@ class EventManager {
 	 */
 	private function buildCallable( Subscriber $subscriber, $parameters ): callable {
 		$callable = null;
+
 		if ( is_string( $parameters ) ) {
 			$callable = [$subscriber, $parameters];
 		} elseif ( is_array( $parameters ) && isset( $parameters[ Keys::CALLBACK ] ) ) {
 			$callable = [$subscriber, $parameters[ Keys::CALLBACK ]];
+		} else {
+			throw new \RuntimeException(\sprintf(
+				'Impossible to build a valid callable because $parameters is a type %s',
+				\gettype( $parameters )
+			));
 		}
+
 		return $callable;
 	}
 

@@ -6,6 +6,7 @@
 [![Latest Unstable Version](https://img.shields.io/packagist/vpre/italystrap/event.svg)](https://packagist.org/packages/italystrap/event)
 [![License](https://img.shields.io/packagist/l/italystrap/event.svg)](https://packagist.org/packages/italystrap/event)
 ![PHP from Packagist](https://img.shields.io/packagist/php-v/italystrap/event)
+![Scrutinizer code quality (GitHub/Bitbucket)](https://img.shields.io/scrutinizer/quality/g/ItalyStrap/event?label=Scrutinizer)
 
 WordPress plus Psr-14 Event API the OOP way
 
