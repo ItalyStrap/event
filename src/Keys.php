@@ -7,7 +7,7 @@ namespace ItalyStrap\Event;
  * Interface Keys
  * @package ItalyStrap\Event
  */
-interface Keys {
+final class Keys {
 	const CALLBACK = 'function_to_add';
 	const PRIORITY = 'priority';
 	const ACCEPTED_ARGS = 'accepted_args';
