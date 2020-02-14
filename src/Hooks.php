@@ -38,7 +38,7 @@ class Hooks implements HooksInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function removeAllListener( string $event_name, $priority = false ) {
+	public function removeAllListener( string $event_name, $priority = false ):bool {
 		return \remove_all_filters( $event_name, $priority );
 	}
 
