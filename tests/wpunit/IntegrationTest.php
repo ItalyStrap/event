@@ -11,7 +11,7 @@ use ItalyStrap\Event\EventManager;
 use ItalyStrap\Event\EventResolverExtension;
 use ItalyStrap\Event\Hooks;
 use ItalyStrap\Event\HooksInterface;
-use ItalyStrap\Event\Keys;
+use ItalyStrap\Event\ParameterKeys;
 use ItalyStrap\Event\SubscriberInterface;
 
 // phpcs:disable
@@ -88,14 +88,14 @@ class IntegrationTest extends WPTestCase {
 					'event_name'	=> 'method',
 					'other_event_name'	=> [
 						[
-							Keys::CALLBACK		=> 'onCallback',
-							Keys::PRIORITY		=> 20,
-							Keys::ACCEPTED_ARGS	=> 6,
+							ParameterKeys::CALLBACK		=> 'onCallback',
+							ParameterKeys::PRIORITY		=> 20,
+							ParameterKeys::ACCEPTED_ARGS	=> 6,
 						],
 						[
-							Keys::CALLBACK		=> 'onCallback',
-							Keys::PRIORITY		=> 10,
-							Keys::ACCEPTED_ARGS	=> 6,
+							ParameterKeys::CALLBACK		=> 'onCallback',
+							ParameterKeys::PRIORITY		=> 10,
+							ParameterKeys::ACCEPTED_ARGS	=> 6,
 						],
 					],
 				];
@@ -172,17 +172,17 @@ class IntegrationTest extends WPTestCase {
 			'hook_name => [callback|priority]'		=> [
 				[
 					'hook_name' => [
-						Keys::CALLBACK		=> 'callback',
-						Keys::PRIORITY		=> 20,
+						ParameterKeys::CALLBACK		=> 'callback',
+						ParameterKeys::PRIORITY		=> 20,
 					]
 				]
 			],
 			'hook_name => [callback|priority|args]'	=> [
 				[
 					'hook_name' => [
-						Keys::CALLBACK		=> 'callback',
-						Keys::PRIORITY		=> 20,
-						Keys::ACCEPTED_ARGS	=> 6,
+						ParameterKeys::CALLBACK		=> 'callback',
+						ParameterKeys::PRIORITY		=> 20,
+						ParameterKeys::ACCEPTED_ARGS	=> 6,
 					]
 				]
 			],

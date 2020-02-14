@@ -134,8 +134,8 @@ class EventManager {
 
 		if ( is_string( $parameters ) ) {
 			$callable = [$subscriber, $parameters];
-		} elseif ( is_array( $parameters ) && isset( $parameters[ Keys::CALLBACK ] ) ) {
-			$callable = [$subscriber, $parameters[ Keys::CALLBACK ]];
+		} elseif ( is_array( $parameters ) && isset( $parameters[ ParameterKeys::CALLBACK ] ) ) {
+			$callable = [$subscriber, $parameters[ ParameterKeys::CALLBACK ]];
 		} else {
 			throw new \RuntimeException(\sprintf(
 				'Impossible to build a valid callable because $parameters is a type %s',
@@ -152,8 +152,8 @@ class EventManager {
 	 */
 	private function buildParameters( $parameters ): array {
 		return [
-			$parameters[ Keys::PRIORITY ] ?? self::ORDER,
-			$parameters[ Keys::ACCEPTED_ARGS ] ?? self::ARGS,
+			$parameters[ ParameterKeys::PRIORITY ] ?? self::ORDER,
+			$parameters[ ParameterKeys::ACCEPTED_ARGS ] ?? self::ARGS,
 		];
 	}
 }

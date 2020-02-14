@@ -6,7 +6,7 @@ namespace ItalyStrap\Tests;
 use Codeception\Test\Unit;
 use ItalyStrap\Event\EventManager;
 use ItalyStrap\Event\Hooks;
-use ItalyStrap\Event\Keys;
+use ItalyStrap\Event\ParameterKeys;
 use ItalyStrap\Event\SubscriberInterface;
 use PhpParser\Node\Arg;
 use PHPUnit\Framework\Assert;
@@ -93,26 +93,26 @@ class EventManagerTest extends Unit {
 			'event_name => [callback|priority]'		=> [
 				[
 					'event_name' => [
-						Keys::CALLBACK		=> 'callback',
-						Keys::PRIORITY		=> 20,
+						ParameterKeys::CALLBACK		=> 'callback',
+						ParameterKeys::PRIORITY		=> 20,
 					],
 					'event_name1' => [
-						Keys::CALLBACK		=> 'callback',
-						Keys::PRIORITY		=> 20,
+						ParameterKeys::CALLBACK		=> 'callback',
+						ParameterKeys::PRIORITY		=> 20,
 					],
 				]
 			],
 			'event_name => [callback|priority|args]'	=> [
 				[
 					'event_name' => [
-						Keys::CALLBACK		=> 'callback',
-						Keys::PRIORITY		=> 20,
-						Keys::ACCEPTED_ARGS	=> 6,
+						ParameterKeys::CALLBACK		=> 'callback',
+						ParameterKeys::PRIORITY		=> 20,
+						ParameterKeys::ACCEPTED_ARGS	=> 6,
 					],
 					'event_name1' => [
-						Keys::CALLBACK		=> 'callback',
-						Keys::PRIORITY		=> 20,
-						Keys::ACCEPTED_ARGS	=> 6,
+						ParameterKeys::CALLBACK		=> 'callback',
+						ParameterKeys::PRIORITY		=> 20,
+						ParameterKeys::ACCEPTED_ARGS	=> 6,
 					],
 				]
 			],
@@ -120,14 +120,14 @@ class EventManagerTest extends Unit {
 				[
 					'event_name' => [
 						[
-							Keys::CALLBACK		=> 'onCallback',
-							Keys::PRIORITY		=> 10,
-							Keys::ACCEPTED_ARGS	=> 6,
+							ParameterKeys::CALLBACK		=> 'onCallback',
+							ParameterKeys::PRIORITY		=> 10,
+							ParameterKeys::ACCEPTED_ARGS	=> 6,
 						],
 						[
-							Keys::CALLBACK		=> 'onCallback',
-							Keys::PRIORITY		=> 20,
-							Keys::ACCEPTED_ARGS	=> 6,
+							ParameterKeys::CALLBACK		=> 'onCallback',
+							ParameterKeys::PRIORITY		=> 20,
+							ParameterKeys::ACCEPTED_ARGS	=> 6,
 						],
 					],
 				]
@@ -207,8 +207,8 @@ class EventManagerTest extends Unit {
 					[$event_name => $arg],
 					$called_method,
 					$event_name,
-					$arg[Keys::PRIORITY],
-					$arg[Keys::ACCEPTED_ARGS]
+					$arg[ParameterKeys::PRIORITY],
+					$arg[ParameterKeys::ACCEPTED_ARGS]
 				);
 			}
 			return;
@@ -226,19 +226,19 @@ class EventManagerTest extends Unit {
 	): void {
 		Assert::assertEquals(
 			$called_method,
-			$args[ $event_name ][ Keys::CALLBACK ] ?? $args[ $event_name ],
+			$args[ $event_name ][ ParameterKeys::CALLBACK ] ?? $args[ $event_name ],
 			'Should be callback name'
 		);
 
 		Assert::assertEquals(
 			$priority,
-			$args[ $event_name ][ Keys::PRIORITY ] ?? 10, // 10 is the default priority
+			$args[ $event_name ][ ParameterKeys::PRIORITY ] ?? 10, // 10 is the default priority
 			'Should be default priority'
 		);
 
 		Assert::assertEquals(
 			$accepted_args,
-			$args[ $event_name ][ Keys::ACCEPTED_ARGS ] ?? 1, // 1 is the defaul number of passed argument
+			$args[ $event_name ][ ParameterKeys::ACCEPTED_ARGS ] ?? 1, // 1 is the defaul number of passed argument
 			'Should be default accepted args'
 		);
 	}

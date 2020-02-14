@@ -252,7 +252,7 @@ use ItalyStrap\Empress\Injector;
 use ItalyStrap\Event\EventManager;
 use ItalyStrap\Event\EventResolverExtension;
 use ItalyStrap\Event\Hooks;
-use ItalyStrap\Event\Keys;
+use ItalyStrap\Event\ParameterKeys;
 use ItalyStrap\Event\SubscriberInterface;
 
 // From Subscriber.php
