@@ -36,7 +36,7 @@ class Dispatcher extends Hooks implements EventDispatcherInterface {
 		callable $listener,
 		int $priority = parent::ORDER,
 		int $accepted_args = parent::ARGS
-	) {
+	): bool {
 		/** @var callable $callback */
 		$callback = $this->factory->buildCallable( $listener );
 		return parent::addListener( $event_name, $callback, $priority, $accepted_args );
@@ -45,7 +45,7 @@ class Dispatcher extends Hooks implements EventDispatcherInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function removeListener( string $event_name, callable $listener, int $priority = parent::ORDER ) {
+	public function removeListener( string $event_name, callable $listener, int $priority = parent::ORDER ): bool {
 
 		if ( ! isset( $this->wp_filter[ $event_name ][ $priority ] ) ) {
 			return false;

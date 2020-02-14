@@ -102,6 +102,7 @@ class DispatcherTest extends \Codeception\Test\Unit {
 			'add_filter',
 			function ( string $event_name, object $event ) use ( $eventName ) {
 				$this->assertSame( $eventName, $event_name, '' );
+				return true;
 			}
 		);
 

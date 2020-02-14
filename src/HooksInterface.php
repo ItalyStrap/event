@@ -17,6 +17,8 @@ interface HooksInterface {
 	 * @param callable $listener
 	 * @param int      $priority
 	 * @param int      $accepted_args
+	 *
+	 * @return bool
 	 */
 	public function addListener(
 		string $event_name,
@@ -32,6 +34,8 @@ interface HooksInterface {
 	 * @param string   $event_name
 	 * @param callable $listener
 	 * @param int      $priority
+	 *
+	 * @return bool
 	 */
 	public function removeListener( string $event_name, callable $listener, int $priority );
 

@@ -68,6 +68,7 @@ class HooksTest extends \Codeception\Test\Unit {
 		FunctionMockerLe\define('add_filter', function () use (&$calls, $args) {
 			$calls++;
 			Assert::assertEquals($args, func_get_args());
+			return true;
 		});
 
 		$sut->addListener( ...$args );
@@ -93,6 +94,7 @@ class HooksTest extends \Codeception\Test\Unit {
 		FunctionMockerLe\define('remove_filter', function () use (&$calls, $args) {
 			$calls++;
 			Assert::assertEquals($args, func_get_args());
+			return true;
 		});
 
 		$sut->removeListener( ...$args );

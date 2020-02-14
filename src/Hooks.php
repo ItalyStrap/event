@@ -20,15 +20,19 @@ class Hooks implements HooksInterface {
 		callable $listener,
 		int $priority = self::ORDER,
 		int $accepted_args = self::ARGS
-	) {
-		\add_filter( ...\func_get_args() );
+	): bool {
+		return \add_filter( ...\func_get_args() );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function removeListener( string $event_name, callable $listener, int $priority = self::ORDER ) {
-		\remove_filter( ...\func_get_args() );
+	public function removeListener(
+		string $event_name,
+		callable $listener,
+		int $priority = self::ORDER
+	): bool {
+		return \remove_filter( ...\func_get_args() );
 	}
 
 	/**

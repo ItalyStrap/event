@@ -152,6 +152,7 @@ class EventManagerTest extends Unit {
 			Argument::type( 'int' )
 		)->will(function ( $args ) use ( $sub_args, $test ) {
 			$test->assertArgsPassedAreCorrect(  $args, $sub_args  );
+			return true;
 		})->shouldBeCalled();
 
 		$sut->addSubscriber( $this->getSubscriber() );
@@ -174,6 +175,7 @@ class EventManagerTest extends Unit {
 			Argument::type( 'int' )
 		)->will(function ( $args ) use ( $sub_args, $test ) {
 			$test->assertArgsPassedAreCorrect(  $args, $sub_args  );
+			return true;
 		})->shouldBeCalled();
 
 		$sut->removeSubscriber( $this->getSubscriber() );
