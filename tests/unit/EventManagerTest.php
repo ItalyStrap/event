@@ -5,7 +5,7 @@ namespace ItalyStrap\Tests;
 
 use Codeception\Test\Unit;
 use ItalyStrap\Event\EventManager;
-use ItalyStrap\Event\Hooks;
+use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\ParameterKeys;
 use ItalyStrap\Event\SubscriberInterface;
 use PhpParser\Node\Arg;
@@ -34,9 +34,9 @@ class EventManagerTest extends Unit {
 	private $subscriber;
 
 	/**
-	 * @return Hooks
+	 * @return EventDispatcher
 	 */
-	public function getHooks(): Hooks {
+	public function getHooks(): EventDispatcher {
 		return $this->hooks->reveal();
 	}
 
@@ -49,7 +49,7 @@ class EventManagerTest extends Unit {
 
 	// phpcs:ignore -- Method from Codeception
 	protected function _before() {
-		$this->hooks = $this->prophesize( Hooks::class );
+		$this->hooks = $this->prophesize( EventDispatcher::class );
 		$this->subscriber = $this->prophesize( SubscriberInterface::class );
 	}
 

@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Event\PsrDispatcher;
 
-use ItalyStrap\Event\Hooks;
+use ItalyStrap\Event\EventDispatcher;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-class Dispatcher extends Hooks implements EventDispatcherInterface {
+class Dispatcher extends EventDispatcher implements EventDispatcherInterface {
 
 	/**
 	 * @var array

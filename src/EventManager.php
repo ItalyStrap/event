@@ -20,15 +20,15 @@ class EventManager {
 	private const ORDER = 10;
 
 	/**
-	 * @var HooksInterface
+	 * @var EventDispatcherInterface
 	 */
 	private $hooks;
 
 	/**
 	 * EvenManager constructor.
-	 * @param HooksInterface $hooks
+	 * @param EventDispatcherInterface $hooks
 	 */
-	public function __construct( HooksInterface $hooks ) {
+	public function __construct( EventDispatcherInterface $hooks ) {
 		$this->hooks = $hooks;
 	}
 

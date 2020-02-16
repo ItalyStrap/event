@@ -7,7 +7,7 @@ namespace ItalyStrap\Event;
  * Interface HooksInterface
  * @package ItalyStrap\Event
  */
-interface HooksInterface {
+interface EventDispatcherInterface {
 
 	/**
 	 * Adds the given event listener to the list of event listeners

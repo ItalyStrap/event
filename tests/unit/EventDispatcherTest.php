@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Tests;
 
-use ItalyStrap\Event\Hooks;
-use ItalyStrap\Event\HooksInterface;
+use ItalyStrap\Event\EventDispatcher;
+use ItalyStrap\Event\EventDispatcherInterface;
 use PHPUnit\Framework\Assert;
 use tad\FunctionMockerLe;
 
@@ -12,7 +12,7 @@ use tad\FunctionMockerLe;
  * Class HooksTest
  * @package ItalyStrap\Tests
  */
-class HooksTest extends \Codeception\Test\Unit {
+class EventDispatcherTest extends \Codeception\Test\Unit {
 
 	/**
 	 * @var \UnitTester
@@ -36,10 +36,10 @@ class HooksTest extends \Codeception\Test\Unit {
 	protected function _after() {
 	}
 
-	public function getInstance(): Hooks {
-		$sut = new Hooks();
-		$this->assertInstanceOf( HooksInterface::class, $sut );
-		$this->assertInstanceOf( Hooks::class, $sut );
+	public function getInstance(): EventDispatcher {
+		$sut = new EventDispatcher();
+		$this->assertInstanceOf( EventDispatcherInterface::class, $sut );
+		$this->assertInstanceOf( EventDispatcher::class, $sut );
 		return $sut;
 	}
 

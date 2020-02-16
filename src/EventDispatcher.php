@@ -7,7 +7,7 @@ namespace ItalyStrap\Event;
  * Class Hooks
  * @package ItalyStrap\Event
  */
-class Hooks implements HooksInterface {
+class EventDispatcher implements EventDispatcherInterface {
 
 	protected const ARGS = 3;
 	protected const ORDER = 10;

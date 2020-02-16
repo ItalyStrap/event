@@ -36,9 +36,9 @@ The Hooks::class is a wrapper around the (WordPress Plugin API)[https://develope
 ### Simple example for actions
 
 ```php
-use ItalyStrap\Event\Hooks;
+use ItalyStrap\Event\EventDispatcher;
 
-$hooks = new Hooks();
+$hooks = new EventDispatcher();
 // Listen for `event_name`
 $hooks->addListener( 'event_name', function () { echo 'Event Called'; }, 10 );
 
@@ -49,9 +49,9 @@ $hooks->execute( 'event_name' );
 ### Simple example for filters
 
 ```php
-use ItalyStrap\Event\Hooks;
+use ItalyStrap\Event\EventDispatcher;
 
-$hooks = new Hooks();
+$hooks = new EventDispatcher();
 // Listen for `event_name`
 $hooks->addListener( 'event_name', function ( array $value ) {
     // Do your stuff here in the same ways you do with filters
@@ -67,18 +67,18 @@ Ok, so, for now it is very straightforward, you will use it like you use the Wor
 you can inject the Hooks::class into yours classes.
 
 ```php
-use ItalyStrap\Event\Hooks;
-use ItalyStrap\Event\HooksInterface;
+use ItalyStrap\Event\EventDispatcher;
+use ItalyStrap\Event\EventDispatcherInterface;
 
-$hooks = new Hooks();
+$hooks = new EventDispatcher();
 
 class MyClass {
 
     /**
-     * @var HooksInterface 
+     * @var EventDispatcherInterface 
      */
     private $hooks;
-    public function __construct( HooksInterface $hooks ) {
+    public function __construct( EventDispatcherInterface $hooks ) {
         $this->hooks = $hooks;
     }
 
@@ -97,7 +97,7 @@ What about the event manager?
 Here a simple example:
 
 ```php
-use ItalyStrap\Event\Hooks;
+use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\EventManager;
 use ItalyStrap\Event\SubscriberInterface;
 
@@ -114,7 +114,7 @@ class MyClassSubscriber implements SubscriberInterface {
 
 $subscriber = new MyClassSubscriber();
 
-$hooks = new Hooks();
+$hooks = new EventDispatcher();
 $event_manager = new EventManager( $hooks );
 $event_manager->addSubscriber( $subscriber );
 
@@ -181,7 +181,7 @@ In case the subscriber has a lot of events to subscribe to it is better to separ
 another class an then use the subscriber to do the registration of the other class like this:
 
 ```php
-use ItalyStrap\Event\Hooks;
+use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\EventManager;
 use ItalyStrap\Event\SubscriberInterface;
 
@@ -229,7 +229,7 @@ class MyClassSubscriber implements SubscriberInterface {
 $logic = new MyBusinessLogic();
 $subscriber = new MyClassSubscriber( $logic );
 
-$hooks = new Hooks();
+$hooks = new EventDispatcher();
 $event_manager = new EventManager( $hooks );
 $event_manager->addSubscriber( $subscriber );
 
@@ -251,7 +251,7 @@ use ItalyStrap\Empress\AurynResolver;
 use ItalyStrap\Empress\Injector;
 use ItalyStrap\Event\EventManager;
 use ItalyStrap\Event\EventResolverExtension;
-use ItalyStrap\Event\Hooks;
+use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\ParameterKeys;
 use ItalyStrap\Event\SubscriberInterface;
 
@@ -299,7 +299,7 @@ $injector->share($injector);
 $dependencies = ConfigFactory::make([
     // Share the instancies of the Hooks and EventManager better than singleton
     AurynResolver::SHARING	=> [
-        Hooks::class,
+        EventDispatcher::class,
         EventManager::class,
     ],
     // Now add in the array all your subscribers
@@ -332,9 +332,9 @@ $empress->resolve();
 
 
 $this->expectOutputString( 'Some text' );
-( $injector->make( Hooks::class ) )->execute( 'event' );
+( $injector->make( EventDispatcher::class ) )->execute( 'event' );
 // or
-$hooks = $injector->make( Hooks::class );
+$hooks = $injector->make( EventDispatcher::class );
 $hooks->execute( 'event' );
 
 // $hooks will be the same instance because you have share in the above code
