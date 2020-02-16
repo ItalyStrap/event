@@ -18,7 +18,7 @@ class EventResolverExtension implements Extension {
 	const KEY = 'subscribers';
 
 	/**
-	 * @var EventManager
+	 * @var SubscriberRegister
 	 */
 	private $event_manager;
 
@@ -29,10 +29,10 @@ class EventResolverExtension implements Extension {
 
 	/**
 	 * EventResolverExtension constructor.
-	 * @param EventManager $event_manager
+	 * @param SubscriberRegister $event_manager
 	 * @param ConfigInterface $config
 	 */
-	public function __construct( EventManager $event_manager, ConfigInterface $config ) {
+	public function __construct( SubscriberRegister $event_manager, ConfigInterface $config ) {
 		$this->event_manager = $event_manager;
 		$this->config = $config;
 	}

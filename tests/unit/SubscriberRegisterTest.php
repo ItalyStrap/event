@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace ItalyStrap\Tests;
 
 use Codeception\Test\Unit;
-use ItalyStrap\Event\EventManager;
+use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\ParameterKeys;
 use ItalyStrap\Event\SubscriberInterface;
@@ -13,10 +13,10 @@ use PHPUnit\Framework\Assert;
 use Prophecy\Argument;
 
 /**
- * Class EventManagerTest
+ * Class SubscriberRegisterTest
  * @package ItalyStrap\Tests
  */
-class EventManagerTest extends Unit {
+class SubscriberRegisterTest extends Unit {
 
 	/**
 	 * @var \UnitTester
@@ -58,8 +58,8 @@ class EventManagerTest extends Unit {
 	}
 
 	private function getInstance() {
-		$sut = new EventManager( $this->getHooks() );
-		$this->assertInstanceOf( EventManager::class, $sut, '' );
+		$sut = new SubscriberRegister( $this->getHooks() );
+		$this->assertInstanceOf( SubscriberRegister::class, $sut, '' );
 		return $sut;
 	}
 

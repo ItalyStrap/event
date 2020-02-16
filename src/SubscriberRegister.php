@@ -10,11 +10,8 @@ use function is_array;
 use function is_string;
 use function sprintf;
 
-/**
- * Class EvenManager
- * @package ItalyStrap\Event
- */
-class EventManager {
+class SubscriberRegister implements SubscriberRegisterInterface {
+
 
 	private const ARGS = 1;
 	private const ORDER = 10;
@@ -33,12 +30,7 @@ class EventManager {
 	}
 
 	/**
-	 * Adds an event subscriber.
-	 *
-	 * The event manager adds the given subscriber to the list of event listeners
-	 * for all the events that it wants to listen to.
-	 *
-	 * @param Subscriber $subscriber
+	 * @inheritDoc
 	 */
 	public function addSubscriber( Subscriber $subscriber ): void {
 		$map = $this->assertSubscriberIsNotEmpty( $subscriber );
@@ -71,12 +63,7 @@ class EventManager {
 	}
 
 	/**
-	 * Removes an event subscriber.
-	 *
-	 * The event manager removes the given subscriber from the list of event listeners
-	 * for all the events that it wants to listen to.
-	 *
-	 * @param Subscriber $subscriber
+	 * @inheritDoc
 	 */
 	public function removeSubscriber( Subscriber $subscriber ): void {
 		$map = $this->assertSubscriberIsNotEmpty( $subscriber );

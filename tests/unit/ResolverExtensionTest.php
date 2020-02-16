@@ -8,7 +8,7 @@ use ItalyStrap\Config\Config;
 use ItalyStrap\Empress\AurynResolverInterface;
 use ItalyStrap\Empress\Extension;
 use ItalyStrap\Empress\Injector;
-use ItalyStrap\Event\EventManager;
+use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\EventResolverExtension;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -45,9 +45,9 @@ class ResolverExtensionTest extends Unit {
 	}
 
 	/**
-	 * @return EventManager
+	 * @return SubscriberRegister
 	 */
-	public function getEventManager(): EventManager {
+	public function getEventManager(): SubscriberRegister {
 		return $this->event_manager->reveal();
 	}
 
@@ -61,7 +61,7 @@ class ResolverExtensionTest extends Unit {
 	// phpcs:ignore -- Method from Codeception
 	protected function _before() {
 		$this->fake_injector = $this->prophesize( Injector::class );
-		$this->event_manager = $this->prophesize( EventManager::class );
+		$this->event_manager = $this->prophesize( SubscriberRegister::class );
 		$this->config = $this->prophesize( Config::class );
 	}
 

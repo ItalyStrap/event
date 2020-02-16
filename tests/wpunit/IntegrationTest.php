@@ -7,7 +7,7 @@ use Codeception\TestCase\WPTestCase;
 use ItalyStrap\Config\ConfigFactory;
 use ItalyStrap\Empress\AurynResolver;
 use ItalyStrap\Empress\Injector;
-use ItalyStrap\Event\EventManager;
+use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\EventResolverExtension;
 use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\EventDispatcherInterface;
@@ -34,7 +34,7 @@ class IntegrationTest extends WPTestCase {
 	private $hooks;
 
 	/**
-	 * @var EventManager
+	 * @var SubscriberRegister
 	 */
 	private $manager;
 
@@ -46,7 +46,7 @@ class IntegrationTest extends WPTestCase {
 		$wp_filter = [];
 
 		$this->hooks = new EventDispatcher();
-		$this->manager = new EventManager( $this->hooks );
+		$this->manager = new SubscriberRegister( $this->hooks );
 
 		// Your set up methods here.
 	}
@@ -129,7 +129,7 @@ class IntegrationTest extends WPTestCase {
 
 		$injector->alias(EventDispatcherInterface::class, EventDispatcher::class);
 		$injector->share( EventDispatcherInterface::class );
-		$injector->share( EventManager::class );
+		$injector->share( SubscriberRegister::class );
 		$event_resolver = $injector->make( EventResolverExtension::class, [
 			':config'	=> ConfigFactory::make([
 				Subscriber::class	=> false

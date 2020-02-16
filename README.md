@@ -98,7 +98,7 @@ Here a simple example:
 
 ```php
 use ItalyStrap\Event\EventDispatcher;
-use ItalyStrap\Event\EventManager;
+use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\SubscriberInterface;
 
 // Your class must implements the ItalyStrap\Event\SubscriberInterface
@@ -115,7 +115,7 @@ class MyClassSubscriber implements SubscriberInterface {
 $subscriber = new MyClassSubscriber();
 
 $hooks = new EventDispatcher();
-$event_manager = new EventManager( $hooks );
+$event_manager = new SubscriberRegister( $hooks );
 $event_manager->addSubscriber( $subscriber );
 
 // It will execute the subscriber MyClassSubscriber::methodName
@@ -182,7 +182,7 @@ another class an then use the subscriber to do the registration of the other cla
 
 ```php
 use ItalyStrap\Event\EventDispatcher;
-use ItalyStrap\Event\EventManager;
+use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\SubscriberInterface;
 
 class MyBusinessLogic {
@@ -230,7 +230,7 @@ $logic = new MyBusinessLogic();
 $subscriber = new MyClassSubscriber( $logic );
 
 $hooks = new EventDispatcher();
-$event_manager = new EventManager( $hooks );
+$event_manager = new SubscriberRegister( $hooks );
 $event_manager->addSubscriber( $subscriber );
 
 // It will execute the subscriber MyClassSubscriber::methodName
@@ -249,7 +249,7 @@ This library is very similar to the
 use ItalyStrap\Config\ConfigFactory;
 use ItalyStrap\Empress\AurynResolver;
 use ItalyStrap\Empress\Injector;
-use ItalyStrap\Event\EventManager;
+use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\EventResolverExtension;
 use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\ParameterKeys;
@@ -300,7 +300,7 @@ $dependencies = ConfigFactory::make([
     // Share the instancies of the Hooks and EventManager better than singleton
     AurynResolver::SHARING	=> [
         EventDispatcher::class,
-        EventManager::class,
+        SubscriberRegister::class,
     ],
     // Now add in the array all your subscribers
     EventResolverExtension::KEY	=> [
