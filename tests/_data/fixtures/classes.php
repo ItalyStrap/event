@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Tests;
 
-use Auryn\Injector;
 use ItalyStrap\Event\SubscriberInterface;
-use ProxyManager\Factory\LazyLoadingValueHolderFactory;
-use ProxyManager\Proxy\LazyLoadingInterface;
 
 class SomeCLass {
 	private $state = 0;
