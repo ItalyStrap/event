@@ -118,8 +118,8 @@ class MyClassSubscriber implements SubscriberInterface {
 $subscriber = new MyClassSubscriber();
 
 $dispatcher = new EventDispatcher();
-$event_manager = new SubscriberRegister( $dispatcher );
-$event_manager->addSubscriber( $subscriber );
+$subscriber_register = new SubscriberRegister( $dispatcher );
+$subscriber_register->addSubscriber( $subscriber );
 
 // It will execute the subscriber MyClassSubscriber::methodName
 $dispatcher->execute( 'event_name' );
@@ -150,7 +150,7 @@ use ItalyStrap\Event\ParameterKeys as KEYS;
 return [
             'event_name' => [
                 KEYS::CALLBACK	=> 'method_name',
-                KEYS::PRIORITY	=> $priority, // 10 default
+                KEYS::PRIORITY	=> 20, // 10 default
             ],
             // ... more event => method
         ];
@@ -161,8 +161,8 @@ use ItalyStrap\Event\ParameterKeys as KEYS;
 return [
            'event_name' => [
                KEYS::CALLBACK	    => 'method_name',
-               KEYS::PRIORITY	    => $priority, // 10 default
-               KEYS::ACCEPTED_ARGS	=> $accepted_args // 3 default
+               KEYS::PRIORITY	    => 20, // 10 default
+               KEYS::ACCEPTED_ARGS	=> 4 // 3 default
            ],
             // ... more event => method
        ];
@@ -174,13 +174,13 @@ return [
            'event_name' => [
                 [
                     KEYS::CALLBACK	    => 'method_name',
-                    KEYS::PRIORITY	    => $priority, // 10 default
-                    KEYS::ACCEPTED_ARGS	=> $accepted_args // 3 default
+                    KEYS::PRIORITY	    => 20, // 10 default
+                    KEYS::ACCEPTED_ARGS	=> 4 // 3 default
                 ],
                 [
                     KEYS::CALLBACK	    => 'method_name2',
-                    KEYS::PRIORITY	    => $priority, // 10 default
-                    KEYS::ACCEPTED_ARGS	=> $accepted_args // 3 default
+                    KEYS::PRIORITY	    => 20, // 10 default
+                    KEYS::ACCEPTED_ARGS	=> 4 // 3 default
                 ],
             ],
             // ... more event => method
@@ -188,7 +188,7 @@ return [
 
 ```
 
-In case the subscriber has a lot of events to subscribe it is better to separate the business logic from the
+In case the subscriber has a lots of events to subscribe it is better to (separate)[https://en.wikipedia.org/wiki/Separation_of_concerns] the business logic from the
 subscriber in another class an then use the subscriber to do the registration of the other class like this:
 
 ```php
@@ -225,15 +225,15 @@ class MyClassSubscriber implements SubscriberInterface {
         ];
     }
     
-    public function onEventNameOne(/* may be with some arguments if you use the ::filter() method */){
+    public function onEventNameOne(/* may be with some arguments if you use the ::filter() method of the dispatcher */){
         $this->logic->methodOne();
     }
     
-    public function onEventNameTwo(/* may be with some arguments if you use the ::filter() method */){
+    public function onEventNameTwo(/* may be with some arguments if you use the ::filter() method of the dispatcher */){
         $this->logic->methodTwo();
     }
     
-    public function onEventNameThree(/* may be with some arguments if you use the ::filter() method */){
+    public function onEventNameThree(/* may be with some arguments if you use the ::filter() method of the dispatcher */){
         $this->logic->methodThree();
     }
 }
@@ -241,20 +241,43 @@ $logic = new MyBusinessLogic();
 $subscriber = new MyClassSubscriber( $logic );
 
 $dispatcher = new EventDispatcher();
-$event_manager = new SubscriberRegister( $dispatcher );
-$event_manager->addSubscriber( $subscriber );
+$subscriber_register = new SubscriberRegister( $dispatcher );
+$subscriber_register->addSubscriber( $subscriber );
 
 // It will execute the subscriber MyClassSubscriber::methodName
 $dispatcher->execute( 'event_name' );
 // or
-$dispatcher->filter( 'event_name', $some_value );
-```
-Why? (Separation of concern)[https://en.wikipedia.org/wiki/Separation_of_concerns]
+$dispatcher->filter( 'event_name', ['some_value'] );
 
-This library is very similar to the
-(Symfony Event Dispatcher)[https://symfony.com/doc/current/components/event_dispatcher.html]
+// You can also remove a listener:
+$subscriber_register->removeSubscriber( $subscriber );
+
+// The instance of the subscriber you want to remove MUST BE the same instance of the subscriber you
+// added earlier and BEFORE you dispatch the event.
+```
+
+This library is similar to the (Symfony Event Dispatcher)[https://symfony.com/doc/current/components/event_dispatcher.html]
+
+### Example with WordPress event name
+```php
+// Filter the title
+use ItalyStrap\Event\EventDispatcher;
+
+$dispatcher = new EventDispatcher();
+$dispatcher->filter( 'the_title', function ( string $title ): string {
+    return \mb_strtoupper( $title ); // A very dumb example
+} );
+
+// Execute some action
+$dispatcher->execute( 'after_setup_theme', function (): void {
+    // Bootstrap your logic for theme configuration
+} );
+```
 
 ## Advanced Usage
+
+If you want more power you can use the (Empress library)[https://github.com/ItalyStrap/empress] with this library
+The benefit is that now you can do auto-wiring for your application, lazy loading you listener/subscriber and so on.
 
 ```php
 use ItalyStrap\Config\ConfigFactory;
@@ -298,36 +321,43 @@ class Subscriber implements SubscriberInterface {
 	}
 }
 
-// From boostrap.php
+// From your bootstrap.php file
 
 // Create a new InjectorContainer
 $injector = new Injector();
 
 // This is optional, you could share the injector instance
+// if you need this instance inside a class for registering stuff
+// Remember that the Auryn\Injector is not a service locator
+// Do not use it for locating services
 $injector->share($injector);
 
-// Now it's time to create a configuration for dependencies
+// Now it's time to create a configuration for dependencies to inject in the AurynResolver
 $dependencies = ConfigFactory::make([
-    // Share the instancies of the Hooks and EventManager better than singleton
+    // Share the instances of the EventDispatcher and SubscriberRegister
     AurynResolver::SHARING	=> [
         EventDispatcher::class,
         SubscriberRegister::class,
     ],
-    // Now add in the array all your subscribers
+    // Now add in the array all your subscribers that implemente the ItalyStrap\Event\SubscriberInterface
+    // The instances create are shared by default for later removing like you se above.
     EventResolverExtension::KEY	=> [
         Subscriber::class,
     ],
+    // You can also add more configuration for the AurynResolver https://github.com/ItalyStrap/empress
 ]);
 
 // This wil instantiate the EventResolverExtension::class
 $event_resolver = $injector->make( EventResolverExtension::class, [
-    // In the configuration object you can pass a key value pair for adding or not listener at runtime
+    // In the EventResolverExtension object you can pass a config key value pair for adding or not listener at runtime
+    // from your theme or plugin options
     ':config'	=> ConfigFactory::make([
-        'option_key_for_subscriber' => Subscriber::class
+        // If the 'option_key_for_subscriber' is true than the Subscriber::class will load
+        'option_key_for_subscriber' => Subscriber::class // Optional
     ]),
 ] );
 
-// Create the object for the AurynResolver::class
+// Create the object for the AurynResolver::class and pass the instance of $injector and the dependencies collection
 $empress = new AurynResolver( $injector, $dependencies );
 
 // Is the same as above if you want to use Auryn and you have shared the Auryn instance:
@@ -338,7 +368,7 @@ $empress = $injector->make( AurynResolver::class, [
 // Pass the $event_resolver object created earlier
 $empress->extend( $event_resolver );
 
-// When you are ready call the resolve() method for autowiring your application
+// When you are ready call the resolve() method for auto-wiring your application
 $empress->resolve();
 
 
@@ -348,8 +378,126 @@ $this->expectOutputString( 'Some text' );
 $dispatcher = $injector->make( EventDispatcher::class );
 $dispatcher->execute( 'event' );
 
-// $dispatcher will be the same instance because you have share in the above code
+// $dispatcher will be the same instance because you have shared it in the above code
 ```
+### Lazy Loading a subscriber
+
+To lazy loading a subscriber you can simply add in the AurynResolver configuration a new key value pair 
+for proxy, see the example below:
+```php
+use ItalyStrap\Config\ConfigFactory;
+use ItalyStrap\Empress\AurynResolver;
+use ItalyStrap\Empress\Injector;
+use ItalyStrap\Event\SubscriberRegister;
+use ItalyStrap\Event\EventResolverExtension;
+use ItalyStrap\Event\EventDispatcher;
+use ItalyStrap\Event\ParameterKeys;
+use ItalyStrap\Event\SubscriberInterface;
+
+// From MyBusinessLogic.php
+class MyBusinessLogic {
+    public function methodOne() {
+        // Do some stuff
+    }
+    public function methodTwo() {
+        // Do some stuff
+    }
+    public function methodThree() {
+        // Do some stuff
+    }
+}
+// From MyClassSubscriber.php
+class MyClassSubscriber implements SubscriberInterface {
+    /**
+     * @var MyBusinessLogic 
+     */
+    private $logic;
+    public function __construct( MyBusinessLogic $logic ) {
+        $this->logic = $logic;
+    }
+
+    public function getSubscribedEvents(): array {
+        return [
+            'event_name_one' => 'onEventNameOne',
+            'event_name_two' => 'onEventNameTwo',
+            'event_name_three' => 'onEventNameThree',
+        ];
+    }
+    
+    public function onEventNameOne(/* may be with some arguments if you use the ::filter() method of the dispatcher */){
+        $this->logic->methodOne();
+    }
+    
+    public function onEventNameTwo(/* may be with some arguments if you use the ::filter() method of the dispatcher */){
+        $this->logic->methodTwo();
+    }
+    
+    public function onEventNameThree(/* may be with some arguments if you use the ::filter() method of the dispatcher */){
+        $this->logic->methodThree();
+    }
+}
+
+// From your bootstrap.php file
+
+// Create a new InjectorContainer
+$injector = new Injector();
+
+// This is optional, you could share the injector instance
+// if you need this instance inside a class for registering stuff
+// Remember that the Auryn\Injector is not a service locator
+// Do not use it for locating services
+$injector->share($injector);
+
+// Now it's time to create a configuration for dependencies to inject in the AurynResolver
+$dependencies = ConfigFactory::make([
+    // Share the instances of the EventDispatcher and SubscriberRegister
+    AurynResolver::SHARING	=> [
+        EventDispatcher::class,
+        SubscriberRegister::class,
+    ],
+    AurynResolver::SHARING  => [
+        MyBusinessLogic::class,
+    ],
+    // Now add in the array all your subscribers that implemente the ItalyStrap\Event\SubscriberInterface
+    // The instances create are shared by default for later removing like you se above.
+    EventResolverExtension::KEY	=> [
+        MyClassSubscriber::class,
+    ],
+    // You can also add more configuration for the AurynResolver https://github.com/ItalyStrap/empress
+]);
+
+// This wil instantiate the EventResolverExtension::class
+$event_resolver = $injector->make( EventResolverExtension::class, [
+    // In the EventResolverExtension object you can pass a config key value pair for adding or not listener at runtime
+    // from your theme or plugin options
+    ':config'	=> ConfigFactory::make([
+        // If the 'option_key_for_subscriber' is true than the Subscriber::class will load
+        'option_key_for_subscriber' => Subscriber::class // Optional
+    ]),
+] );
+
+// Create the object for the AurynResolver::class and pass the instance of $injector and the dependencies collection
+$empress = new AurynResolver( $injector, $dependencies );
+
+// Is the same as above if you want to use Auryn and you have shared the Auryn instance:
+$empress = $injector->make( AurynResolver::class, [
+    ':dependencies'  => $dependencies
+] );
+
+// Pass the $event_resolver object created earlier
+$empress->extend( $event_resolver );
+
+// When you are ready call the resolve() method for auto-wiring your application
+$empress->resolve();
+
+
+$this->expectOutputString( 'Some text' );
+( $injector->make( EventDispatcher::class ) )->execute( 'event' );
+// or
+$dispatcher = $injector->make( EventDispatcher::class );
+$dispatcher->execute( 'event' );
+```
+
 You can find more information about the (EmpressAurynResolver here)[https://github.com/ItalyStrap/empress]
 
 ## Contributing
@@ -369,7 +517,7 @@ This code is licensed under the [MIT](LICENSE).
 * (Carl Alexander)[https://carlalexander.ca/designing-system-wordpress-event-management/]
 * (Carl Alexander)[https://carlalexander.ca/mediator-pattern-wordpress/]
 
-### For the EventDispatcher implementation
+### For the PsrDispatcher implementation
 
 * (Symfony)[https://symfony.com/doc/current/components/event_dispatcher.html]
 * (Larry Garfield)[https://github.com/Crell/Tukio]

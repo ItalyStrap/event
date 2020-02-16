@@ -41,7 +41,8 @@
         "psr/event-dispatcher-implementation": "1.0"
     },
     "suggest": {
-        "italystrap/empress": "Config driven for Auryn Injector the OOP way"
+        "italystrap/empress": "Config driven for Auryn Injector the OOP way",
+        "inpsyde/objects-hooks-remover": "Package to remove WordPress hook callbacks that uses object methods or closures."
     },
     "scripts": {
         "check": [
