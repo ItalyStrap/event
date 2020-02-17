@@ -382,7 +382,7 @@ $dispatcher->execute( 'event' );
 ```
 ### Lazy Loading a subscriber
 
-To lazy loading a subscriber you can simply add in the AurynResolver configuration a new key value pair 
+To lazy load a subscriber you can simply add in the AurynResolver configuration a new value
 for proxy, see the example below:
 ```php
 use ItalyStrap\Config\ConfigFactory;
@@ -396,6 +396,9 @@ use ItalyStrap\Event\SubscriberInterface;
 
 // From MyBusinessLogic.php
 class MyBusinessLogic {
+    public function __construct(/*Heavy dependencies*/){
+        // Initialize
+    }
     public function methodOne() {
         // Do some stuff
     }
@@ -413,17 +416,20 @@ class MyClassSubscriber implements SubscriberInterface {
      */
     private $logic;
     public function __construct( MyBusinessLogic $logic ) {
+        // This will be the proxy version of the $logic object
         $this->logic = $logic;
     }
 
     public function getSubscribedEvents(): array {
+        // The first method that will be called will sobstitute the
+        // proxy version of the object with the real one.
         return [
-            'event_name_one' => 'onEventNameOne',
-            'event_name_two' => 'onEventNameTwo',
-            'event_name_three' => 'onEventNameThree',
+            'event_name_one'    => 'onEventNameOne',
+            'event_name_two'    => 'onEventNameTwo',
+            'event_name_three'  => 'onEventNameThree',
         ];
     }
-    
+
     public function onEventNameOne(/* may be with some arguments if you use the ::filter() method of the dispatcher */){
         $this->logic->methodOne();
     }
@@ -455,7 +461,9 @@ $dependencies = ConfigFactory::make([
         EventDispatcher::class,
         SubscriberRegister::class,
     ],
-    AurynResolver::SHARING  => [
+    // Now we declare what class we need to lazy load
+    // In our case is the MyBusinessLogic::class injected in the MyClassSubscriber::class
+    AurynResolver::PROXY  => [
         MyBusinessLogic::class,
     ],
     // Now add in the array all your subscribers that implemente the ItalyStrap\Event\SubscriberInterface
@@ -490,12 +498,18 @@ $empress->extend( $event_resolver );
 // When you are ready call the resolve() method for auto-wiring your application
 $empress->resolve();
 
-
-$this->expectOutputString( 'Some text' );
-( $injector->make( EventDispatcher::class ) )->execute( 'event' );
-// or
 $dispatcher = $injector->make( EventDispatcher::class );
-$dispatcher->execute( 'event' );
+$dispatcher->execute( 'event_name_one' );
+$dispatcher->execute( 'event_name_two' );
+$dispatcher->execute( 'event_name_three' );
+```
+Remember that the proxy version of an object is a "dumb" object that do nothing until you
+call some method and the real object will be executed, this is useful for run code only when
+you need it to run.
+
+Example with pseudo code;
+```php
+\do_action('save_post', [$proxyObject, 'executeOnlyOnSavePost']);
 ```
 
 You can find more information about the (EmpressAurynResolver here)[https://github.com/ItalyStrap/empress]
