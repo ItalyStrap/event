@@ -4,6 +4,7 @@
             "src"
         ]
     },
+    "timeout": 10,
     "logs": {
     	"summary": "infection.log",
         "text": "infection-log.txt"
@@ -11,6 +12,7 @@
     "mutators": {
         "@default": true
     },
-    "tmpDir": "tests\/_output",
-    "testFramework": "codeception"
+    "tmpDir": "/tests/_output",
+    "testFramework": "codeception",
+    "testFrameworkOptions": "unit"
 }
