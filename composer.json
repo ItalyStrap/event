@@ -30,7 +30,8 @@
         "psr/event-dispatcher": "^1.0",
         "fig/event-dispatcher-util": "^1.0",
         "crell/tukio": "^1.0",
-        "italystrap/empress": "~1.0"
+        "italystrap/empress": "~1.0",
+        "infection/infection": "^0.15.3"
     },
     "autoload": {
         "psr-4": {
