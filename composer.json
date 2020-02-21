@@ -19,6 +19,7 @@
     },
     "require-dev": {
         "lucatume/wp-browser": "~2.2",
+        "codeception/c3": "2.*",
         "lucatume/function-mocker-le": "^1.0",
         "italystrap/debug": "~2.0",
         "wp-coding-standards/wpcs": "^2.1",
@@ -31,7 +32,8 @@
         "fig/event-dispatcher-util": "^1.0",
         "crell/tukio": "^1.0",
         "italystrap/empress": "~1.0",
-        "infection/infection": "^0.15.3"
+        "infection/infection": "^0.15.3",
+        "vimeo/psalm": "^3.9"
     },
     "autoload": {
         "psr-4": {
