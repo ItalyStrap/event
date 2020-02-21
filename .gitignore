@@ -9,3 +9,4 @@ codeception.yml
 c3.php
 infection.log
 infection-log.txt
+infection.json

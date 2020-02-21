@@ -5,14 +5,9 @@
         ]
     },
     "timeout": 10,
-    "logs": {
-    	"summary": "tests\/_output\/infection.log",
-        "text": "tests\/_output\/infection-log.txt"
-    },
     "mutators": {
         "@default": true
     },
-    "tmpDir": "\/tests\/_output",
     "testFramework": "codeception",
     "testFrameworkOptions": "--skip=wpunit --skip=acceptance --skip=functional"
 }

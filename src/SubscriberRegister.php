@@ -120,8 +120,10 @@ class SubscriberRegister implements SubscriberRegisterInterface {
 		$callable = null;
 
 		if ( is_string( $parameters ) ) {
+			/** @var callable $callable */
 			$callable = [$subscriber, $parameters];
 		} elseif ( is_array( $parameters ) && isset( $parameters[ ParameterKeys::CALLBACK ] ) ) {
+			/** @var callable $callable */
 			$callable = [$subscriber, $parameters[ ParameterKeys::CALLBACK ]];
 		} else {
 			throw new \RuntimeException(\sprintf(
