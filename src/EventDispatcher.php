@@ -3,6 +3,14 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Event;
 
+use function add_filter;
+use function apply_filters;
+use function current_filter;
+use function do_action;
+use function has_filter;
+use function remove_all_filters;
+use function remove_filter;
+
 /**
  * Class Hooks
  * @package ItalyStrap\Event
@@ -21,7 +29,7 @@ class EventDispatcher implements EventDispatcherInterface {
 		int $priority = self::ORDER,
 		int $accepted_args = self::ARGS
 	): bool {
-		return \add_filter( ...\func_get_args() );
+		return add_filter( ...\func_get_args() );
 	}
 
 	/**
@@ -32,41 +40,41 @@ class EventDispatcher implements EventDispatcherInterface {
 		callable $listener,
 		int $priority = self::ORDER
 	): bool {
-		return \remove_filter( ...\func_get_args() );
+		return remove_filter( ...\func_get_args() );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function removeAllListener( string $event_name, $priority = false ):bool {
-		return \remove_all_filters( $event_name, $priority );
+		return remove_all_filters( $event_name, $priority );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function execute( string $event_name, ...$args ): void {
-		\do_action( ...\func_get_args() );
+		do_action( ...\func_get_args() );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function filter( string $event_name, $value, ...$args ) {
-		return \apply_filters( ...\func_get_args() );
+		return apply_filters( ...\func_get_args() );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function currentEventName() {
-		return \current_filter();
+		return current_filter();
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function hasListener( string $event_name, $function_to_check = false ) {
-		return \has_filter( $event_name, $function_to_check );
+		return has_filter( $event_name, $function_to_check );
 	}
 }

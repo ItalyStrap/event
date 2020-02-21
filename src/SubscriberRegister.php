@@ -122,7 +122,7 @@ class SubscriberRegister implements SubscriberRegisterInterface {
 		if ( is_string( $parameters ) ) {
 			/** @var callable $callable */
 			$callable = [$subscriber, $parameters];
-		} elseif ( is_array( $parameters ) && isset( $parameters[ ParameterKeys::CALLBACK ] ) ) {
+		} elseif ( isset( $parameters[ ParameterKeys::CALLBACK ] ) ) {
 			/** @var callable $callable */
 			$callable = [$subscriber, $parameters[ ParameterKeys::CALLBACK ]];
 		} else {

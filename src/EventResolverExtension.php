@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Event;
 
+use Auryn\ConfigException;
+use Auryn\InjectionException;
 use ItalyStrap\Config\ConfigInterface;
 use ItalyStrap\Empress\AurynResolverInterface;
 use ItalyStrap\Empress\Extension;
@@ -47,7 +49,7 @@ class EventResolverExtension implements Extension {
 	/**
 	 * @inheritDoc
 	 */
-	public function execute( AurynResolverInterface $application ) {
+	public function execute( AurynResolverInterface $application ): void {
 		$application->walk( $this->name(), [$this, 'walk'] );
 	}
 
@@ -55,10 +57,10 @@ class EventResolverExtension implements Extension {
 	 * @param string $class Array value from yous configuration
 	 * @param int|string $index_or_optionName Array key from your configuration
 	 * @param Injector $injector An instance of the Injector::class
-	 * @throws \Auryn\ConfigException
-	 * @throws \Auryn\InjectionException
+	 * @throws ConfigException
+	 * @throws InjectionException
 	 */
-	public function walk( string $class, $index_or_optionName, Injector $injector ) {
+	public function walk( string $class, $index_or_optionName, Injector $injector ): void {
 
 		if ( \is_string( $index_or_optionName ) && empty( $this->config->get( $index_or_optionName, false ) ) ) {
 			return;

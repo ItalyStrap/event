@@ -8,6 +8,7 @@
     "mutators": {
         "@default": true
     },
+    "tmpDir": "\/tests\/_output",
     "testFramework": "codeception",
     "testFrameworkOptions": "--skip=wpunit --skip=acceptance --skip=functional"
 }

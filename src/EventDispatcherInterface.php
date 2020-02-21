@@ -44,7 +44,7 @@ interface EventDispatcherInterface {
 	 *
 	 * @param string $event_name
 	 * @param bool $priority
-	 * @return true
+	 * @return bool
 	 */
 	public function removeAllListener( string $event_name, $priority = false );
 
