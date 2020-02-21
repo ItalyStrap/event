@@ -341,7 +341,7 @@ $dependencies = ConfigFactory::make([
     ],
     // Now add in the array all your subscribers that implemente the ItalyStrap\Event\SubscriberInterface
     // The instances create are shared by default for later removing like you se above.
-    EventResolverExtension::KEY	=> [
+    EventResolverExtension::SUBSCRIBERS	=> [
         Subscriber::class,
     ],
     // You can also add more configuration for the AurynResolver https://github.com/ItalyStrap/empress
@@ -468,7 +468,7 @@ $dependencies = ConfigFactory::make([
     ],
     // Now add in the array all your subscribers that implemente the ItalyStrap\Event\SubscriberInterface
     // The instances create are shared by default for later removing like you se above.
-    EventResolverExtension::KEY	=> [
+    EventResolverExtension::SUBSCRIBERS	=> [
         MyClassSubscriber::class,
     ],
     // You can also add more configuration for the AurynResolver https://github.com/ItalyStrap/empress

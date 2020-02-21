@@ -17,6 +17,6 @@ modules:
             tablePrefix: "%TEST_TABLE_PREFIX%"
             domain: "%TEST_SITE_WP_DOMAIN%"
             adminEmail: "%TEST_SITE_ADMIN_EMAIL%"
-            title: "Performize"        
-            plugins: ['perf-metrics/perf-metrics.php']
-            activatePlugins: ['perf-metrics/perf-metrics.php']
+            title: "Event"
+            plugins: ['event/index.php']
+            activatePlugins: ['event/index.php']

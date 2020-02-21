@@ -8,9 +8,10 @@ use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\ParameterKeys;
 use ItalyStrap\Event\SubscriberInterface;
-use PhpParser\Node\Arg;
 use PHPUnit\Framework\Assert;
 use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
+use UnitTester;
 
 /**
  * Class SubscriberRegisterTest
@@ -19,17 +20,17 @@ use Prophecy\Argument;
 class SubscriberRegisterTest extends Unit {
 
 	/**
-	 * @var \UnitTester
+	 * @var UnitTester
 	 */
 	protected $tester;
 
 	/**
-	 * @var \Prophecy\Prophecy\ObjectProphecy
+	 * @var ObjectProphecy
 	 */
 	private $hooks;
 
 	/**
-	 * @var \Prophecy\Prophecy\ObjectProphecy
+	 * @var ObjectProphecy
 	 */
 	private $subscriber;
 

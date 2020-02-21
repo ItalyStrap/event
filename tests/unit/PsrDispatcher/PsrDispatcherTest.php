@@ -3,38 +3,50 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Tests;
 
+use Codeception\Test\Unit;
+use ItalyStrap\Event\PsrDispatcher\CallableFactoryInterface;
 use ItalyStrap\Event\PsrDispatcher\Dispatcher;
 use ItalyStrap\Event\PsrDispatcher\CallableFactory;
 use ItalyStrap\Event\PsrDispatcher\ListenerHolderInterface;
 use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use stdClass;
 use tad\FunctionMockerLe;
+use UnitTester;
 
 /**
  * Class DispatcherTest
  * @package ItalyStrap\Tests
  */
-class DispatcherTest extends \Codeception\Test\Unit {
+class PsrDispatcherTest extends Unit {
 
 	/**
-	 * @var \UnitTester
+	 * @var UnitTester
 	 */
 	protected $tester;
 	/**
-	 * @var \Prophecy\Prophecy\ObjectProphecy
+	 * @var ObjectProphecy
 	 */
 	private $factory;
 
 	/**
-	 * @return \ItalyStrap\Event\PsrDispatcher\CallableFactoryInterface
+	 * @return CallableFactoryInterface
 	 */
-	public function getFactory(): \ItalyStrap\Event\PsrDispatcher\CallableFactoryInterface {
+	public function getFactory(): CallableFactoryInterface {
 		return $this->factory->reveal();
 	}
 
 	// phpcs:ignore -- Method from Codeception
 	protected function _before() {
+		$this->factory = $this->prophesize( CallableFactory::class );
+		global $wp_filter;
+		$wp_filter = [];
+	}
+
+	// phpcs:ignore -- Method from Codeception
+	protected function _after() {
+
 		FunctionMockerLe\undefineAll([
 			'do_action',
 			'add_filter',
@@ -45,13 +57,6 @@ class DispatcherTest extends \Codeception\Test\Unit {
 			'remove_all_filters'
 		]);
 
-		$this->factory = $this->prophesize( CallableFactory::class );
-		global $wp_filter;
-		$wp_filter = [];
-	}
-
-	// phpcs:ignore -- Method from Codeception
-	protected function _after() {
 		global $wp_filter;
 		$wp_filter = [];
 	}
@@ -97,10 +102,16 @@ class DispatcherTest extends \Codeception\Test\Unit {
 		$eventObj = new stdClass();
 		$eventName = get_class( $eventObj );
 
+		$sut = $this->getInstance();
+
 		// phpcs:ignore -- Method from Codeception
 		FunctionMockerLe\define(
 			'add_filter',
 			function ( string $event_name, object $event ) use ( $eventName ) {
+
+				codecept_debug($event_name);
+				codecept_debug($event);
+
 				$this->assertSame( $eventName, $event_name, '' );
 				return true;
 			}
@@ -108,12 +119,12 @@ class DispatcherTest extends \Codeception\Test\Unit {
 
 		$this->factory
 			->buildCallable( Argument::type('callable'))
-			->will(function ($args) {
-				return function () {
+			->will(function ($args) use ($eventObj) {
+				return static function () use ($eventObj) {
+					return $eventObj;
 				};
 			});
 
-		$sut = $this->getInstance();
 		$sut->addListener( $eventName, static function (object $event) {
 			//No called here
 		} );

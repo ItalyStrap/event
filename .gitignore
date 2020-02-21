@@ -7,3 +7,5 @@ codeception.yml
 *.lock
 
 c3.php
+infection.log
+infection-log.txt

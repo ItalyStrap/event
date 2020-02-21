@@ -21,6 +21,10 @@ class EventDispatcherTest extends \Codeception\Test\Unit {
 
 	// phpcs:ignore -- Method from Codeception
 	protected function _before() {
+	}
+
+	// phpcs:ignore -- Method from Codeception
+	protected function _after() {
 		FunctionMockerLe\undefineAll([
 			'do_action',
 			'add_filter',
@@ -30,10 +34,6 @@ class EventDispatcherTest extends \Codeception\Test\Unit {
 			'has_filter',
 			'remove_all_filters'
 		]);
-	}
-
-	// phpcs:ignore -- Method from Codeception
-	protected function _after() {
 	}
 
 	public function getInstance(): EventDispatcher {

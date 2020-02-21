@@ -3,23 +3,25 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Tests;
 
+use Codeception\Test\Unit;
 use Fig\EventDispatcher\ParameterDeriverTrait;
 use ItalyStrap\Event\PsrDispatcher\ListenerHolder;
 use ItalyStrap\Event\PsrDispatcher\ListenerHolderInterface;
 use PHPUnit\Framework\Assert;
 use Psr\EventDispatcher\StoppableEventInterface;
 use stdClass;
+use UnitTester;
 
 // phpcs:disable
 require_once codecept_data_dir( '/fixtures/psr-14.php' );
 // phpcs:enable
 
-class ListenerHolderTest extends \Codeception\Test\Unit {
+class ListenerHolderTest extends Unit {
 
 	use ParameterDeriverTrait;
 
 	/**
-	 * @var \UnitTester
+	 * @var UnitTester
 	 */
 	protected $tester;
 

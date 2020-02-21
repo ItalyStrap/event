@@ -3,16 +3,18 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Tests;
 
+use Codeception\Test\Unit;
 use ItalyStrap\Event\PsrDispatcher\CallableFactory;
+use UnitTester;
 
 /**
  * Class CallableFactoryTest
  * @package ItalyStrap\Tests
  */
-class CallableFactoryTest extends \Codeception\Test\Unit {
+class CallableFactoryTest extends Unit {
 
 	/**
-	 * @var \UnitTester
+	 * @var UnitTester
 	 */
 	protected $tester;
 

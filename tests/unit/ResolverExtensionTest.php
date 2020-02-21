@@ -12,6 +12,7 @@ use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\EventResolverExtension;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use UnitTester;
 
 // phpcs:disable
 require_once codecept_data_dir( '/fixtures/classes.php' );
@@ -19,7 +20,7 @@ require_once codecept_data_dir( '/fixtures/classes.php' );
 class ResolverExtensionTest extends Unit {
 
 	/**
-	 * @var \UnitTester
+	 * @var UnitTester
 	 */
 	protected $tester;
 	/**
@@ -88,7 +89,7 @@ class ResolverExtensionTest extends Unit {
 	 */
 	public function itShouldHaveName() {
 		$sut = $this->getInstance();
-		$this->assertStringContainsString( EventResolverExtension::KEY, $sut->name(), '' );
+		$this->assertStringContainsString( EventResolverExtension::SUBSCRIBERS, $sut->name(), '' );
 	}
 
 	/**

@@ -13,6 +13,7 @@ use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\EventDispatcherInterface;
 use ItalyStrap\Event\ParameterKeys;
 use ItalyStrap\Event\SubscriberInterface;
+use WpunitTester;
 
 // phpcs:disable
 require_once codecept_data_dir( '/fixtures/classes.php' );
@@ -24,7 +25,7 @@ require_once codecept_data_dir( '/fixtures/classes.php' );
 class IntegrationTest extends WPTestCase {
 
 	/**
-	 * @var \WpunitTester
+	 * @var WpunitTester
 	 */
 	protected $tester;
 
@@ -144,7 +145,7 @@ class IntegrationTest extends WPTestCase {
 //				HooksInterface::class,
 //				EventManager::class,
 //			],
-			EventResolverExtension::KEY	=> [
+			EventResolverExtension::SUBSCRIBERS	=> [
 				Subscriber::class,
 //				Subscriber::class	=> false,
 			],

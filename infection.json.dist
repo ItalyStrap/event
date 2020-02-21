@@ -14,5 +14,5 @@
     },
     "tmpDir": "/tests/_output",
     "testFramework": "codeception",
-    "testFrameworkOptions": "unit"
+    "testFrameworkOptions": "--skip=wpunit --skip=acceptance --skip=functional"
 }

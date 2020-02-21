@@ -15,7 +15,7 @@ use ItalyStrap\Empress\Injector;
 class EventResolverExtension implements Extension {
 
 	/** @var string */
-	const KEY = 'subscribers';
+	const SUBSCRIBERS = 'subscribers';
 
 	/**
 	 * @var SubscriberRegister
@@ -41,7 +41,7 @@ class EventResolverExtension implements Extension {
 	 * @inheritDoc
 	 */
 	public function name(): string {
-		return self::KEY;
+		return self::SUBSCRIBERS;
 	}
 
 	/**

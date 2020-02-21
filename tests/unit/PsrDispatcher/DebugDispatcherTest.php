@@ -6,18 +6,20 @@ namespace ItalyStrap\Tests;
 use Codeception\Test\Unit;
 use ItalyStrap\Event\PsrDispatcher\DebugDispatcher;
 use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use stdClass;
+use UnitTester;
 
 class DebugDispatcherTest extends Unit {
 
 	/**
-	 * @var \UnitTester
+	 * @var UnitTester
 	 */
 	protected $tester;
 	/**
-	 * @var \Prophecy\Prophecy\ObjectProphecy
+	 * @var ObjectProphecy
 	 */
 	private $dispatcher;
 
@@ -35,7 +37,7 @@ class DebugDispatcherTest extends Unit {
 		return $this->logger->reveal();
 	}
 	/**
-	 * @var \Prophecy\Prophecy\ObjectProphecy
+	 * @var ObjectProphecy
 	 */
 	private $logger;
 

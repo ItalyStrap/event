@@ -9,6 +9,7 @@ use ItalyStrap\Event\PsrDispatcher\CallableFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use WpunitTester;
 
 // phpcs:disable
 require_once codecept_data_dir( '/fixtures/psr-14.php' );
@@ -20,7 +21,7 @@ require_once codecept_data_dir( '/fixtures/psr-14.php' );
 class Psr14IntegrationTest extends WPTestCase {
 
 	/**
-	 * @var \WpunitTester
+	 * @var WpunitTester
 	 */
 	protected $tester;
 
