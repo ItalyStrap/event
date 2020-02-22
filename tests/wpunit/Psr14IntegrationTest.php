@@ -47,6 +47,8 @@ class Psr14IntegrationTest extends WPTestCase {
 		// Before...
 		parent::setUp();
 
+		$_SERVER['REQUEST_TIME'] = \time();
+
 		global $wp_filter, $wp_actions;
 		$wp_filter = $wp_actions = [];
 
@@ -224,5 +226,10 @@ class Psr14IntegrationTest extends WPTestCase {
 
 		$this->assertEquals( false, $event->value, '' );
 		$this->assertTrue( $event->isPropagationStopped(), '' );
+	}
+
+	public function testServerRequest() {
+		codecept_debug($_SERVER['REQUEST_TIME']);
+		codecept_debug( \json_encode( \is_int( $_SERVER['REQUEST_TIME'] ) ) );
 	}
 }

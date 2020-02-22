@@ -109,5 +109,5 @@ script:
   - vendor/bin/phpcs --ignore=./tests/_support/* ./src/ ./tests/
   - vendor/bin/phpstan analyze --level=4
   - vendor/bin/psalm
-  - codecept run wpunit && codecept run unit --coverage-text
+  - codecept run wpunit && codecept run unit --coverage --coverage-text
 #  - vendor/bin/infection

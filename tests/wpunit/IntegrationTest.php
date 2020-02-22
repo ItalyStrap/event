@@ -43,6 +43,8 @@ class IntegrationTest extends WPTestCase {
 		// Before...
 		parent::setUp();
 
+		$_SERVER['REQUEST_TIME'] = \time();
+
 		global $wp_filter;
 		$wp_filter = [];
 
