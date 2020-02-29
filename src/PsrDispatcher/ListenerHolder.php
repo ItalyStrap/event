@@ -40,19 +40,6 @@ class ListenerHolder implements ListenerHolderInterface {
 	}
 
 	/**
-	 * @inheritDoc
-	 */
-	public function execute( object $event ) {
-
-		if ( $event instanceof StoppableEventInterface && $event->isPropagationStopped() ) {
-			return;
-		}
-
-		$listener = $this->listener;
-		$listener( $event );
-	}
-
-	/**
 	 * The method called from the WordPress Plugin API on event
 	 * This method MUST check if the $event is stoppable or not and
 	 * then call the $listener and pass the $event object in it

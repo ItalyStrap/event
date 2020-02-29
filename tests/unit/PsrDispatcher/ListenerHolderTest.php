@@ -69,7 +69,7 @@ class ListenerHolderTest extends Unit {
 		};
 		$sut = $this->getInstance( $listener );
 		$sut->nullListener();
-		$sut->execute( $event );
+		$sut( $event );
 
 		$this->assertEmpty( $event->value, '' );
 	}
@@ -89,7 +89,7 @@ class ListenerHolderTest extends Unit {
 		};
 
 		$sut = $this->getInstance( $listener );
-		$sut->execute( $event->reveal() );
+		$sut( $event->reveal() );
 
 		$this->assertTrue( 1 === $calls, '' );
 	}
@@ -109,7 +109,7 @@ class ListenerHolderTest extends Unit {
 		};
 
 		$sut = $this->getInstance( $listener );
-		$sut->execute( $event->reveal() );
+		$sut( $event->reveal() );
 
 		$this->assertTrue( 0 === $calls, '' );
 	}
@@ -123,7 +123,7 @@ class ListenerHolderTest extends Unit {
 		$listener = new ListenerChangeValueToText();
 		$sut = $this->getInstance( [ $listener, 'changeText' ] );
 
-		$sut->execute( $event );
+		$sut( $event );
 
 		$this->assertTrue( 'new value' === $event->value, '' );
 	}
