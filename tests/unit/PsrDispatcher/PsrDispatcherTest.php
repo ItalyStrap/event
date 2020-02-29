@@ -146,7 +146,6 @@ class PsrDispatcherTest extends Unit {
 		$listener_holder = $this->prophesize( ListenerHolderInterface::class );
 		$listener_holder->listener()->willReturn($listener);
 		$listener_holder->nullListener()->shouldBeCalled();
-		$listener_holder->execute()->shouldNotBeCalled();
 
 		$wp_filter[$eventName][10][\uniqid()]['function'] = $listener_holder->reveal();
 

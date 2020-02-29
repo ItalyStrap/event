@@ -19,14 +19,4 @@ interface ListenerHolderInterface {
 	 * Use this to set the listener to a null callable
 	 */
 	public function nullListener(): void;
-
-	/**
-	 * The method called from the WordPress Plugin API on event
-	 * This method MUST check if the $event is stoppable or not and
-	 * then call the $listener and pass the $event object in it
-	 *
-	 * @param object $event
-	 * @return void
-	 */
-	public function execute( object $event );
 }
