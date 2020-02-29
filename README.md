@@ -514,6 +514,8 @@ Example with pseudo code;
 
 You can find more information about the (EmpressAurynResolver here)[https://github.com/ItalyStrap/empress]
 
+> TODO https://inpsyde.com/en/remove-wordpress-hooks/
+
 ## Contributing
 
 All feedback / bug reports / pull requests are welcome.

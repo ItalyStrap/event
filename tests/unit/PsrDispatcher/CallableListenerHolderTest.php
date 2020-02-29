@@ -5,7 +5,7 @@ namespace ItalyStrap\Tests;
 
 use Codeception\Test\Unit;
 use Fig\EventDispatcher\ParameterDeriverTrait;
-use ItalyStrap\Event\PsrDispatcher\ListenerHolder;
+use ItalyStrap\Event\PsrDispatcher\CallableListenerHolder;
 use ItalyStrap\Event\PsrDispatcher\ListenerHolderInterface;
 use PHPUnit\Framework\Assert;
 use Psr\EventDispatcher\StoppableEventInterface;
@@ -16,7 +16,7 @@ use UnitTester;
 require_once codecept_data_dir( '/fixtures/psr-14.php' );
 // phpcs:enable
 
-class ListenerHolderTest extends Unit {
+class CallableListenerHolderTest extends Unit {
 
 	use ParameterDeriverTrait;
 
@@ -34,7 +34,7 @@ class ListenerHolderTest extends Unit {
 	}
 
 	private function getInstance( callable  $listener ) {
-		$sut = new ListenerHolder( $listener );
+		$sut = new CallableListenerHolder( $listener );
 		$this->assertInstanceOf( ListenerHolderInterface::class, $sut, '' );
 		return $sut;
 	}

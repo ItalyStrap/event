@@ -23,18 +23,20 @@
         "lucatume/function-mocker-le": "^1.0",
         "italystrap/debug": "~2.0",
         "wp-coding-standards/wpcs": "^2.1",
-        "phpcompatibility/php-compatibility": "*",
+        "phpcompatibility/php-compatibility": "^9.3",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
         "phpstan/phpstan": "^0.11.16",
         "szepeviktor/phpstan-wordpress": "^0.3.0",
         "phpbench/phpbench": "@dev",
+        "infection/infection": "^0.15.3",
+        "vimeo/psalm": "^3.9",
+        "phpmetrics/phpmetrics": "^2.5",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
         "fig/event-dispatcher-util": "^1.0",
         "crell/tukio": "^1.0",
         "italystrap/empress": "~1.0",
-        "infection/infection": "^0.15.3",
-        "vimeo/psalm": "^3.9"
+        "inpsyde/object-hooks-remover": "^0.1"
     },
     "autoload": {
         "psr-4": {

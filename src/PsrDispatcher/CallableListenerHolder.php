@@ -9,7 +9,7 @@ use Psr\EventDispatcher\StoppableEventInterface;
  * Class ListenerHolder
  * @package ItalyStrap\Event\PsrDispatcher
  */
-class ListenerHolder implements ListenerHolderInterface {
+class CallableListenerHolder implements ListenerHolderInterface {
 
 	/**
 	 * @var callable

@@ -9,6 +9,6 @@ class CallableFactory implements CallableFactoryInterface {
 	 * @inheritDoc
 	 */
 	public function buildCallable( callable $listener ): callable {
-		return new ListenerHolder( $listener );
+		return new CallableListenerHolder( $listener );
 	}
 }

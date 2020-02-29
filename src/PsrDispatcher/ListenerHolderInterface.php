@@ -16,7 +16,7 @@ interface ListenerHolderInterface {
 	public function listener(): callable;
 
 	/**
-	 * Use this to set the listener to a null callable
+	 * Use this to change the listener to an empty callable.
 	 */
 	public function nullListener(): void;
 }
