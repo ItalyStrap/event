@@ -51,4 +51,17 @@ class ListenerHolder implements ListenerHolderInterface {
 		$listener = $this->listener;
 		$listener( $event );
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function __invoke( object $event ) {
+
+		if ( $event instanceof StoppableEventInterface && $event->isPropagationStopped() ) {
+			return;
+		}
+
+		$listener = $this->listener;
+		$listener( $event );
+	}
 }

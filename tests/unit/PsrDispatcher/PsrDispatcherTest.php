@@ -148,10 +148,7 @@ class PsrDispatcherTest extends Unit {
 		$listener_holder->nullListener()->shouldBeCalled();
 		$listener_holder->execute()->shouldNotBeCalled();
 
-		$wp_filter[$eventName][10][\uniqid()]['function'] = [
-			$listener_holder->reveal(),
-			'execute'
-		];
+		$wp_filter[$eventName][10][\uniqid()]['function'] = $listener_holder->reveal();
 
 		$sut = $this->getInstance();
 

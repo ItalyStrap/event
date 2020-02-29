@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Tests;
 
+use ItalyStrap\Event\EventDispatcherInterface;
 use ItalyStrap\Event\SubscriberInterface;
 
 class SomeCLass {
@@ -106,4 +107,35 @@ class SubscriberServiceProviderCallable extends Subscriber implements Subscriber
 
 class Listener {
 
+}
+
+class ClassWithDispatchDependency {
+
+	const EVENT_NAME = 'event_name';
+
+	/**
+	 * @var EventDispatcherInterface
+	 */
+	private $dispatcher;
+
+	private $value = '';
+
+	/**
+	 * ClassWithDispatchDependency constructor.
+	 * @param EventDispatcherInterface $dispatcher
+	 */
+	public function __construct( EventDispatcherInterface $dispatcher ) {
+		$this->dispatcher = $dispatcher;
+	}
+
+	public function filterValue() {
+		$this->value = $this->dispatcher->filter(
+			static::EVENT_NAME,
+			$this->value
+		);
+	}
+
+	public function value() {
+		return $this->value;
+	}
 }

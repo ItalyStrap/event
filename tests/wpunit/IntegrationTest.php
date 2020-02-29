@@ -32,12 +32,12 @@ class IntegrationTest extends WPTestCase {
 	/**
 	 * @var EventDispatcher
 	 */
-	private $hooks;
+	private $dispatcher;
 
 	/**
 	 * @var SubscriberRegister
 	 */
-	private $manager;
+	private $register;
 
 	public function setUp(): void {
 		// Before...
@@ -48,8 +48,8 @@ class IntegrationTest extends WPTestCase {
 		global $wp_filter;
 		$wp_filter = [];
 
-		$this->hooks = new EventDispatcher();
-		$this->manager = new SubscriberRegister( $this->hooks );
+		$this->dispatcher = new EventDispatcher();
+		$this->register = new SubscriberRegister( $this->dispatcher );
 
 		// Your set up methods here.
 	}
@@ -68,12 +68,30 @@ class IntegrationTest extends WPTestCase {
 	 */
 	public function itShouldOutputTextOnEventName() {
 
-		$this->hooks->addListener( 'event_name', function () {
+		$this->dispatcher->addListener( 'event_name', function () {
 			echo 'Value printed';
-		}, 10, 1 );
+		} );
 
 		$this->expectOutputString( 'Value printed' );
-		$this->hooks->execute( 'event_name' );
+		$this->dispatcher->execute( 'event_name' );
+	}
+
+	/**
+	 * @test
+	 */
+	public function testClassWithDispatchDependency() {
+		$some_class = new ClassWithDispatchDependency( $this->dispatcher );
+
+		$this->dispatcher->addListener(
+			ClassWithDispatchDependency::EVENT_NAME,
+			function ( string $value ) {
+				return 'New value';
+			}
+		);
+
+		$some_class->filterValue();
+
+		$this->assertStringContainsString('New value', $some_class->value(), '');
 	}
 
 	/**
@@ -113,12 +131,12 @@ class IntegrationTest extends WPTestCase {
 			}
 		};
 
-		$this->manager->addSubscriber( $subscriber );
+		$this->register->addSubscriber( $subscriber );
 
 		$this->expectOutputString( 'Value printed' );
-		$this->hooks->execute( 'event_name' );
+		$this->dispatcher->execute( 'event_name' );
 
-		$filtered = (string) $this->hooks->filter( 'other_event_name', '' );
+		$filtered = (string) $this->dispatcher->filter( 'other_event_name', '' );
 		$this->assertStringContainsString( 'Value printed Value printed', $filtered, '' );
 	}
 

@@ -52,15 +52,16 @@ class Dispatcher extends EventDispatcher implements EventDispatcherInterface {
 		}
 
 		foreach ( (array) $this->wp_filter[ $event_name ][ $priority ] as $method_name_registered => $value ) {
-			if ( ! $value['function'][0] instanceof ListenerHolderInterface ) {
+//			codecept_debug($value);
+			if ( ! $value['function'] instanceof ListenerHolderInterface ) {
 				throw new \RuntimeException( \sprintf(
 					'The callable is not an instance of %s',
 					ListenerHolderInterface::class
 				) );
 			}
 
-			if ( $value['function'][0]->listener() === $listener ) {
-				$value['function'][0]->nullListener();
+			if ( $value['function']->listener() === $listener ) {
+				$value['function']->nullListener();
 			}
 		}
 
