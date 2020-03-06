@@ -5,8 +5,8 @@ namespace ItalyStrap\Tests;
 
 use Codeception\Test\Unit;
 use Fig\EventDispatcher\ParameterDeriverTrait;
-use ItalyStrap\Event\PsrDispatcher\CallableListenerHolder;
-use ItalyStrap\Event\PsrDispatcher\ListenerHolderInterface;
+use ItalyStrap\PsrDispatcher\CallableListenerHolder;
+use ItalyStrap\PsrDispatcher\ListenerHolderInterface;
 use PHPUnit\Framework\Assert;
 use Psr\EventDispatcher\StoppableEventInterface;
 use stdClass;

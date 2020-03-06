@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace ItalyStrap\Event\PsrDispatcher;
+namespace ItalyStrap\PsrDispatcher;
 
 use ItalyStrap\Event\EventDispatcher;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-class Dispatcher extends EventDispatcher implements EventDispatcherInterface {
+class PsrDispatcher implements EventDispatcherInterface {
 
 	/**
 	 * @var array
@@ -19,13 +19,24 @@ class Dispatcher extends EventDispatcher implements EventDispatcherInterface {
 	private $factory;
 
 	/**
+	 * @var EventDispatcher
+	 */
+	private $dispatcher;
+
+	/**
 	 * Dispatcher constructor.
 	 * @param array $wp_filter
 	 * @param CallableFactoryInterface $factory
+	 * @param EventDispatcher $dispatcher
 	 */
-	public function __construct( array &$wp_filter, CallableFactoryInterface $factory ) {
+	public function __construct(
+		array &$wp_filter,
+		CallableFactoryInterface $factory,
+		EventDispatcher $dispatcher
+	) {
 		$this->wp_filter = &$wp_filter;
 		$this->factory = $factory;
+		$this->dispatcher = $dispatcher;
 	}
 
 	/**
@@ -34,18 +45,22 @@ class Dispatcher extends EventDispatcher implements EventDispatcherInterface {
 	public function addListener(
 		string $event_name,
 		callable $listener,
-		int $priority = parent::ORDER,
-		int $accepted_args = parent::ARGS
+		int $priority = 10,
+		int $accepted_args = 1
 	): bool {
 		/** @var callable $callback */
 		$callback = $this->factory->buildCallable( $listener );
-		return parent::addListener( $event_name, $callback, $priority, $accepted_args );
+		return $this->dispatcher->addListener( $event_name, $callback, $priority, $accepted_args );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function removeListener( string $event_name, callable $listener, int $priority = parent::ORDER ): bool {
+	public function removeListener(
+		string $event_name,
+		callable $listener,
+		int $priority = 10
+	): bool {
 
 		if ( ! isset( $this->wp_filter[ $event_name ][ $priority ] ) ) {
 			return false;
@@ -71,7 +86,7 @@ class Dispatcher extends EventDispatcher implements EventDispatcherInterface {
 	 * @inheritDoc
 	 */
 	public function dispatch( object $event ) {
-		$this->execute( \get_class( $event ), $event );
+		$this->dispatcher->dispatch( \get_class( $event ), $event );
 		return $event;
 	}
 }

@@ -7,6 +7,7 @@ use function add_filter;
 use function apply_filters;
 use function current_filter;
 use function do_action;
+use function func_get_args;
 use function has_filter;
 use function remove_all_filters;
 use function remove_filter;
@@ -29,7 +30,7 @@ class EventDispatcher implements EventDispatcherInterface {
 		int $priority = self::ORDER,
 		int $accepted_args = self::ARGS
 	): bool {
-		return add_filter( ...\func_get_args() );
+		return add_filter( ...func_get_args() );
 	}
 
 	/**
@@ -40,7 +41,7 @@ class EventDispatcher implements EventDispatcherInterface {
 		callable $listener,
 		int $priority = self::ORDER
 	): bool {
-		return remove_filter( ...\func_get_args() );
+		return remove_filter( ...func_get_args() );
 	}
 
 	/**
@@ -54,14 +55,21 @@ class EventDispatcher implements EventDispatcherInterface {
 	 * @inheritDoc
 	 */
 	public function execute( string $event_name, ...$args ): void {
-		do_action( ...\func_get_args() );
+		do_action( ...func_get_args() );
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function dispatch( $event_name, ...$args ) {
+		$this->execute( ...func_get_args() );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function filter( string $event_name, $value, ...$args ) {
-		return apply_filters( ...\func_get_args() );
+		return apply_filters( ...func_get_args() );
 	}
 
 	/**

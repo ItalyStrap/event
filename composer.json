@@ -40,7 +40,8 @@
     },
     "autoload": {
         "psr-4": {
-            "ItalyStrap\\Event\\": "src/"
+            "ItalyStrap\\Event\\": "src/Event/",
+            "ItalyStrap\\PsrDispatcher\\": "src/PsrDispatcher/"
         }
     },
     "provide": {

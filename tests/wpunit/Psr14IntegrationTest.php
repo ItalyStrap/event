@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace ItalyStrap\Tests;
 
 use Codeception\TestCase\WPTestCase;
-use ItalyStrap\Event\PsrDispatcher\Dispatcher;
-use ItalyStrap\Event\PsrDispatcher\CallableFactory;
+use ItalyStrap\PsrDispatcher\PsrDispatcher;
+use ItalyStrap\PsrDispatcher\CallableFactory;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -40,7 +40,7 @@ class Psr14IntegrationTest extends WPTestCase {
 	 */
 	public function getEventDispatcher() {
 		global $wp_filter;
-		return new Dispatcher( $wp_filter, new CallableFactory() );
+		return new PsrDispatcher( $wp_filter, new CallableFactory(), new \ItalyStrap\Event\EventDispatcher() );
 	}
 
 	public function setUp(): void {

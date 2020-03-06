@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace ItalyStrap\Tests;
 
 use Codeception\Test\Unit;
-use ItalyStrap\Event\PsrDispatcher\CallableFactory;
+use ItalyStrap\PsrDispatcher\CallableFactory;
 use UnitTester;
 
 /**
