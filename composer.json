@@ -36,6 +36,7 @@
         "fig/event-dispatcher-util": "^1.0",
         "crell/tukio": "^1.0",
         "italystrap/empress": "~1.0",
+        "ocramius/package-versions": "~1.4.2",
         "inpsyde/object-hooks-remover": "^0.1"
     },
     "autoload": {
