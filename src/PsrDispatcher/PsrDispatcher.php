@@ -4,9 +4,10 @@ declare(strict_types=1);
 namespace ItalyStrap\PsrDispatcher;
 
 use ItalyStrap\Event\EventDispatcher;
-use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\EventDispatcherInterface as PsrDispatcherInterface;
 
-class PsrDispatcher implements EventDispatcherInterface {
+class PsrDispatcher implements PsrDispatcherInterface
+{
 
 	/**
 	 * @var array
