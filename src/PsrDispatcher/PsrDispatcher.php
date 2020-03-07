@@ -6,8 +6,8 @@ namespace ItalyStrap\PsrDispatcher;
 use ItalyStrap\Event\EventDispatcher;
 use Psr\EventDispatcher\EventDispatcherInterface as PsrDispatcherInterface;
 
-class PsrDispatcher implements PsrDispatcherInterface
-{
+class PsrDispatcher implements PsrDispatcherInterface {
+
 
 	/**
 	 * @var array

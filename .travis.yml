@@ -67,7 +67,7 @@ before_install:
   - export PATH=vendor/bin:$PATH
 
 install:
-  - echo ${TRAVIS_PHP_VERSION:0:3}
+  - echo $TRAVIS_PHP_VERSION
   - composer install --prefer-dist
   # install WordPress
   - cd $WP_FOLDER
