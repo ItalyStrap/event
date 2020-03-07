@@ -7,8 +7,6 @@ notifications:
 
 php:
   - 7.2
-  - 7.3
-  - 7.4
 
 matrix:
   fast_finish: true
@@ -46,7 +44,7 @@ env:
     - WP_TABLE_PREFIX="wp_"
     - WP_ADMIN_USERNAME="admin"
     - WP_ADMIN_PASSWORD="admin"
-    - IGNORE_PLATFORM_REQS=false
+    - IGNORE_PLATFORM_REQS="false"
   matrix:
     - WP_VERSION=latest
     - WP_VERSION=nightly
@@ -67,7 +65,8 @@ before_install:
   - export PATH=vendor/bin:$PATH
 
 install:
-  - echo env(TRAVIS_PHP_VERSION)
+  - echo $TRAVIS_PHP_VERSION
+  - echo $IGNORE_PLATFORM_REQS
   - composer install --prefer-dist
   # install WordPress
   - cd $WP_FOLDER
