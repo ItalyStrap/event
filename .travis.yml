@@ -45,7 +45,6 @@ env:
     - WP_TABLE_PREFIX="wp_"
     - WP_ADMIN_USERNAME="admin"
     - WP_ADMIN_PASSWORD="admin"
-    - IGNORE_PLATFORM_REQS="false"
   matrix:
     - WP_VERSION=latest
     - WP_VERSION=nightly
@@ -68,7 +67,7 @@ before_install:
 install:
   - |
     if [ $TRAVIS_PHP_VERSION == "nightly" ]; then
-      composer install --prefer-dist
+      composer install --prefer-dist --ignore-platform-reqs
     else
       composer install --prefer-dist
     fi
