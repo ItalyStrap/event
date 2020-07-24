@@ -85,6 +85,16 @@ class SubscriberRegisterTest extends Unit {
 
 	public function subscriberProvider() {
 		return [
+			/**
+			 * @TODO Potrebbe essere utile chiamare direttamente
+			 *       una callback
+			 */
+//			'event_name => callable'					=> [
+//				[
+//					'event_name' 			=> function () {},
+////					'event_name1' 			=> [ new \stdClass(), 'run' ],
+//				]
+//			],
 			'event_name => callback'					=> [
 				[
 					'event_name' 			=> 'callback',
@@ -139,20 +149,21 @@ class SubscriberRegisterTest extends Unit {
 	/**
 	 * @test
 	 * @dataProvider subscriberProvider()
+	 * @param $provider_args
 	 */
-	public function itShouldAddSubscriberWith( $sub_args ) {
+	public function itShouldAddSubscriberWith( $provider_args ) {
 		$test = $this;
 		$sut = $this->getInstance();
 
-		$this->subscriber->getSubscribedEvents()->willReturn($sub_args);
+		$this->subscriber->getSubscribedEvents()->willReturn($provider_args);
 
 		$this->hooks->addListener(
 			Argument::type( 'string' ),
 			Argument::type( 'callable' ),
 			Argument::type( 'int' ),
 			Argument::type( 'int' )
-		)->will(function ( $args ) use ( $sub_args, $test ) {
-			$test->assertArgsPassedAreCorrect(  $args, $sub_args  );
+		)->will(function ( $listener_args ) use ( $provider_args, $test ) {
+			$test->assertArgsPassedAreCorrect(  $listener_args, $provider_args  );
 			return true;
 		})->shouldBeCalled();
 
@@ -163,19 +174,19 @@ class SubscriberRegisterTest extends Unit {
 	 * @test
 	 * @dataProvider subscriberProvider()
 	 */
-	public function itShouldRemoveSubscriberWith( $sub_args ) {
+	public function itShouldRemoveSubscriberWith( $provider_args ) {
 		$test = $this;
 		$sut = $this->getInstance();
 
-		$this->subscriber->getSubscribedEvents()->willReturn($sub_args);
+		$this->subscriber->getSubscribedEvents()->willReturn($provider_args);
 
 		$this->hooks->removeListener(
 			Argument::type( 'string' ),
 			Argument::type( 'callable' ),
 			Argument::type( 'int' ),
 			Argument::type( 'int' )
-		)->will(function ( $args ) use ( $sub_args, $test ) {
-			$test->assertArgsPassedAreCorrect(  $args, $sub_args  );
+		)->will(function ( $listener_args ) use ( $provider_args, $test ) {
+			$test->assertArgsPassedAreCorrect(  $listener_args, $provider_args  );
 			return true;
 		})->shouldBeCalled();
 
@@ -183,10 +194,10 @@ class SubscriberRegisterTest extends Unit {
 	}
 
 	/**
-	 * @param $args
-	 * @param $sub_args
+	 * @param $listener_args
+	 * @param $provider_args
 	 */
-	private function assertArgsPassedAreCorrect( $args, $sub_args ): void {
+	private function assertArgsPassedAreCorrect( $listener_args, $provider_args ): void {
 
 		/**
 		 * $args[0] Is the 'event_name'
@@ -195,15 +206,16 @@ class SubscriberRegisterTest extends Unit {
 		 * $args[3] Is the number of passed arguments
 		 */
 
-		$event_name = $args[ 0 ];
-		$called_method = $args[ 1 ][ 1 ];
-		$priority = $args[ 2 ];
-		$accepted_args = $args[ 3 ];
+		$event_name = $listener_args[ 0 ];
+//		$called_method = \is_callable( $listener_args[ 1 ] ) ? $listener_args[ 1 ] : $listener_args[ 1 ][ 1 ];
+		$called_method = $listener_args[ 1 ][ 1 ];
+		$priority = $listener_args[ 2 ];
+		$accepted_args = $listener_args[ 3 ];
 
-		Assert::assertArrayHasKey( $event_name, $sub_args, 'Both should be the "event_name"' );
+		Assert::assertArrayHasKey( $event_name, $provider_args, 'Both should be the "event_name"' );
 
-		if ( isset( $sub_args[ $event_name ][0] ) && is_array( $sub_args[ $event_name ][0] ) ) {
-			foreach ( $sub_args[ $event_name ] as $arg ) {
+		if ( isset( $provider_args[ $event_name ][0] ) && is_array( $provider_args[ $event_name ][0] ) ) {
+			foreach ($provider_args[ $event_name ] as $arg ) {
 				$this->assertValueFromArrayAreCorrect(
 					[$event_name => $arg],
 					$called_method,
@@ -215,7 +227,7 @@ class SubscriberRegisterTest extends Unit {
 			return;
 		}
 
-		$this->assertValueFromArrayAreCorrect( $sub_args, $called_method, $event_name, $priority, $accepted_args );
+		$this->assertValueFromArrayAreCorrect( $provider_args, $called_method, $event_name, $priority, $accepted_args );
 	}
 
 	private function assertValueFromArrayAreCorrect(

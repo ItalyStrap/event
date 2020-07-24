@@ -71,7 +71,6 @@ install:
     else
       composer install --prefer-dist
     fi
-#  - composer install --prefer-dist
   # install WordPress
   - cd $WP_FOLDER
   - wp core download --version=$WP_VERSION
