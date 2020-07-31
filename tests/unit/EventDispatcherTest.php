@@ -141,7 +141,7 @@ class EventDispatcherTest extends \Codeception\Test\Unit {
 			Assert::assertEquals($args, func_get_args());
 		});
 
-		$sut->execute( ...$args );
+		$sut->dispatch( ...$args );
 
 		$this->assertEquals( 1, $calls );
 	}

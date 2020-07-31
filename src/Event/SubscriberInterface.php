@@ -9,6 +9,10 @@ namespace ItalyStrap\Event;
  */
 interface SubscriberInterface {
 
+	const CALLBACK		= 'function_to_add';
+	const PRIORITY		= 'priority';
+	const ACCEPTED_ARGS	= 'accepted_args';
+
 	/**
 	 * Returns an array of hooks that this subscriber wants to register with
 	 * the WordPress plugin API.
@@ -38,7 +42,7 @@ interface SubscriberInterface {
 	 * 		]
 	 * 	  ]
 	 *
-	 * @return array
+	 * @return iterable
 	 */
-	public function getSubscribedEvents(): array;
+	public function getSubscribedEvents(): iterable;
 }

@@ -122,9 +122,9 @@ class SubscriberRegister implements SubscriberRegisterInterface {
 		if ( is_string( $parameters ) ) {
 			/** @var callable $callable */
 			$callable = [$subscriber, $parameters];
-		} elseif ( isset( $parameters[ ParameterKeys::CALLBACK ] ) ) {
+		} elseif ( isset( $parameters[ Subscriber::CALLBACK ] ) ) {
 			/** @var callable $callable */
-			$callable = [$subscriber, $parameters[ ParameterKeys::CALLBACK ]];
+			$callable = [$subscriber, $parameters[ Subscriber::CALLBACK ]];
 		} else {
 			throw new \RuntimeException(\sprintf(
 				'Impossible to build a valid callable because $parameters is a type %s',
@@ -141,8 +141,8 @@ class SubscriberRegister implements SubscriberRegisterInterface {
 	 */
 	private function buildParameters( $parameters ): array {
 		return [
-			$parameters[ ParameterKeys::PRIORITY ] ?? self::ORDER,
-			$parameters[ ParameterKeys::ACCEPTED_ARGS ] ?? self::ARGS,
+			$parameters[ Subscriber::PRIORITY ] ?? self::ORDER,
+			$parameters[ Subscriber::ACCEPTED_ARGS ] ?? self::ARGS,
 		];
 	}
 }

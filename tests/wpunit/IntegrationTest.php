@@ -11,7 +11,6 @@ use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\EventResolverExtension;
 use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\EventDispatcherInterface;
-use ItalyStrap\Event\ParameterKeys;
 use ItalyStrap\Event\SubscriberInterface;
 use WpunitTester;
 
@@ -73,7 +72,7 @@ class IntegrationTest extends WPTestCase {
 		} );
 
 		$this->expectOutputString( 'Value printed' );
-		$this->dispatcher->execute( 'event_name' );
+		$this->dispatcher->dispatch( 'event_name' );
 	}
 
 	/**
@@ -109,14 +108,14 @@ class IntegrationTest extends WPTestCase {
 					'event_name'	=> 'method',
 					'other_event_name'	=> [
 						[
-							ParameterKeys::CALLBACK		=> 'onCallback',
-							ParameterKeys::PRIORITY		=> 20,
-							ParameterKeys::ACCEPTED_ARGS	=> 6,
+							SubscriberInterface::CALLBACK		=> 'onCallback',
+							SubscriberInterface::PRIORITY		=> 20,
+							SubscriberInterface::ACCEPTED_ARGS	=> 6,
 						],
 						[
-							ParameterKeys::CALLBACK		=> 'onCallback',
-							ParameterKeys::PRIORITY		=> 10,
-							ParameterKeys::ACCEPTED_ARGS	=> 6,
+							SubscriberInterface::CALLBACK		=> 'onCallback',
+							SubscriberInterface::PRIORITY		=> 10,
+							SubscriberInterface::ACCEPTED_ARGS	=> 6,
 						],
 					],
 				];
@@ -134,7 +133,7 @@ class IntegrationTest extends WPTestCase {
 		$this->register->addSubscriber( $subscriber );
 
 		$this->expectOutputString( 'Value printed' );
-		$this->dispatcher->execute( 'event_name' );
+		$this->dispatcher->dispatch( 'event_name' );
 
 		$filtered = (string) $this->dispatcher->filter( 'other_event_name', '' );
 		$this->assertStringContainsString( 'Value printed Value printed', $filtered, '' );
@@ -179,7 +178,7 @@ class IntegrationTest extends WPTestCase {
 		$empress->resolve();
 
 		$this->expectOutputString( 'Some text' );
-		( $injector->make( EventDispatcher::class ) )->execute( 'event' );
+		( $injector->make( EventDispatcher::class ) )->dispatch( 'event' );
 	}
 
 	private function configExample() {
@@ -193,17 +192,17 @@ class IntegrationTest extends WPTestCase {
 			'hook_name => [callback|priority]'		=> [
 				[
 					'hook_name' => [
-						ParameterKeys::CALLBACK		=> 'callback',
-						ParameterKeys::PRIORITY		=> 20,
+						SubscriberInterface::CALLBACK		=> 'callback',
+						SubscriberInterface::PRIORITY		=> 20,
 					]
 				]
 			],
 			'hook_name => [callback|priority|args]'	=> [
 				[
 					'hook_name' => [
-						ParameterKeys::CALLBACK		=> 'callback',
-						ParameterKeys::PRIORITY		=> 20,
-						ParameterKeys::ACCEPTED_ARGS	=> 6,
+						SubscriberInterface::CALLBACK		=> 'callback',
+						SubscriberInterface::PRIORITY		=> 20,
+						SubscriberInterface::ACCEPTED_ARGS	=> 6,
 					]
 				]
 			],

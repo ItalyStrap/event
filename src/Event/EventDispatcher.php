@@ -19,7 +19,13 @@ use function remove_filter;
 class EventDispatcher implements EventDispatcherInterface {
 
 	protected const ARGS = 3;
+
+	/**
+	 * @deprecated
+	 */
 	protected const ORDER = 10;
+
+	protected const PRIORITY = 10;
 
 	/**
 	 * @inheritDoc
@@ -27,7 +33,7 @@ class EventDispatcher implements EventDispatcherInterface {
 	public function addListener(
 		string $event_name,
 		callable $listener,
-		int $priority = self::ORDER,
+		int $priority = self::PRIORITY,
 		int $accepted_args = self::ARGS
 	): bool {
 		return add_filter( ...func_get_args() );
@@ -39,7 +45,7 @@ class EventDispatcher implements EventDispatcherInterface {
 	public function removeListener(
 		string $event_name,
 		callable $listener,
-		int $priority = self::ORDER
+		int $priority = self::PRIORITY
 	): bool {
 		return remove_filter( ...func_get_args() );
 	}
@@ -53,6 +59,7 @@ class EventDispatcher implements EventDispatcherInterface {
 
 	/**
 	 * @inheritDoc
+	 * @deprecated
 	 */
 	public function execute( string $event_name, ...$args ): void {
 		do_action( ...func_get_args() );

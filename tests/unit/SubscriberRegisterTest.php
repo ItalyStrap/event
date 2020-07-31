@@ -6,7 +6,6 @@ namespace ItalyStrap\Tests;
 use Codeception\Test\Unit;
 use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\EventDispatcher;
-use ItalyStrap\Event\ParameterKeys;
 use ItalyStrap\Event\SubscriberInterface;
 use PHPUnit\Framework\Assert;
 use Prophecy\Argument;
@@ -104,26 +103,26 @@ class SubscriberRegisterTest extends Unit {
 			'event_name => [callback|priority]'		=> [
 				[
 					'event_name' => [
-						ParameterKeys::CALLBACK		=> 'callback',
-						ParameterKeys::PRIORITY		=> 20,
+						SubscriberInterface::CALLBACK		=> 'callback',
+						SubscriberInterface::PRIORITY		=> 20,
 					],
 					'event_name1' => [
-						ParameterKeys::CALLBACK		=> 'callback',
-						ParameterKeys::PRIORITY		=> 20,
+						SubscriberInterface::CALLBACK		=> 'callback',
+						SubscriberInterface::PRIORITY		=> 20,
 					],
 				]
 			],
 			'event_name => [callback|priority|args]'	=> [
 				[
 					'event_name' => [
-						ParameterKeys::CALLBACK		=> 'callback',
-						ParameterKeys::PRIORITY		=> 20,
-						ParameterKeys::ACCEPTED_ARGS	=> 6,
+						SubscriberInterface::CALLBACK		=> 'callback',
+						SubscriberInterface::PRIORITY		=> 20,
+						SubscriberInterface::ACCEPTED_ARGS	=> 6,
 					],
 					'event_name1' => [
-						ParameterKeys::CALLBACK		=> 'callback',
-						ParameterKeys::PRIORITY		=> 20,
-						ParameterKeys::ACCEPTED_ARGS	=> 6,
+						SubscriberInterface::CALLBACK		=> 'callback',
+						SubscriberInterface::PRIORITY		=> 20,
+						SubscriberInterface::ACCEPTED_ARGS	=> 6,
 					],
 				]
 			],
@@ -131,14 +130,14 @@ class SubscriberRegisterTest extends Unit {
 				[
 					'event_name' => [
 						[
-							ParameterKeys::CALLBACK		=> 'onCallback',
-							ParameterKeys::PRIORITY		=> 10,
-							ParameterKeys::ACCEPTED_ARGS	=> 6,
+							SubscriberInterface::CALLBACK		=> 'onCallback',
+							SubscriberInterface::PRIORITY		=> 10,
+							SubscriberInterface::ACCEPTED_ARGS	=> 6,
 						],
 						[
-							ParameterKeys::CALLBACK		=> 'onCallback',
-							ParameterKeys::PRIORITY		=> 20,
-							ParameterKeys::ACCEPTED_ARGS	=> 6,
+							SubscriberInterface::CALLBACK		=> 'onCallback',
+							SubscriberInterface::PRIORITY		=> 20,
+							SubscriberInterface::ACCEPTED_ARGS	=> 6,
 						],
 					],
 				]
@@ -220,8 +219,8 @@ class SubscriberRegisterTest extends Unit {
 					[$event_name => $arg],
 					$called_method,
 					$event_name,
-					$arg[ParameterKeys::PRIORITY],
-					$arg[ParameterKeys::ACCEPTED_ARGS]
+					$arg[SubscriberInterface::PRIORITY],
+					$arg[SubscriberInterface::ACCEPTED_ARGS]
 				);
 			}
 			return;
@@ -239,19 +238,19 @@ class SubscriberRegisterTest extends Unit {
 	): void {
 		Assert::assertEquals(
 			$called_method,
-			$args[ $event_name ][ ParameterKeys::CALLBACK ] ?? $args[ $event_name ],
+			$args[ $event_name ][ SubscriberInterface::CALLBACK ] ?? $args[ $event_name ],
 			'Should be callback name'
 		);
 
 		Assert::assertEquals(
 			$priority,
-			$args[ $event_name ][ ParameterKeys::PRIORITY ] ?? 10, // 10 is the default priority
+			$args[ $event_name ][ SubscriberInterface::PRIORITY ] ?? 10, // 10 is the default priority
 			'Should be default priority'
 		);
 
 		Assert::assertEquals(
 			$accepted_args,
-			$args[ $event_name ][ ParameterKeys::ACCEPTED_ARGS ] ?? 1, // 1 is the defaul number of passed argument
+			$args[ $event_name ][ SubscriberInterface::ACCEPTED_ARGS ] ?? 1, // 1 is the defaul number of passed argument
 			'Should be default accepted args'
 		);
 	}

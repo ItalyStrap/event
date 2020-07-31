@@ -43,7 +43,7 @@ $dispatcher = new EventDispatcher();
 $dispatcher->addListener( 'event_name', function () { echo 'Event Called'; }, 10 );
 
 // This will echo 'Event Called' on `event_name`
-$dispatcher->execute( 'event_name' );
+$dispatcher->dispatch( 'event_name' );
 ```
 
 ### Simple example for filters
@@ -122,7 +122,7 @@ $subscriber_register = new SubscriberRegister( $dispatcher );
 $subscriber_register->addSubscriber( $subscriber );
 
 // It will execute the subscriber MyClassSubscriber::methodName
-$dispatcher->execute( 'event_name' );
+$dispatcher->dispatch( 'event_name' );
 // or
 $dispatcher->filter( 'event_name', $some_value );
 ```
@@ -145,42 +145,42 @@ return [
 ];
 ```
 ```php
-use ItalyStrap\Event\ParameterKeys as KEYS;
+use ItalyStrap\Event\SubscriberInterface as Subscriber;
 // Event with method and priority (for multiple events the logic is the same as above)
 return [
             'event_name' => [
-                KEYS::CALLBACK	=> 'method_name',
-                KEYS::PRIORITY	=> 20, // 10 default
+                Subscriber::CALLBACK	=> 'method_name',
+                Subscriber::PRIORITY	=> 20, // 10 default
             ],
             // ... more event => method
         ];
 ```
 ```php
-use ItalyStrap\Event\ParameterKeys as KEYS;
+use ItalyStrap\Event\SubscriberInterface as Subscriber;
 // Event with method, priority and accepted args (for multiple events the logic is the same as above)
 return [
            'event_name' => [
-               KEYS::CALLBACK	    => 'method_name',
-               KEYS::PRIORITY	    => 20, // 10 default
-               KEYS::ACCEPTED_ARGS	=> 4 // 3 default
+               Subscriber::CALLBACK	    => 'method_name',
+               Subscriber::PRIORITY	    => 20, // 10 default
+               Subscriber::ACCEPTED_ARGS	=> 4 // 3 default
            ],
             // ... more event => method
        ];
 ```
 ```php
-use ItalyStrap\Event\ParameterKeys as KEYS;
+use ItalyStrap\Event\SubscriberInterface as Subscriber;
 // Event with methods, priority and accepted args (for multiple events the logic is the same as above)
 return [
            'event_name' => [
                 [
-                    KEYS::CALLBACK	    => 'method_name',
-                    KEYS::PRIORITY	    => 20, // 10 default
-                    KEYS::ACCEPTED_ARGS	=> 4 // 3 default
+                    Subscriber::CALLBACK	    => 'method_name',
+                    Subscriber::PRIORITY	    => 20, // 10 default
+                    Subscriber::ACCEPTED_ARGS	=> 4 // 3 default
                 ],
                 [
-                    KEYS::CALLBACK	    => 'method_name2',
-                    KEYS::PRIORITY	    => 20, // 10 default
-                    KEYS::ACCEPTED_ARGS	=> 4 // 3 default
+                    Subscriber::CALLBACK	    => 'method_name2',
+                    Subscriber::PRIORITY	    => 20, // 10 default
+                    Subscriber::ACCEPTED_ARGS	=> 4 // 3 default
                 ],
             ],
             // ... more event => method
@@ -245,7 +245,7 @@ $subscriber_register = new SubscriberRegister( $dispatcher );
 $subscriber_register->addSubscriber( $subscriber );
 
 // It will execute the subscriber MyClassSubscriber::methodName
-$dispatcher->execute( 'event_name' );
+$dispatcher->dispatch( 'event_name' );
 // or
 $dispatcher->filter( 'event_name', ['some_value'] );
 
@@ -269,7 +269,7 @@ $dispatcher->filter( 'the_title', function ( string $title ): string {
 } );
 
 // Execute some action
-$dispatcher->execute( 'after_setup_theme', function (): void {
+$dispatcher->dispatch( 'after_setup_theme', function (): void {
     // Bootstrap your logic for theme configuration
 } );
 ```
@@ -286,7 +286,6 @@ use ItalyStrap\Empress\Injector;
 use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\EventResolverExtension;
 use ItalyStrap\Event\EventDispatcher;
-use ItalyStrap\Event\ParameterKeys;
 use ItalyStrap\Event\SubscriberInterface;
 
 // From Subscriber.php
@@ -373,10 +372,10 @@ $empress->resolve();
 
 
 $this->expectOutputString( 'Some text' );
-( $injector->make( EventDispatcher::class ) )->execute( 'event' );
+( $injector->make( EventDispatcher::class ) )->dispatch( 'event' );
 // or
 $dispatcher = $injector->make( EventDispatcher::class );
-$dispatcher->execute( 'event' );
+$dispatcher->dispatch( 'event' );
 
 // $dispatcher will be the same instance because you have shared it in the above code
 ```
@@ -391,7 +390,6 @@ use ItalyStrap\Empress\Injector;
 use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\EventResolverExtension;
 use ItalyStrap\Event\EventDispatcher;
-use ItalyStrap\Event\ParameterKeys;
 use ItalyStrap\Event\SubscriberInterface;
 
 // From MyBusinessLogic.php
@@ -499,9 +497,9 @@ $empress->extend( $event_resolver );
 $empress->resolve();
 
 $dispatcher = $injector->make( EventDispatcher::class );
-$dispatcher->execute( 'event_name_one' );
-$dispatcher->execute( 'event_name_two' );
-$dispatcher->execute( 'event_name_three' );
+$dispatcher->dispatch( 'event_name_one' );
+$dispatcher->dispatch( 'event_name_two' );
+$dispatcher->dispatch( 'event_name_three' );
 ```
 Remember that the proxy version of an object is a "dumb" object that do nothing until you
 call some method and the real object will be executed, this is useful for run code only when

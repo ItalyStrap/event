@@ -51,6 +51,8 @@ interface EventDispatcherInterface {
 	/**
 	 * Executes all the callbacks registered with the given event.
 	 *
+	 * @deprecated Use EventDispatcherInterface::dispatch()
+	 *
 	 * @param string $event_name The name of the action to be executed.
 	 * @param mixed  ...$args    Optional. Additional arguments which are passed on to the
 	 *                           listeners to the action. Default empty.
