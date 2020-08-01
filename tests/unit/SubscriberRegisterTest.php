@@ -73,13 +73,69 @@ class SubscriberRegisterTest extends Unit {
 	/**
 	 * @test
 	 */
-	public function itShouldThrownErrorIfArrayIsEmpty() {
+//	public function itShouldThrownErrorIfArrayIsEmpty() {
+//		$sut = $this->getInstance();
+//
+//		$this->subscriber->getSubscribedEvents()->willReturn([]);
+//
+//		$this->expectException( \InvalidArgumentException::class );
+//		$sut->addSubscriber( $this->getSubscriber() );
+//		$sut->removeSubscriber( $this->getSubscriber() );
+//	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldThrownErrorIfArrayIsEmptygggg() {
 		$sut = $this->getInstance();
 
-		$this->subscriber->getSubscribedEvents()->willReturn([]);
+		$this->subscriber->getSubscribedEvents()->will(function (){
 
-		$this->expectException( \InvalidArgumentException::class );
+			yield 'event_name' 			=> 'callback';
+
+			yield 'event_name' => [
+				SubscriberInterface::CALLBACK		=> 'callback',
+				SubscriberInterface::PRIORITY		=> 20,
+			];
+
+			yield 'event_name1' => [
+				SubscriberInterface::CALLBACK		=> 'callback',
+				SubscriberInterface::PRIORITY		=> 20,
+			];
+
+			yield 'event_name' => [
+				[
+					SubscriberInterface::CALLBACK		=> 'onCallback',
+					SubscriberInterface::PRIORITY		=> 10,
+					SubscriberInterface::ACCEPTED_ARGS	=> 6,
+				],
+				[
+					SubscriberInterface::CALLBACK		=> 'onCallback',
+					SubscriberInterface::PRIORITY		=> 20,
+					SubscriberInterface::ACCEPTED_ARGS	=> 6,
+				],
+			];
+
+			return [
+				'event_name' 			=> 'callback',
+				'event_name1' 			=> 'callback',
+			];
+		});
+
+		$this->hooks->addListener(
+			Argument::type( 'string' ),
+			Argument::type( 'callable' ),
+			Argument::type( 'int' ),
+			Argument::type( 'int' )
+		)->will(function ( $listener_args )
+//		use ( $provider_args, $test )
+		{
+//			$test->assertArgsPassedAreCorrect(  $listener_args, $provider_args  );
+			return true;
+		})->shouldBeCalled();
+
 		$sut->addSubscriber( $this->getSubscriber() );
+//		$sut->removeSubscriber( $this->getSubscriber() );
 	}
 
 	public function subscriberProvider() {

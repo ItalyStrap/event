@@ -33,8 +33,7 @@ class SubscriberRegister implements SubscriberRegisterInterface {
 	 * @inheritDoc
 	 */
 	public function addSubscriber( Subscriber $subscriber ): void {
-		$map = $this->assertSubscriberIsNotEmpty( $subscriber );
-		foreach ( $map as $event_name => $parameters ) {
+		foreach ( $subscriber->getSubscribedEvents() as $event_name => $parameters ) {
 			if ( isset( $parameters[0] ) && is_array( $parameters[0] ) ) {
 				foreach ( $parameters as $listener ) {
 					$this->addSubscriberListener( $subscriber, $event_name, $listener );
@@ -66,8 +65,7 @@ class SubscriberRegister implements SubscriberRegisterInterface {
 	 * @inheritDoc
 	 */
 	public function removeSubscriber( Subscriber $subscriber ): void {
-		$map = $this->assertSubscriberIsNotEmpty( $subscriber );
-		foreach ( $map as $event_name => $parameters ) {
+		foreach ( $subscriber->getSubscribedEvents() as $event_name => $parameters ) {
 			if ( isset( $parameters[0] ) && is_array( $parameters[0] ) ) {
 				foreach ( $parameters as $listener ) {
 					$this->removeSubscriberListener( $subscriber, $event_name, $listener );
@@ -98,7 +96,7 @@ class SubscriberRegister implements SubscriberRegisterInterface {
 	 * @param Subscriber $subscriber
 	 * @return array
 	 */
-	private function assertSubscriberIsNotEmpty( Subscriber $subscriber ): array {
+	private function assertSubscriberIsNotEmpty( Subscriber $subscriber ): iterable {
 		if ( empty( $map = $subscriber->getSubscribedEvents() ) ) {
 			throw new InvalidArgumentException(
 				sprintf(
