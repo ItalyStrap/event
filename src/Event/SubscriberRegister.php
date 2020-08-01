@@ -4,11 +4,9 @@ declare(strict_types=1);
 namespace ItalyStrap\Event;
 
 use ItalyStrap\Event\SubscriberInterface as Subscriber;
-use InvalidArgumentException;
 use RuntimeException;
-use function get_class;
 use function gettype;
-use function is_array;
+use function is_iterable;
 use function is_string;
 use function sprintf;
 
@@ -21,14 +19,14 @@ class SubscriberRegister implements SubscriberRegisterInterface {
 	/**
 	 * @var EventDispatcherInterface
 	 */
-	private $hooks;
+	private $dispatcher;
 
 	/**
 	 * EvenManager constructor.
-	 * @param EventDispatcherInterface $hooks
+	 * @param EventDispatcherInterface $dispatcher
 	 */
-	public function __construct( EventDispatcherInterface $hooks ) {
-		$this->hooks = $hooks;
+	public function __construct( EventDispatcherInterface $dispatcher ) {
+		$this->dispatcher = $dispatcher;
 	}
 
 	/**
@@ -36,7 +34,7 @@ class SubscriberRegister implements SubscriberRegisterInterface {
 	 */
 	public function addSubscriber( Subscriber $subscriber ): void {
 		foreach ( $subscriber->getSubscribedEvents() as $event_name => $parameters ) {
-			if ( isset( $parameters[0] ) && is_array( $parameters[0] ) ) {
+			if ( isset( $parameters[0] ) && is_iterable( $parameters[0] ) ) {
 				foreach ( $parameters as $listener ) {
 					$this->addSubscriberListener( $subscriber, $event_name, $listener );
 				}
@@ -56,7 +54,7 @@ class SubscriberRegister implements SubscriberRegisterInterface {
 	 * @param string|array         $parameters
 	 */
 	private function addSubscriberListener( Subscriber $subscriber, string $event_name, $parameters ): void {
-		$this->hooks->addListener(
+		$this->dispatcher->addListener(
 			$event_name,
 			$this->buildCallable( $subscriber, $parameters ),
 			...$this->buildParameters( $parameters )
@@ -68,7 +66,7 @@ class SubscriberRegister implements SubscriberRegisterInterface {
 	 */
 	public function removeSubscriber( Subscriber $subscriber ): void {
 		foreach ( $subscriber->getSubscribedEvents() as $event_name => $parameters ) {
-			if ( isset( $parameters[0] ) && is_array( $parameters[0] ) ) {
+			if ( isset( $parameters[0] ) && is_iterable( $parameters[0] ) ) {
 				foreach ( $parameters as $listener ) {
 					$this->removeSubscriberListener( $subscriber, $event_name, $listener );
 				}
@@ -87,7 +85,7 @@ class SubscriberRegister implements SubscriberRegisterInterface {
 	 * @param string|array         $parameters
 	 */
 	private function removeSubscriberListener( Subscriber $subscriber, string $event_name, $parameters ): void {
-		$this->hooks->removeListener(
+		$this->dispatcher->removeListener(
 			$event_name,
 			$this->buildCallable( $subscriber, $parameters ),
 			...$this->buildParameters( $parameters )

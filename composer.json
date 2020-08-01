@@ -6,7 +6,7 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "overclokk",
+            "name": "Enea Overclokk",
             "email": "info@overclokk.net",
             "homepage": "https://www.italystrap.com",
             "role": "Developer"
@@ -18,10 +18,9 @@
         "psr/log": "^1.1"
     },
     "require-dev": {
-        "lucatume/wp-browser": "~2.2",
+        "lucatume/wp-browser": "2.2",
         "codeception/c3": "2.*",
         "lucatume/function-mocker-le": "^1.0",
-        "italystrap/debug": "~2.0",
         "wp-coding-standards/wpcs": "^2.1",
         "phpcompatibility/php-compatibility": "^9.3",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
@@ -35,8 +34,10 @@
         "psr/event-dispatcher": "^1.0",
         "fig/event-dispatcher-util": "^1.0",
         "crell/tukio": "^1.0",
-        "italystrap/empress": "~1.0",
-        "inpsyde/object-hooks-remover": "^0.1"
+        "inpsyde/object-hooks-remover": "^0.1",
+        "italystrap/config": "^2.2",
+        "italystrap/debug": "~2.0",
+        "italystrap/empress": "~1.0"
     },
     "autoload": {
         "psr-4": {
@@ -52,12 +53,29 @@
         "inpsyde/objects-hooks-remover": "Package to remove WordPress hook callbacks that uses object methods or closures."
     },
     "scripts": {
-        "check": [
-            ".\\vendor\\bin\\phpcs -p --standard=PHPCompatibility src",
-            ".\\vendor\\bin\\phpcs -p --standard=WordPress src"
-        ],
         "test": [
             "test"
+        ],
+        "cs": [
+            "vendor\\bin\\phpcbf -p --ignore=./tests/_support/* ./src/ ./tests/ && vendor\\bin\\phpcs -p --ignore=./tests/_support/* ./src/ ./tests/"
+        ],
+        "analyze": [
+            "vendor\\bin\\phpstan analyze --level=max && vendor\\bin\\psalm"
+        ],
+        "unit": [
+            "vendor\\bin\\codecept run unit && vendor\\bin\\infection --threads=8"
+        ],
+        "bench": [
+            "vendor\\bin\\phpbench run --report=performance"
+        ],
+        "metrics": [
+            "vendor\\bin\\phpmetrics --report-html='./tests/_output/report' ./src"
+        ],
+        "insights": [
+            "vendor\\bin\\phpinsights"
+        ],
+        "clean": [
+            "vendor\\bin\\codecept clean"
         ]
     },
     "support"    : {

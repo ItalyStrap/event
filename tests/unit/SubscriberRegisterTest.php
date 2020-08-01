@@ -66,14 +66,14 @@ class SubscriberRegisterTest extends Unit {
 	/**
 	 * @test
 	 */
-	public function itShouldbeInstantiable() {
+	public function instanceOk() {
 		$sut = $this->getInstance();
 	}
 
 	/**
 	 * @test
 	 */
-	public function itShouldThrownErrorIfArrayIsEmptygggg() {
+	public function itShouldAddAndRemoveSubscriberFromGenerator() {
 		$sut = $this->getInstance();
 
 		$this->subscriber->getSubscribedEvents()->will(function (){
@@ -114,15 +114,77 @@ class SubscriberRegisterTest extends Unit {
 			Argument::type( 'callable' ),
 			Argument::type( 'int' ),
 			Argument::type( 'int' )
-		)->will(function ( $listener_args )
-//		use ( $provider_args, $test )
-		{
-//			$test->assertArgsPassedAreCorrect(  $listener_args, $provider_args  );
+		)->will(function ( $listener_args ) {
+			return true;
+		})->shouldBeCalled();
+
+		$this->hooks->removeListener(
+			Argument::type( 'string' ),
+			Argument::type( 'callable' ),
+			Argument::type( 'int' ),
+			Argument::type( 'int' )
+		)->will(function ( $listener_args ) {
 			return true;
 		})->shouldBeCalled();
 
 		$sut->addSubscriber( $this->getSubscriber() );
-//		$sut->removeSubscriber( $this->getSubscriber() );
+		$sut->removeSubscriber( $this->getSubscriber() );
+	}
+
+	public function iteratorProvider() {
+
+		yield 'ArrayObject' => [
+			new \ArrayObject(['event_name' => 'callback']),
+		];
+
+		yield 'ConfigObject' => [
+			new \ItalyStrap\Config\Config(['event_name' => 'callback']),
+		];
+
+		yield 'ConfigObjectWithAdd' => [
+			(new \ItalyStrap\Config\Config())->add( 'event_name', 'callback' ),
+		];
+
+		yield 'ArrayIterator' => [
+			new \ArrayIterator([
+				'event_name' 			=> 'callback',
+				'event_name1' 			=> 'callback',
+			]),
+		];
+
+	}
+
+	/**
+	 * @test
+	 * @dataProvider iteratorProvider()
+	 */
+	public function itShouldAddAndRemoveSubscriberFromIterators( $iterator ) {
+		$sut = $this->getInstance();
+
+		$this->subscriber->getSubscribedEvents()->will(function () use ( $iterator ) {
+			return $iterator;
+		});
+
+		$this->hooks->addListener(
+			Argument::type( 'string' ),
+			Argument::type( 'callable' ),
+			Argument::type( 'int' ),
+			Argument::type( 'int' )
+		)->will(function ( $listener_args ) {
+			return true;
+		})->shouldBeCalled();
+
+		$this->hooks->removeListener(
+			Argument::type( 'string' ),
+			Argument::type( 'callable' ),
+			Argument::type( 'int' ),
+			Argument::type( 'int' )
+		)->will(function ( $listener_args ) {
+			return true;
+		})->shouldBeCalled();
+
+		$sut->addSubscriber( $this->getSubscriber() );
+		$sut->removeSubscriber( $this->getSubscriber() );
 	}
 
 	public function subscriberProvider() {
@@ -134,7 +196,7 @@ class SubscriberRegisterTest extends Unit {
 //			'event_name => callable'					=> [
 //				[
 //					'event_name' 			=> function () {},
-////					'event_name1' 			=> [ new \stdClass(), 'run' ],
+//					'event_name1' 			=> [ new \stdClass(), 'run' ],
 //				]
 //			],
 			'event_name => callback'					=> [
