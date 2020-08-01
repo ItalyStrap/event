@@ -13,8 +13,8 @@ use function sprintf;
 class SubscriberRegister implements SubscriberRegisterInterface {
 
 
-	private const ARGS = 1;
-	private const ORDER = 10;
+	private const ACCEPTED_ARGS = 1;
+	private const PRIORITY = 10;
 
 	/**
 	 * @var EventDispatcherInterface
@@ -139,8 +139,8 @@ class SubscriberRegister implements SubscriberRegisterInterface {
 	 */
 	private function buildParameters( $parameters ): array {
 		return [
-			$parameters[ Subscriber::PRIORITY ] ?? self::ORDER,
-			$parameters[ Subscriber::ACCEPTED_ARGS ] ?? self::ARGS,
+			$parameters[ Subscriber::PRIORITY ] ?? self::PRIORITY,
+			$parameters[ Subscriber::ACCEPTED_ARGS ] ?? self::ACCEPTED_ARGS,
 		];
 	}
 }

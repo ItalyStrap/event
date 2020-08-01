@@ -18,13 +18,7 @@ use function remove_filter;
  */
 class EventDispatcher implements EventDispatcherInterface {
 
-	protected const ARGS = 3;
-
-	/**
-	 * @deprecated
-	 */
-	protected const ORDER = 10;
-
+	protected const ACCEPTED_ARGS = 3;
 	protected const PRIORITY = 10;
 
 	/**
@@ -34,7 +28,7 @@ class EventDispatcher implements EventDispatcherInterface {
 		string $event_name,
 		callable $listener,
 		int $priority = self::PRIORITY,
-		int $accepted_args = self::ARGS
+		int $accepted_args = self::ACCEPTED_ARGS
 	): bool {
 		return add_filter( ...func_get_args() );
 	}
