@@ -73,19 +73,6 @@ class SubscriberRegisterTest extends Unit {
 	/**
 	 * @test
 	 */
-//	public function itShouldThrownErrorIfArrayIsEmpty() {
-//		$sut = $this->getInstance();
-//
-//		$this->subscriber->getSubscribedEvents()->willReturn([]);
-//
-//		$this->expectException( \InvalidArgumentException::class );
-//		$sut->addSubscriber( $this->getSubscriber() );
-//		$sut->removeSubscriber( $this->getSubscriber() );
-//	}
-
-	/**
-	 * @test
-	 */
 	public function itShouldThrownErrorIfArrayIsEmptygggg() {
 		$sut = $this->getInstance();
 

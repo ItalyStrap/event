@@ -5,7 +5,9 @@ namespace ItalyStrap\Event;
 
 use ItalyStrap\Event\SubscriberInterface as Subscriber;
 use InvalidArgumentException;
+use RuntimeException;
 use function get_class;
+use function gettype;
 use function is_array;
 use function is_string;
 use function sprintf;
@@ -94,23 +96,6 @@ class SubscriberRegister implements SubscriberRegisterInterface {
 
 	/**
 	 * @param Subscriber $subscriber
-	 * @return array
-	 */
-	private function assertSubscriberIsNotEmpty( Subscriber $subscriber ): iterable {
-		if ( empty( $map = $subscriber->getSubscribedEvents() ) ) {
-			throw new InvalidArgumentException(
-				sprintf(
-					'You have to add at least an event name and a method to %s::class',
-					get_class( $subscriber )
-				)
-			);
-		}
-
-		return $map;
-	}
-
-	/**
-	 * @param Subscriber $subscriber
 	 * @param string|array $parameters
 	 * @return callable
 	 */
@@ -124,9 +109,9 @@ class SubscriberRegister implements SubscriberRegisterInterface {
 			/** @var callable $callable */
 			$callable = [$subscriber, $parameters[ Subscriber::CALLBACK ]];
 		} else {
-			throw new \RuntimeException(\sprintf(
+			throw new RuntimeException( sprintf(
 				'Impossible to build a valid callable because $parameters is a type %s',
-				\gettype( $parameters )
+				gettype( $parameters )
 			));
 		}
 
