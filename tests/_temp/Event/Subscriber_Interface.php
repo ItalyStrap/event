@@ -9,7 +9,7 @@
  * @author Carl Alexander <contact@carlalexander.ca>
  */
 declare(strict_types=1);
-
+// phpcs:ignoreFile
 namespace ItalyStrap\Event;
 
 interface Subscriber_Interface {

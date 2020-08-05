@@ -39,5 +39,5 @@ if ( ! \function_exists( 'd_footer' ) ) {
 
 add_action( 'plugins_loaded', function () {
 	require( __DIR__ . '/vendor/autoload.php' );
-	require 'example.php';
+//	require 'example.php';
 } );

@@ -76,7 +76,7 @@ class SubscriberRegisterTest extends Unit {
 	public function itShouldAddAndRemoveSubscriberFromGenerator() {
 		$sut = $this->getInstance();
 
-		$this->subscriber->getSubscribedEvents()->will(function (){
+		$this->subscriber->getSubscribedEvents()->will(function () {
 
 			yield 'event_name' 			=> 'callback';
 
@@ -151,7 +151,6 @@ class SubscriberRegisterTest extends Unit {
 				'event_name1' 			=> 'callback',
 			]),
 		];
-
 	}
 
 	/**
@@ -355,7 +354,8 @@ class SubscriberRegisterTest extends Unit {
 
 		Assert::assertEquals(
 			$accepted_args,
-			$args[ $event_name ][ SubscriberInterface::ACCEPTED_ARGS ] ?? 1, // 1 is the defaul number of passed argument
+			$args[ $event_name ][ SubscriberInterface::ACCEPTED_ARGS ]
+				?? 1, // 1 is the defaul number of passed argument
 			'Should be default accepted args'
 		);
 	}

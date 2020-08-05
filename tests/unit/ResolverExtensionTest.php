@@ -9,7 +9,7 @@ use ItalyStrap\Empress\AurynResolverInterface;
 use ItalyStrap\Empress\Extension;
 use ItalyStrap\Empress\Injector;
 use ItalyStrap\Event\SubscriberRegister;
-use ItalyStrap\Event\EventResolverExtension;
+use ItalyStrap\Event\SubscribersConfigExtension;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use UnitTester;
@@ -70,10 +70,10 @@ class ResolverExtensionTest extends Unit {
 	protected function _after() {
 	}
 
-	protected function getInstance(): EventResolverExtension {
-		$sut = new EventResolverExtension( $this->getEventManager(), $this->getConfig() );
+	protected function getInstance(): SubscribersConfigExtension {
+		$sut = new SubscribersConfigExtension( $this->getEventManager(), $this->getConfig() );
 		$this->assertInstanceOf( Extension::class, $sut, '' );
-		$this->assertInstanceOf( EventResolverExtension::class, $sut, '' );
+		$this->assertInstanceOf( SubscribersConfigExtension::class, $sut, '' );
 		return $sut;
 	}
 
@@ -89,7 +89,7 @@ class ResolverExtensionTest extends Unit {
 	 */
 	public function itShouldHaveName() {
 		$sut = $this->getInstance();
-		$this->assertStringContainsString( EventResolverExtension::SUBSCRIBERS, $sut->name(), '' );
+		$this->assertStringContainsString( SubscribersConfigExtension::SUBSCRIBERS, $sut->name(), '' );
 	}
 
 	/**

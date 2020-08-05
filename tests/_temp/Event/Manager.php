@@ -13,7 +13,7 @@ declare(strict_types=1);
  */
 
 namespace ItalyStrap\Event;
-
+// phpcs:ignoreFile
 /**
  * Class description
  */
@@ -36,7 +36,7 @@ class Manager {
 			$this->add_subscriber_listener( $subscriber, $event_name, $parameters );
 		}
 	}
- 
+
 	/**
 	 * Adds the given subscriber listener to the list of event listeners
 	 * that listen to the given event.
@@ -57,7 +57,7 @@ class Manager {
 			);
 		}
 	}
- 
+
 	/**
 	 * Adds the given event listener to the list of event listeners
 	 * that listen to the given event.
@@ -70,7 +70,7 @@ class Manager {
 	public function add_listener( $event_name, $listener, $priority = 10, $accepted_args = 1 ) {
 		\add_filter( $event_name, $listener, $priority, $accepted_args );
 	}
- 
+
 	/**
 	 * Hard removing a method registerd by an anonimous object.
 	 *
@@ -99,7 +99,7 @@ class Manager {
 			}
 		}
 	}
- 
+
 	/**
 	 * Removes an event subscriber.
 	 *
@@ -113,7 +113,7 @@ class Manager {
 			$this->remove_subscriber_listener( $subscriber, $event_name, $parameters );
 		}
 	}
- 
+
 	/**
 	 * Adds the given subscriber listener to the list of event listeners
 	 * that listen to the given event.
@@ -133,7 +133,7 @@ class Manager {
 			);
 		}
 	}
- 
+
 	/**
 	 * Removes the given event listener from the list of event listeners
 	 * that listen to the given event.

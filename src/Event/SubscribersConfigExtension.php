@@ -6,7 +6,7 @@ namespace ItalyStrap\Event;
 use Auryn\ConfigException;
 use Auryn\InjectionException;
 use ItalyStrap\Config\ConfigInterface;
-use ItalyStrap\Empress\AurynResolverInterface;
+use ItalyStrap\Empress\AurynConfigInterface;
 use ItalyStrap\Empress\Extension;
 use ItalyStrap\Empress\Injector;
 
@@ -14,7 +14,7 @@ use ItalyStrap\Empress\Injector;
  * Class EventResolverExtension
  * @package ItalyStrap\Event
  */
-class EventResolverExtension implements Extension {
+class SubscribersConfigExtension implements Extension {
 
 	/** @var string */
 	const SUBSCRIBERS = 'subscribers';
@@ -49,7 +49,7 @@ class EventResolverExtension implements Extension {
 	/**
 	 * @inheritDoc
 	 */
-	public function execute( AurynResolverInterface $application ): void {
+	public function execute( AurynConfigInterface $application ): void {
 		$application->walk( $this->name(), [$this, 'walk'] );
 	}
 

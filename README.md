@@ -380,7 +380,7 @@ use ItalyStrap\Config\ConfigFactory;
 use ItalyStrap\Empress\AurynResolver;
 use ItalyStrap\Empress\Injector;
 use ItalyStrap\Event\SubscriberRegister;
-use ItalyStrap\Event\EventResolverExtension;
+use ItalyStrap\Event\SubscribersConfigExtension;
 use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\SubscriberInterface;
 
@@ -436,14 +436,14 @@ $dependencies = ConfigFactory::make([
     ],
     // Now add in the array all your subscribers that implemente the ItalyStrap\Event\SubscriberInterface
     // The instances create are shared by default for later removing like you se above.
-    EventResolverExtension::SUBSCRIBERS	=> [
+    SubscribersConfigExtension::SUBSCRIBERS	=> [
         Subscriber::class,
     ],
     // You can also add more configuration for the AurynResolver https://github.com/ItalyStrap/empress
 ]);
 
 // This wil instantiate the EventResolverExtension::class
-$event_resolver = $injector->make( EventResolverExtension::class, [
+$event_resolver = $injector->make( SubscribersConfigExtension::class, [
     // In the EventResolverExtension object you can pass a config key value pair for adding or not listener at runtime
     // from your theme or plugin options
     ':config'	=> ConfigFactory::make([
@@ -484,7 +484,7 @@ use ItalyStrap\Config\ConfigFactory;
 use ItalyStrap\Empress\AurynResolver;
 use ItalyStrap\Empress\Injector;
 use ItalyStrap\Event\SubscriberRegister;
-use ItalyStrap\Event\EventResolverExtension;
+use ItalyStrap\Event\SubscribersConfigExtension;
 use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\SubscriberInterface;
 
@@ -562,14 +562,14 @@ $dependencies = ConfigFactory::make([
     ],
     // Now add in the array all your subscribers that implemente the ItalyStrap\Event\SubscriberInterface
     // The instances create are shared by default for later removing like you se above.
-    EventResolverExtension::SUBSCRIBERS	=> [
+    SubscribersConfigExtension::SUBSCRIBERS	=> [
         MyClassSubscriber::class,
     ],
     // You can also add more configuration for the AurynResolver https://github.com/ItalyStrap/empress
 ]);
 
 // This wil instantiate the EventResolverExtension::class
-$event_resolver = $injector->make( EventResolverExtension::class, [
+$event_resolver = $injector->make( SubscribersConfigExtension::class, [
     // In the EventResolverExtension object you can pass a config key value pair for adding or not listener at runtime
     // from your theme or plugin options
     ':config'	=> ConfigFactory::make([

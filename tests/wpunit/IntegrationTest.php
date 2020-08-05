@@ -8,7 +8,7 @@ use ItalyStrap\Config\ConfigFactory;
 use ItalyStrap\Empress\AurynResolver;
 use ItalyStrap\Empress\Injector;
 use ItalyStrap\Event\SubscriberRegister;
-use ItalyStrap\Event\EventResolverExtension;
+use ItalyStrap\Event\SubscribersConfigExtension;
 use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\EventDispatcherInterface;
 use ItalyStrap\Event\SubscriberInterface;
@@ -150,7 +150,7 @@ class IntegrationTest extends WPTestCase {
 		$injector->alias(EventDispatcherInterface::class, EventDispatcher::class);
 		$injector->share( EventDispatcherInterface::class );
 		$injector->share( SubscriberRegister::class );
-		$event_resolver = $injector->make( EventResolverExtension::class, [
+		$event_resolver = $injector->make( SubscribersConfigExtension::class, [
 			':config'	=> ConfigFactory::make([
 				Subscriber::class	=> false
 			]),
@@ -164,7 +164,7 @@ class IntegrationTest extends WPTestCase {
 //				HooksInterface::class,
 //				EventManager::class,
 //			],
-			EventResolverExtension::SUBSCRIBERS	=> [
+			SubscribersConfigExtension::SUBSCRIBERS	=> [
 				Subscriber::class,
 //				Subscriber::class	=> false,
 			],

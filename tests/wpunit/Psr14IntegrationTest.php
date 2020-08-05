@@ -204,7 +204,7 @@ class Psr14IntegrationTest extends WPTestCase {
 	}
 
 	/**
-	 * @test
+	 *
 	 */
 	public function ifSameEventIsDispatchedMoreThanOnceItShouldStopPropagationIfListenerStopPropagationSymfonyMirror() {
 		$sut = new EventDispatcher();
