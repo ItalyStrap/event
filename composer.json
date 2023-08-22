@@ -20,6 +20,8 @@
     "require-dev": {
         "lucatume/wp-browser": "^3.1",
         "lucatume/function-mocker-le": "^1.0",
+        "codeception/module-asserts": "^1.0",
+        "phpspec/prophecy-phpunit": "^2.0",
 
         "squizlabs/php_codesniffer": "^3.7",
         "phpcompatibility/php-compatibility": "^9.3",
@@ -64,11 +66,17 @@
         "cs:fix": [
             "@php vendor/bin/phpcbf -p"
         ],
+        "psalm": [
+            "@php ./vendor/bin/psalm --no-cache"
+        ],
         "analyze": [
             "vendor\\bin\\phpstan analyze --level=max && vendor\\bin\\psalm"
         ],
         "unit": [
-            "vendor\\bin\\codecept run unit && vendor\\bin\\infection --threads=8"
+            "@php ./vendor/bin/codecept run unit"
+        ],
+        "infection": [
+            "@php vendor/bin/infection --threads=8"
         ],
         "bench": [
             "vendor\\bin\\phpbench run --report=performance"

@@ -14,15 +14,9 @@ class PsrDispatcher implements PsrDispatcherInterface
      */
     private $wp_filter;
 
-    /**
-     * @var CallableFactoryInterface
-     */
-    private $factory;
+    private \ItalyStrap\PsrDispatcher\CallableFactoryInterface $factory;
 
-    /**
-     * @var EventDispatcher
-     */
-    private $dispatcher;
+    private \ItalyStrap\Event\EventDispatcher $dispatcher;
 
     /**
      * Dispatcher constructor.

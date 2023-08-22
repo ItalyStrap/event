@@ -20,15 +20,9 @@ class SubscribersConfigExtension implements Extension
     /** @var string */
     public const SUBSCRIBERS = 'subscribers';
 
-    /**
-     * @var SubscriberRegister
-     */
-    private $event_manager;
+    private \ItalyStrap\Event\SubscriberRegister $event_manager;
 
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private \ItalyStrap\Config\ConfigInterface $config;
 
     /**
      * EventResolverExtension constructor.

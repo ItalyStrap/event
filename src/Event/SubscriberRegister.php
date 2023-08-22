@@ -17,10 +17,7 @@ class SubscriberRegister implements SubscriberRegisterInterface
     private const ACCEPTED_ARGS = 1;
     private const PRIORITY = 10;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
+    private \ItalyStrap\Event\EventDispatcherInterface $dispatcher;
 
     /**
      * EvenManager constructor.
