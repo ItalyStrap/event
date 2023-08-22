@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ItalyStrap\Tests;
@@ -16,125 +17,132 @@ use UnitTester;
 require_once codecept_data_dir( '/fixtures/psr-14.php' );
 // phpcs:enable
 
-class CallableListenerHolderTest extends Unit {
+class CallableListenerHolderTest extends Unit
+{
+    use ParameterDeriverTrait;
 
-	use ParameterDeriverTrait;
-
-	/**
-	 * @var UnitTester
-	 */
-	protected $tester;
+    /**
+     * @var UnitTester
+     */
+    protected $tester;
 
 	// phpcs:ignore -- Method from Codeception
 	protected function _before() {
-	}
+    }
 
 	// phpcs:ignore -- Method from Codeception
 	protected function _after() {
-	}
+    }
 
-	private function getInstance( callable  $listener ) {
-		$sut = new CallableListenerHolder( $listener );
-		$this->assertInstanceOf( ListenerHolderInterface::class, $sut, '' );
-		return $sut;
-	}
+    private function getInstance(callable $listener)
+    {
+        $sut = new CallableListenerHolder($listener);
+        $this->assertInstanceOf(ListenerHolderInterface::class, $sut, '');
+        return $sut;
+    }
 
-	/**
-	 * @test
-	 */
-	public function itShouldBeInstantiable() {
-		$sut = $this->getInstance( static function ( object $event ) {
-		} );
-	}
+    /**
+     * @test
+     */
+    public function itShouldBeInstantiable()
+    {
+        $sut = $this->getInstance(static function (object $event) {
+        });
+    }
 
-	/**
-	 * @test
-	 */
-	public function itShouldReturnListener() {
-		$listener = static function ( object $event ) {
-		};
-		$sut = $this->getInstance( $listener );
-		$this->assertSame( $listener, $sut->listener(), '' );
-	}
+    /**
+     * @test
+     */
+    public function itShouldReturnListener()
+    {
+        $listener = static function (object $event) {
+        };
+        $sut = $this->getInstance($listener);
+        $this->assertSame($listener, $sut->listener(), '');
+    }
 
-	/**
-	 * @test
-	 */
-	public function itShouldReturnVoidListener() {
-		$event = new \stdClass();
-		$event->value = 0;
+    /**
+     * @test
+     */
+    public function itShouldReturnVoidListener()
+    {
+        $event = new \stdClass();
+        $event->value = 0;
 
-		$listener = static function ( object $event ) {
-			$event->value = 42;
-		};
-		$sut = $this->getInstance( $listener );
-		$sut->nullListener();
-		$sut( $event );
+        $listener = static function (object $event) {
+            $event->value = 42;
+        };
+        $sut = $this->getInstance($listener);
+        $sut->nullListener();
+        $sut($event);
 
-		$this->assertEmpty( $event->value, '' );
-	}
+        $this->assertEmpty($event->value, '');
+    }
 
-	/**
-	 * @test
-	 */
-	public function itShouldExecute() {
-		$event = $this->prophesize( StoppableEventInterface::class );
+    /**
+     * @test
+     */
+    public function itShouldExecute()
+    {
+        $event = $this->prophesize(StoppableEventInterface::class);
 
-		$event->isPropagationStopped()->willReturn( false );
+        $event->isPropagationStopped()->willReturn(false);
 
-		$calls = 0;
-		$listener = static function ( object $event_obj ) use ( $event, &$calls ) {
-			Assert::assertSame( $event->reveal(), $event_obj, '' );
-			$calls++;
-		};
+        $calls = 0;
+        $listener = static function (object $event_obj) use ($event, &$calls) {
+            Assert::assertSame($event->reveal(), $event_obj, '');
+            $calls++;
+        };
 
-		$sut = $this->getInstance( $listener );
-		$sut( $event->reveal() );
+        $sut = $this->getInstance($listener);
+        $sut($event->reveal());
 
-		$this->assertTrue( 1 === $calls, '' );
-	}
+        $this->assertTrue(1 === $calls, '');
+    }
 
-	/**
-	 * @test
-	 */
-	public function itShouldNotExecuteIfEventIsStopped() {
-		$event = $this->prophesize( StoppableEventInterface::class );
+    /**
+     * @test
+     */
+    public function itShouldNotExecuteIfEventIsStopped()
+    {
+        $event = $this->prophesize(StoppableEventInterface::class);
 
-		$event->isPropagationStopped()->willReturn( true );
+        $event->isPropagationStopped()->willReturn(true);
 
-		$calls = 0;
-		$listener = static function ( object $event_obj ) use ( $event, &$calls ) {
-			// Never called
-			$calls++;
-		};
+        $calls = 0;
+        $listener = static function (object $event_obj) use ($event, &$calls) {
+            // Never called
+            $calls++;
+        };
 
-		$sut = $this->getInstance( $listener );
-		$sut( $event->reveal() );
+        $sut = $this->getInstance($listener);
+        $sut($event->reveal());
 
-		$this->assertTrue( 0 === $calls, '' );
-	}
+        $this->assertTrue(0 === $calls, '');
+    }
 
-	/**
-	 * @test
-	 */
-	public function testSomeCallable() {
-		$event = new stdClass;
+    /**
+     * @test
+     */
+    public function testSomeCallable()
+    {
+        $event = new stdClass();
 
-		$listener = new ListenerChangeValueToText();
-		$sut = $this->getInstance( [ $listener, 'changeText' ] );
+        $listener = new ListenerChangeValueToText();
+        $sut = $this->getInstance([ $listener, 'changeText' ]);
 
-		$sut( $event );
+        $sut($event);
 
-		$this->assertTrue( 'new value' === $event->value, '' );
-	}
+        $this->assertTrue('new value' === $event->value, '');
+    }
 
-	/**
-	 * @test
-	 */
+    /**
+     * @test
+     */
 //    public function testSomeFeature()
 //    {
-//		$sut = $this->getInstance( static function ( object $event ) {} );
-//		codecept_debug( $type = $this->getParameterType( function ( object $event ) {} ) );
-//		$this->assertTrue( $type === 'object' || ( new \ReflectionClass( $type ) )->isInstantiable() );
+//      $sut = $this->getInstance( static function ( object $event ) {} );
+//      codecept_debug( $type = $this->getParameterType( function ( object $event ) {} ) );
+//      $this->assertTrue( $type === 'object' || ( new \ReflectionClass( $type ) )->isInstantiable() );
 //    }
 }

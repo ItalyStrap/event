@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ItalyStrap\Tests;
@@ -18,218 +19,229 @@ require_once codecept_data_dir( '/fixtures/psr-14.php' );
  * Class Psr14IntegrationTest
  * @package ItalyStrap\Tests
  */
-class Psr14IntegrationTest extends WPTestCase {
+class Psr14IntegrationTest extends WPTestCase
+{
+    /**
+     * @var WpunitTester
+     */
+    protected $tester;
 
-	/**
-	 * @var WpunitTester
-	 */
-	protected $tester;
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $event_dispatcher;
 
-	/**
-	 * @var EventDispatcherInterface
-	 */
-	private $event_dispatcher;
+    /**
+     * @var ListenerProviderInterface
+     */
+    private $listener;
 
-	/**
-	 * @var ListenerProviderInterface
-	 */
-	private $listener;
+    /**
+     * @return object
+     */
+    public function getEventDispatcher()
+    {
+        global $wp_filter;
+        return new PsrDispatcher($wp_filter, new CallableFactory(), new \ItalyStrap\Event\EventDispatcher());
+    }
 
-	/**
-	 * @return object
-	 */
-	public function getEventDispatcher() {
-		global $wp_filter;
-		return new PsrDispatcher( $wp_filter, new CallableFactory(), new \ItalyStrap\Event\EventDispatcher() );
-	}
+    public function setUp(): void
+    {
+        // Before...
+        parent::setUp();
 
-	public function setUp(): void {
-		// Before...
-		parent::setUp();
+        $_SERVER['REQUEST_TIME'] = \time();
 
-		$_SERVER['REQUEST_TIME'] = \time();
+        global $wp_filter, $wp_actions;
+        $wp_filter = $wp_actions = [];
 
-		global $wp_filter, $wp_actions;
-		$wp_filter = $wp_actions = [];
+        $this->listener = new class implements ListenerProviderInterface {
+            /**
+             * @inheritDoc
+             */
+            public function getListenersForEvent(object $event): iterable
+            {
+                // TODO: Implement getListenersForEvent() method.
+            }
+        };
+        // Your set up methods here.
+    }
 
-		$this->listener = new class implements ListenerProviderInterface {
+    public function tearDown(): void
+    {
+        // Your tear down methods here.
 
-			/**
-			 * @inheritDoc
-			 */
-			public function getListenersForEvent( object $event ): iterable {
-				// TODO: Implement getListenersForEvent() method.
-			}
-		};
-		// Your set up methods here.
-	}
+        global $wp_filter, $wp_actions;
+        unset($wp_filter, $wp_actions);
+        // Then...
+        parent::tearDown();
+    }
 
-	public function tearDown(): void {
-		// Your tear down methods here.
+    /**
+     * @test
+     */
+    public function itShouldAddFunctionListenerAndChangeValue()
+    {
 
-		global $wp_filter, $wp_actions;
-		unset($wp_filter, $wp_actions);
-		// Then...
-		parent::tearDown();
-	}
+        $sut = $this->getEventDispatcher();
 
-	/**
-	 * @test
-	 */
-	public function itShouldAddFunctionListenerAndChangeValue() {
+        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42');
 
-		$sut = $this->getEventDispatcher();
+        /** @var object $event */
+        $event = $sut->dispatch(new EventFirst());
 
-		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42' );
+        $this->assertEquals(42, $event->value, '');
+        $this->assertFalse($event->isPropagationStopped(), '');
+    }
 
-		/** @var object $event */
-		$event = $sut->dispatch( new EventFirst() );
+    /**
+     * @test
+     */
+    public function itShouldRemoveFunctionListenerAndReturnValueWithoutChanges()
+    {
 
-		$this->assertEquals( 42, $event->value, '' );
-		$this->assertFalse( $event->isPropagationStopped(), '' );
-	}
+        $sut = $this->getEventDispatcher();
 
-	/**
-	 * @test
-	 */
-	public function itShouldRemoveFunctionListenerAndReturnValueWithoutChanges() {
+        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42');
+        $sut->removeListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42');
 
-		$sut = $this->getEventDispatcher();
+        /** @var object $event */
+        $event = $sut->dispatch(new EventFirst());
 
-		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42' );
-		$sut->removeListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42' );
+        $this->assertEquals(0, $event->value, '');
+        $this->assertFalse($event->isPropagationStopped(), '');
+    }
 
-		/** @var object $event */
-		$event = $sut->dispatch( new EventFirst() );
+    /**
+     * @test
+     */
+    public function itShouldStopPropagation()
+    {
 
-		$this->assertEquals( 0, $event->value, '' );
-		$this->assertFalse( $event->isPropagationStopped(), '' );
-	}
+        $sut = $this->getEventDispatcher();
 
-	/**
-	 * @test
-	 */
-	public function itShouldStopPropagation() {
+        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42');
+        $sut->addListener(EventFirst::class, [new ListenerChangeValueToText(), 'changeText' ]);
 
-		$sut = $this->getEventDispatcher();
-
-		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42' );
-		$sut->addListener( EventFirst::class, [new ListenerChangeValueToText, 'changeText' ]);
-
-		// Here it will set value to false and stop propagation
-		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_false_and_stop_propagation' );
-		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_77' );
-
-
-		$event = new EventFirst();
-
-		/** @var object $event */
-		$sut->dispatch( $event );
-
-		$this->assertEquals( false, $event->value, '' );
-		$this->assertTrue( $event->isPropagationStopped(), '' );
-	}
-
-	/**
-	 * @test
-	 */
-	public function itShouldNotStopPropagation() {
-
-		$sut = $this->getEventDispatcher();
-
-		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42' );
-		$sut->addListener( EventFirst::class, [new ListenerChangeValueToText, 'changeText' ]);
-		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_77' );
+        // Here it will set value to false and stop propagation
+        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_false_and_stop_propagation');
+        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_77');
 
 
-		$event = new EventFirst();
+        $event = new EventFirst();
 
-		/** @var object $event */
-		$sut->dispatch( $event );
+        /** @var object $event */
+        $sut->dispatch($event);
 
-		$this->assertEquals( 77, $event->value, '' );
-		$this->assertFalse( $event->isPropagationStopped(), '' );
-	}
+        $this->assertEquals(false, $event->value, '');
+        $this->assertTrue($event->isPropagationStopped(), '');
+    }
 
-	/**
-	 * @test
-	 */
-	public function itShouldRemoveListenerAndReturnValue77() {
+    /**
+     * @test
+     */
+    public function itShouldNotStopPropagation()
+    {
 
-		$sut = $this->getEventDispatcher();
+        $sut = $this->getEventDispatcher();
 
-		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42' );
-		$sut->addListener( EventFirst::class, [new ListenerChangeValueToText, 'changeText' ]);
-		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_false_and_stop_propagation' );
-		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_77' );
+        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42');
+        $sut->addListener(EventFirst::class, [new ListenerChangeValueToText(), 'changeText' ]);
+        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_77');
 
-		$sut->removeListener(
-			EventFirst::class,
-			__NAMESPACE__ . '\listener_change_value_to_false_and_stop_propagation'
-		);
 
-		$event = new EventFirst();
+        $event = new EventFirst();
 
-		/** @var object $event */
-		$sut->dispatch( $event );
+        /** @var object $event */
+        $sut->dispatch($event);
 
-		$this->assertEquals( 77, $event->value, '' );
-		$this->assertFalse( $event->isPropagationStopped(), '' );
-	}
+        $this->assertEquals(77, $event->value, '');
+        $this->assertFalse($event->isPropagationStopped(), '');
+    }
 
-	/**
-	 * @test
-	 */
-	public function ifSameEventIsDispatchedMoreThanOnceItShouldStopPropagationIfListenerStopPropagation() {
+    /**
+     * @test
+     */
+    public function itShouldRemoveListenerAndReturnValue77()
+    {
 
-		$sut = $this->getEventDispatcher();
+        $sut = $this->getEventDispatcher();
 
-		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42' );
-		$sut->addListener( EventFirst::class, [new ListenerChangeValueToText, 'changeText' ]);
-		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_false_and_stop_propagation' );
-		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_77' );
+        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42');
+        $sut->addListener(EventFirst::class, [new ListenerChangeValueToText(), 'changeText' ]);
+        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_false_and_stop_propagation');
+        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_77');
 
-		$event = new EventFirst();
+        $sut->removeListener(
+            EventFirst::class,
+            __NAMESPACE__ . '\listener_change_value_to_false_and_stop_propagation'
+        );
 
-		/** @var object $event */
-		$event = $sut->dispatch( $event );
+        $event = new EventFirst();
 
-		$this->assertEquals( false, $event->value, '' );
-		$this->assertTrue( $event->isPropagationStopped(), '' );
+        /** @var object $event */
+        $sut->dispatch($event);
 
-		$event = $sut->dispatch( new EventFirst() );
+        $this->assertEquals(77, $event->value, '');
+        $this->assertFalse($event->isPropagationStopped(), '');
+    }
 
-		$this->assertEquals( false, $event->value, '' );
-		$this->assertTrue( $event->isPropagationStopped(), '' );
-	}
+    /**
+     * @test
+     */
+    public function ifSameEventIsDispatchedMoreThanOnceItShouldStopPropagationIfListenerStopPropagation()
+    {
 
-	/**
-	 *
-	 */
-	public function ifSameEventIsDispatchedMoreThanOnceItShouldStopPropagationIfListenerStopPropagationSymfonyMirror() {
-		$sut = new EventDispatcher();
+        $sut = $this->getEventDispatcher();
 
-		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42' );
-		$sut->addListener( EventFirst::class, [new ListenerChangeValueToText, 'changeText' ]);
-		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_false_and_stop_propagation' );
-		$sut->addListener( EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_77' );
+        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42');
+        $sut->addListener(EventFirst::class, [new ListenerChangeValueToText(), 'changeText' ]);
+        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_false_and_stop_propagation');
+        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_77');
 
-		$event = new EventFirst();
+        $event = new EventFirst();
 
-		/** @var object $event */
-		$event = $sut->dispatch( $event );
+        /** @var object $event */
+        $event = $sut->dispatch($event);
 
-		$this->assertEquals( false, $event->value, '' );
-		$this->assertTrue( $event->isPropagationStopped(), '' );
+        $this->assertEquals(false, $event->value, '');
+        $this->assertTrue($event->isPropagationStopped(), '');
 
-		$event = $sut->dispatch( new EventFirst() );
+        $event = $sut->dispatch(new EventFirst());
 
-		$this->assertEquals( false, $event->value, '' );
-		$this->assertTrue( $event->isPropagationStopped(), '' );
-	}
+        $this->assertEquals(false, $event->value, '');
+        $this->assertTrue($event->isPropagationStopped(), '');
+    }
 
-	public function testServerRequest() {
-		codecept_debug($_SERVER['REQUEST_TIME']);
-		codecept_debug( \json_encode( \is_int( $_SERVER['REQUEST_TIME'] ) ) );
-	}
+    /**
+     *
+     */
+    public function ifSameEventIsDispatchedMoreThanOnceItShouldStopPropagationIfListenerStopPropagationSymfonyMirror()
+    {
+        $sut = new EventDispatcher();
+
+        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42');
+        $sut->addListener(EventFirst::class, [new ListenerChangeValueToText(), 'changeText' ]);
+        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_false_and_stop_propagation');
+        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_77');
+
+        $event = new EventFirst();
+
+        /** @var object $event */
+        $event = $sut->dispatch($event);
+
+        $this->assertEquals(false, $event->value, '');
+        $this->assertTrue($event->isPropagationStopped(), '');
+
+        $event = $sut->dispatch(new EventFirst());
+
+        $this->assertEquals(false, $event->value, '');
+        $this->assertTrue($event->isPropagationStopped(), '');
+    }
+
+    public function testServerRequest()
+    {
+        codecept_debug($_SERVER['REQUEST_TIME']);
+        codecept_debug(\json_encode(\is_int($_SERVER['REQUEST_TIME'])));
+    }
 }

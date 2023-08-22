@@ -58,11 +58,11 @@
         "inpsyde/objects-hooks-remover": "Package to remove WordPress hook callbacks that uses object methods or closures."
     },
     "scripts": {
-        "test": [
-            "test"
-        ],
         "cs": [
-            "vendor\\bin\\phpcbf -p --ignore=./tests/_support/* ./src/ ./tests/ && vendor\\bin\\phpcs -p --ignore=./tests/_support/* ./src/ ./tests/"
+            "@php vendor/bin/phpcs -p"
+        ],
+        "cs:fix": [
+            "@php vendor/bin/phpcbf -p"
         ],
         "analyze": [
             "vendor\\bin\\phpstan analyze --level=max && vendor\\bin\\psalm"

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ItalyStrap\Tests;
@@ -12,76 +13,81 @@ use Psr\Log\LoggerInterface;
 use stdClass;
 use UnitTester;
 
-class DebugDispatcherTest extends Unit {
+class DebugDispatcherTest extends Unit
+{
+    /**
+     * @var UnitTester
+     */
+    protected $tester;
+    /**
+     * @var ObjectProphecy
+     */
+    private $dispatcher;
 
-	/**
-	 * @var UnitTester
-	 */
-	protected $tester;
-	/**
-	 * @var ObjectProphecy
-	 */
-	private $dispatcher;
+    /**
+     * @return EventDispatcherInterface
+     */
+    public function getDispatcher(): EventDispatcherInterface
+    {
+        return $this->dispatcher->reveal();
+    }
 
-	/**
-	 * @return EventDispatcherInterface
-	 */
-	public function getDispatcher(): EventDispatcherInterface {
-		return $this->dispatcher->reveal();
-	}
-
-	/**
-	 * @return LoggerInterface
-	 */
-	public function getLogger(): LoggerInterface {
-		return $this->logger->reveal();
-	}
-	/**
-	 * @var ObjectProphecy
-	 */
-	private $logger;
+    /**
+     * @return LoggerInterface
+     */
+    public function getLogger(): LoggerInterface
+    {
+        return $this->logger->reveal();
+    }
+    /**
+     * @var ObjectProphecy
+     */
+    private $logger;
 
 	// phpcs:ignore -- Method from Codeception
 	protected function _before() {
-		$this->dispatcher = $this->prophesize( EventDispatcherInterface::class );
-		$this->logger = $this->prophesize( LoggerInterface::class );
-	}
+        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->logger = $this->prophesize(LoggerInterface::class);
+    }
 
 	// phpcs:ignore -- Method from Codeception
 	protected function _after() {
-	}
+    }
 
-	/**
-	 * @return DebugDispatcher
-	 */
-	private function getInstance() {
-		$sut = new DebugDispatcher(
-			$this->getDispatcher(),
-			$this->getLogger()
-		);
-		$this->assertInstanceOf( EventDispatcherInterface::class, $sut, '' );
-		return $sut;
-	}
+    /**
+     * @return DebugDispatcher
+     */
+    private function getInstance()
+    {
+        $sut = new DebugDispatcher(
+            $this->getDispatcher(),
+            $this->getLogger()
+        );
+        $this->assertInstanceOf(EventDispatcherInterface::class, $sut, '');
+        return $sut;
+    }
 
-	/**
-	 * @test
-	 */
-	public function itShouldBeInstantiable() {
-		$sut = $this->getInstance();
-	}
+    /**
+     * @test
+     */
+    public function itShouldBeInstantiable()
+    {
+        $sut = $this->getInstance();
+    }
 
-	/**
-	 * @test
-	 */
-	public function itShouldDispatchAndRecordLog() {
-		$sut = $this->getInstance();
+    /**
+     * @test
+     */
+    public function itShouldDispatchAndRecordLog()
+    {
+        $sut = $this->getInstance();
 
-		$this->logger
-			->debug( Argument::type('string'), Argument::type('array') )
-			->shouldBeCalled();
+        $this->logger
+            ->debug(Argument::type('string'), Argument::type('array'))
+            ->shouldBeCalled();
 
-		$this->dispatcher->dispatch( Argument::type('object') )->shouldBeCalled();
+        $this->dispatcher->dispatch(Argument::type('object'))->shouldBeCalled();
 
-		$sut->dispatch( new stdClass() );
-	}
+        $sut->dispatch(new stdClass());
+    }
 }

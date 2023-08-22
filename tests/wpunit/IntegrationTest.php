@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ItalyStrap\Tests;
@@ -21,205 +22,214 @@ require_once codecept_data_dir( '/fixtures/classes.php' );
  * Class IntegrationTest
  * @package ItalyStrap\Tests
  */
-class IntegrationTest extends WPTestCase {
+class IntegrationTest extends WPTestCase
+{
+    /**
+     * @var WpunitTester
+     */
+    protected $tester;
 
-	/**
-	 * @var WpunitTester
-	 */
-	protected $tester;
+    /**
+     * @var EventDispatcher
+     */
+    private $dispatcher;
 
-	/**
-	 * @var EventDispatcher
-	 */
-	private $dispatcher;
+    /**
+     * @var SubscriberRegister
+     */
+    private $register;
 
-	/**
-	 * @var SubscriberRegister
-	 */
-	private $register;
+    public function setUp(): void
+    {
+        // Before...
+        parent::setUp();
 
-	public function setUp(): void {
-		// Before...
-		parent::setUp();
+        $_SERVER['REQUEST_TIME'] = \time();
 
-		$_SERVER['REQUEST_TIME'] = \time();
+        global $wp_filter;
+        $wp_filter = [];
 
-		global $wp_filter;
-		$wp_filter = [];
+        $this->dispatcher = new EventDispatcher();
+        $this->register = new SubscriberRegister($this->dispatcher);
 
-		$this->dispatcher = new EventDispatcher();
-		$this->register = new SubscriberRegister( $this->dispatcher );
+        // Your set up methods here.
+    }
 
-		// Your set up methods here.
-	}
+    public function tearDown(): void
+    {
+        // Your tear down methods here.
 
-	public function tearDown(): void {
-		// Your tear down methods here.
+        global $wp_filter;
+        $wp_filter = [];
+        // Then...
+        parent::tearDown();
+    }
 
-		global $wp_filter;
-		$wp_filter = [];
-		// Then...
-		parent::tearDown();
-	}
+    /**
+     * @test
+     */
+    public function itShouldOutputTextOnEventName()
+    {
 
-	/**
-	 * @test
-	 */
-	public function itShouldOutputTextOnEventName() {
+        $this->dispatcher->addListener('event_name', function () {
+            echo 'Value printed';
+        });
 
-		$this->dispatcher->addListener( 'event_name', function () {
-			echo 'Value printed';
-		} );
+        $this->expectOutputString('Value printed');
+        $this->dispatcher->dispatch('event_name');
+    }
 
-		$this->expectOutputString( 'Value printed' );
-		$this->dispatcher->dispatch( 'event_name' );
-	}
+    /**
+     * @test
+     */
+    public function testClassWithDispatchDependency()
+    {
+        $some_class = new ClassWithDispatchDependency($this->dispatcher);
 
-	/**
-	 * @test
-	 */
-	public function testClassWithDispatchDependency() {
-		$some_class = new ClassWithDispatchDependency( $this->dispatcher );
+        $this->dispatcher->addListener(
+            ClassWithDispatchDependency::EVENT_NAME,
+            function (string $value) {
+                return 'New value';
+            }
+        );
 
-		$this->dispatcher->addListener(
-			ClassWithDispatchDependency::EVENT_NAME,
-			function ( string $value ) {
-				return 'New value';
-			}
-		);
+        $some_class->filterValue();
 
-		$some_class->filterValue();
+        $this->assertStringContainsString('New value', $some_class->value(), '');
+    }
 
-		$this->assertStringContainsString('New value', $some_class->value(), '');
-	}
+    /**
+     * @test
+     */
+    public function subscriberShouldEchoTextWhenEventIsExecuted()
+    {
 
-	/**
-	 * @test
-	 */
-	public function subscriberShouldEchoTextWhenEventIsExecuted() {
+        $subscriber = new class implements SubscriberInterface {
+            /**
+             * @inheritDoc
+             */
+            public function getSubscribedEvents(): array
+            {
+                return [
+                    'event_name'    => 'method',
+                    'other_event_name'  => [
+                        [
+                            SubscriberInterface::CALLBACK       => 'onCallback',
+                            SubscriberInterface::PRIORITY       => 20,
+                            SubscriberInterface::ACCEPTED_ARGS  => 6,
+                        ],
+                        [
+                            SubscriberInterface::CALLBACK       => 'onCallback',
+                            SubscriberInterface::PRIORITY       => 10,
+                            SubscriberInterface::ACCEPTED_ARGS  => 6,
+                        ],
+                    ],
+                ];
+            }
 
-		$subscriber = new class implements SubscriberInterface {
+            public function method()
+            {
+                echo 'Value printed';
+            }
 
-			/**
-			 * @inheritDoc
-			 */
-			public function getSubscribedEvents(): array {
-				return [
-					'event_name'	=> 'method',
-					'other_event_name'	=> [
-						[
-							SubscriberInterface::CALLBACK		=> 'onCallback',
-							SubscriberInterface::PRIORITY		=> 20,
-							SubscriberInterface::ACCEPTED_ARGS	=> 6,
-						],
-						[
-							SubscriberInterface::CALLBACK		=> 'onCallback',
-							SubscriberInterface::PRIORITY		=> 10,
-							SubscriberInterface::ACCEPTED_ARGS	=> 6,
-						],
-					],
-				];
-			}
+            public function onCallback(string $filtered)
+            {
+                return $filtered . ' Value printed';
+            }
+        };
 
-			public function method() {
-				echo 'Value printed';
-			}
+        $this->register->addSubscriber($subscriber);
 
-			public function onCallback( string $filtered ) {
-				return $filtered . ' Value printed';
-			}
-		};
+        $this->expectOutputString('Value printed');
+        $this->dispatcher->dispatch('event_name');
 
-		$this->register->addSubscriber( $subscriber );
+        $filtered = (string) $this->dispatcher->filter('other_event_name', '');
+        $this->assertStringContainsString('Value printed Value printed', $filtered, '');
+    }
 
-		$this->expectOutputString( 'Value printed' );
-		$this->dispatcher->dispatch( 'event_name' );
+    /**
+     * @test
+     */
+    public function itShouldPrintText()
+    {
 
-		$filtered = (string) $this->dispatcher->filter( 'other_event_name', '' );
-		$this->assertStringContainsString( 'Value printed Value printed', $filtered, '' );
-	}
+        $injector = new Injector();
+        $injector->share($injector);
 
-	/**
-	 * @test
-	 */
-	public function itShouldPrintText() {
+        $injector->alias(EventDispatcherInterface::class, EventDispatcher::class);
+        $injector->share(EventDispatcherInterface::class);
+        $injector->share(SubscriberRegister::class);
+        $event_resolver = $injector->make(SubscribersConfigExtension::class, [
+            ':config'   => ConfigFactory::make([
+                Subscriber::class   => false
+            ]),
+        ]);
 
-		$injector = new Injector();
-		$injector->share($injector);
+        $dependencies = ConfigFactory::make([
+//          AurynResolver::ALIASES  => [
+//              HooksInterface::class   => Hooks::class,
+//          ],
+//          AurynResolver::SHARING  => [
+//              HooksInterface::class,
+//              EventManager::class,
+//          ],
+            SubscribersConfigExtension::SUBSCRIBERS => [
+                Subscriber::class,
+//              Subscriber::class   => false,
+            ],
+        ]);
 
-		$injector->alias(EventDispatcherInterface::class, EventDispatcher::class);
-		$injector->share( EventDispatcherInterface::class );
-		$injector->share( SubscriberRegister::class );
-		$event_resolver = $injector->make( SubscribersConfigExtension::class, [
-			':config'	=> ConfigFactory::make([
-				Subscriber::class	=> false
-			]),
-		] );
+//      $empress = new AurynResolver( $injector, $dependencies );
+        $empress = $injector->make(AurynResolver::class, [
+            ':dependencies' => $dependencies
+        ]);
+        $empress->extend($event_resolver);
+        $empress->resolve();
 
-		$dependencies = ConfigFactory::make([
-//			AurynResolver::ALIASES	=> [
-//				HooksInterface::class	=> Hooks::class,
-//			],
-//			AurynResolver::SHARING	=> [
-//				HooksInterface::class,
-//				EventManager::class,
-//			],
-			SubscribersConfigExtension::SUBSCRIBERS	=> [
-				Subscriber::class,
-//				Subscriber::class	=> false,
-			],
-		]);
+        $this->expectOutputString('Some text');
+        ( $injector->make(EventDispatcher::class) )->dispatch('event');
+    }
 
-//		$empress = new AurynResolver( $injector, $dependencies );
-		$empress = $injector->make( AurynResolver::class, [
-			':dependencies'	=> $dependencies
-		] );
-		$empress->extend( $event_resolver );
-		$empress->resolve();
+    private function configExample()
+    {
 
-		$this->expectOutputString( 'Some text' );
-		( $injector->make( EventDispatcher::class ) )->dispatch( 'event' );
-	}
+        $test = [
+            'hook_name => callback'                 => [
+                [
+                    'hook_name'             => 'callback'
+                ]
+            ],
+            'hook_name => [callback|priority]'      => [
+                [
+                    'hook_name' => [
+                        SubscriberInterface::CALLBACK       => 'callback',
+                        SubscriberInterface::PRIORITY       => 20,
+                    ]
+                ]
+            ],
+            'hook_name => [callback|priority|args]' => [
+                [
+                    'hook_name' => [
+                        SubscriberInterface::CALLBACK       => 'callback',
+                        SubscriberInterface::PRIORITY       => 20,
+                        SubscriberInterface::ACCEPTED_ARGS  => 6,
+                    ]
+                ]
+            ],
+        ];
 
-	private function configExample() {
-
-		$test = [
-			'hook_name => callback'					=> [
-				[
-					'hook_name' 			=> 'callback'
-				]
-			],
-			'hook_name => [callback|priority]'		=> [
-				[
-					'hook_name' => [
-						SubscriberInterface::CALLBACK		=> 'callback',
-						SubscriberInterface::PRIORITY		=> 20,
-					]
-				]
-			],
-			'hook_name => [callback|priority|args]'	=> [
-				[
-					'hook_name' => [
-						SubscriberInterface::CALLBACK		=> 'callback',
-						SubscriberInterface::PRIORITY		=> 20,
-						SubscriberInterface::ACCEPTED_ARGS	=> 6,
-					]
-				]
-			],
-		];
-
-		$config = [
-			'subscribers'	=> [
-				Subscriber::class,
-			],
-			'listeners'	=> [
-				Listener::class 	=> [
-					'event_name'	=> '',
-					'method'	=> '',
-					'priority'	=> '',
-					'args'	=> '',
-				]
-			],
-		];
-	}
+        $config = [
+            'subscribers'   => [
+                Subscriber::class,
+            ],
+            'listeners' => [
+                Listener::class     => [
+                    'event_name'    => '',
+                    'method'    => '',
+                    'priority'  => '',
+                    'args'  => '',
+                ]
+            ],
+        ];
+    }
 }
