@@ -14,30 +14,35 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "php" : ">=7.2",
+        "php" : ">=7.4",
         "psr/log": "^1.1"
     },
     "require-dev": {
-        "lucatume/wp-browser": "2.2",
-        "codeception/c3": "2.*",
+        "lucatume/wp-browser": "^3.1",
         "lucatume/function-mocker-le": "^1.0",
-        "wp-coding-standards/wpcs": "^2.1",
+
+        "squizlabs/php_codesniffer": "^3.7",
         "phpcompatibility/php-compatibility": "^9.3",
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
-        "phpstan/phpstan": "^0.11.16",
-        "szepeviktor/phpstan-wordpress": "^0.3.0",
-        "phpbench/phpbench": "@dev",
-        "infection/infection": "^0.15.3",
-        "vimeo/psalm": "^3.9",
-        "phpmetrics/phpmetrics": "^2.5",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+
+        "vimeo/psalm": "^5.6",
+        "humanmade/psalm-plugin-wordpress": "^3.0.0-alpha1",
+
+        "phpbench/phpbench": "^1.2",
+        "phpmetrics/phpmetrics": "^2.8",
+
+        "infection/infection": "^0.26.6",
+        "infection/codeception-adapter": "^0.4.1",
+
+        "rector/rector": "^0.15.17",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
         "fig/event-dispatcher-util": "^1.0",
         "crell/tukio": "^1.0",
         "inpsyde/object-hooks-remover": "^0.1",
         "italystrap/config": "^2.2",
-        "italystrap/debug": "~2.0",
-        "italystrap/empress": "~1.0"
+        "italystrap/debug": "dev-master",
+        "italystrap/empress": "dev-master"
     },
     "autoload": {
         "psr-4": {
@@ -81,5 +86,11 @@
     "support"    : {
         "issues": "https://github.com/ItalyStrap/event/issues",
         "source": "https://github.com/ItalyStrap/event"
+    },
+    "config": {
+        "allow-plugins": {
+            "infection/extension-installer": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }
