@@ -19,10 +19,7 @@ class DebugDispatcherTest extends Unit
      * @var UnitTester
      */
     protected $tester;
-    /**
-     * @var ObjectProphecy
-     */
-    private $dispatcher;
+    private ?\Prophecy\Prophecy\ObjectProphecy $dispatcher = null;
 
     /**
      * @return EventDispatcherInterface
@@ -39,10 +36,7 @@ class DebugDispatcherTest extends Unit
     {
         return $this->logger->reveal();
     }
-    /**
-     * @var ObjectProphecy
-     */
-    private $logger;
+    private ?\Prophecy\Prophecy\ObjectProphecy $logger = null;
 
 	// phpcs:ignore -- Method from Codeception
 	protected function _before() {

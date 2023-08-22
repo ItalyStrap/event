@@ -8,7 +8,7 @@ use ItalyStrap\Event\EventDispatcherInterface;
 use ItalyStrap\Event\SubscriberInterface;
 
 class SomeCLass {
-	private $state = 0;
+	private int $state = 0;
 	public function doSomething() {
 		$this->state++;
 		return 'Test returned from: ' . __METHOD__ . ' with value: ' . $this->state;
@@ -19,10 +19,7 @@ class Subscriber implements SubscriberInterface {
 
 	public $check = 0;
 
-	/**
-	 * @var \stdClass
-	 */
-	private $stdClass;
+	private \stdClass $stdClass;
 
 	/**
 	 * Subscriber constructor.
@@ -47,10 +44,7 @@ class Subscriber implements SubscriberInterface {
 }
 
 class SubscriberServiceProvider extends Subscriber implements SubscriberInterface {
-	/**
-	 * @var Subscriber
-	 */
-	private $subscriber;
+	private \ItalyStrap\Tests\Subscriber $subscriber;
 
 	public function getSubscriberObj(): Subscriber {
 		return $this->subscriber;
@@ -111,12 +105,9 @@ class Listener {
 
 class ClassWithDispatchDependency {
 
-	const EVENT_NAME = 'event_name';
+	public const EVENT_NAME = 'event_name';
 
-	/**
-	 * @var EventDispatcherInterface
-	 */
-	private $dispatcher;
+	private \ItalyStrap\Event\EventDispatcherInterface $dispatcher;
 
 	private $value = '';
 

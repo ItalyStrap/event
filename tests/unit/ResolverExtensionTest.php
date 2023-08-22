@@ -24,20 +24,11 @@ class ResolverExtensionTest extends Unit
      * @var UnitTester
      */
     protected $tester;
-    /**
-     * @var ObjectProphecy
-     */
-    private $fake_injector;
+    private ?\Prophecy\Prophecy\ObjectProphecy $fake_injector = null;
 
-    /**
-     * @var ObjectProphecy
-     */
-    private $event_manager;
+    private ?\Prophecy\Prophecy\ObjectProphecy $event_manager = null;
 
-    /**
-     * @var ObjectProphecy
-     */
-    private $config;
+    private ?\Prophecy\Prophecy\ObjectProphecy $config = null;
 
     /**
      * @return Config

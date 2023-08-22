@@ -24,15 +24,9 @@ class SubscriberRegisterTest extends Unit
      */
     protected $tester;
 
-    /**
-     * @var ObjectProphecy
-     */
-    private $hooks;
+    private ?\Prophecy\Prophecy\ObjectProphecy $hooks = null;
 
-    /**
-     * @var ObjectProphecy
-     */
-    private $subscriber;
+    private ?\Prophecy\Prophecy\ObjectProphecy $subscriber = null;
 
     /**
      * @return EventDispatcher
@@ -120,18 +114,14 @@ class SubscriberRegisterTest extends Unit
             Argument::type('callable'),
             Argument::type('int'),
             Argument::type('int')
-        )->will(function ($listener_args) {
-            return true;
-        })->shouldBeCalled();
+        )->will(fn($listener_args) => true)->shouldBeCalled();
 
         $this->hooks->removeListener(
             Argument::type('string'),
             Argument::type('callable'),
             Argument::type('int'),
             Argument::type('int')
-        )->will(function ($listener_args) {
-            return true;
-        })->shouldBeCalled();
+        )->will(fn($listener_args) => true)->shouldBeCalled();
 
         $sut->addSubscriber($this->getSubscriber());
         $sut->removeSubscriber($this->getSubscriber());
@@ -168,27 +158,21 @@ class SubscriberRegisterTest extends Unit
     {
         $sut = $this->getInstance();
 
-        $this->subscriber->getSubscribedEvents()->will(function () use ($iterator) {
-            return $iterator;
-        });
+        $this->subscriber->getSubscribedEvents()->will(fn() => $iterator);
 
         $this->hooks->addListener(
             Argument::type('string'),
             Argument::type('callable'),
             Argument::type('int'),
             Argument::type('int')
-        )->will(function ($listener_args) {
-            return true;
-        })->shouldBeCalled();
+        )->will(fn($listener_args) => true)->shouldBeCalled();
 
         $this->hooks->removeListener(
             Argument::type('string'),
             Argument::type('callable'),
             Argument::type('int'),
             Argument::type('int')
-        )->will(function ($listener_args) {
-            return true;
-        })->shouldBeCalled();
+        )->will(fn($listener_args) => true)->shouldBeCalled();
 
         $sut->addSubscriber($this->getSubscriber());
         $sut->removeSubscriber($this->getSubscriber());

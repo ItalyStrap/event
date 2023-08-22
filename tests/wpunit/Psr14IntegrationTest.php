@@ -31,10 +31,7 @@ class Psr14IntegrationTest extends WPTestCase
      */
     private $event_dispatcher;
 
-    /**
-     * @var ListenerProviderInterface
-     */
-    private $listener;
+    private ?\Psr\EventDispatcher\ListenerProviderInterface $listener = null;
 
     /**
      * @return object
@@ -242,6 +239,6 @@ class Psr14IntegrationTest extends WPTestCase
     public function testServerRequest()
     {
         codecept_debug($_SERVER['REQUEST_TIME']);
-        codecept_debug(\json_encode(\is_int($_SERVER['REQUEST_TIME'])));
+        codecept_debug(\json_encode(\is_int($_SERVER['REQUEST_TIME']), JSON_THROW_ON_ERROR));
     }
 }

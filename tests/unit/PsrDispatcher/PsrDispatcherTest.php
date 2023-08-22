@@ -30,15 +30,9 @@ class PsrDispatcherTest extends Unit
      * @var UnitTester
      */
     protected $tester;
-    /**
-     * @var ObjectProphecy
-     */
-    private $factory;
+    private ?\Prophecy\Prophecy\ObjectProphecy $factory = null;
 
-    /**
-     * @var ObjectProphecy
-     */
-    private $dispatcher;
+    private ?\Prophecy\Prophecy\ObjectProphecy $dispatcher = null;
 
     /**
      * @return EventDispatcher
@@ -124,11 +118,7 @@ class PsrDispatcherTest extends Unit
 
         $this->factory
             ->buildCallable(Argument::type('callable'))
-            ->will(function ($args) use ($eventObj) {
-                return static function () use ($eventObj) {
-                    return $eventObj;
-                };
-            })
+            ->will(fn($args) => static fn() => $eventObj)
             ->shouldBeCalled();
 
         $this->dispatcher

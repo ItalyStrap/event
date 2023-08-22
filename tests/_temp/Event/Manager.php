@@ -19,9 +19,9 @@ namespace ItalyStrap\Event;
  */
 class Manager {
 
-	const CALLBACK = 'function_to_add';
-	const PRIORITY = 'priority';
-	const ACCEPTED_ARGS = 'accepted_args';
+	public const CALLBACK = 'function_to_add';
+	public const PRIORITY = 'priority';
+	public const ACCEPTED_ARGS = 'accepted_args';
 
 	/**
 	 * Adds an event subscriber.
@@ -47,13 +47,13 @@ class Manager {
 	 */
 	private function add_subscriber_listener( Subscriber_Interface $subscriber, $event_name, $parameters ) {
 		if ( \is_string( $parameters ) ) {
-			$this->add_listener( $event_name, array( $subscriber, $parameters ) );
+			$this->add_listener( $event_name, [$subscriber, $parameters] );
 		} elseif ( \is_array( $parameters ) && isset( $parameters['function_to_add'] ) ) {
 			$this->add_listener(
 				$event_name,
-				array( $subscriber, $parameters['function_to_add'] ),
-				isset( $parameters['priority'] ) ? $parameters['priority'] : 10,
-				isset( $parameters['accepted_args'] ) ? $parameters['accepted_args'] : 1
+				[$subscriber, $parameters['function_to_add']],
+				$parameters['priority'] ?? 10,
+				$parameters['accepted_args'] ?? 1
 			);
 		}
 	}
@@ -124,12 +124,12 @@ class Manager {
 	 */
 	private function remove_subscriber_listener( Subscriber_Interface $subscriber, $event_name, $parameters ) {
 		if ( \is_string( $parameters ) ) {
-			$this->remove_listener( $event_name, array( $subscriber, $parameters ) );
+			$this->remove_listener( $event_name, [$subscriber, $parameters] );
 		} elseif ( \is_array( $parameters ) && isset( $parameters['function_to_add'] ) ) {
 			$this->remove_listener(
 				$event_name,
-				array( $subscriber, $parameters['function_to_add'] ),
-				isset( $parameters['priority'] ) ? $parameters['priority'] : 10
+				[$subscriber, $parameters['function_to_add']],
+				$parameters['priority'] ?? 10
 			);
 		}
 	}

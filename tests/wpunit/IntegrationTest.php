@@ -29,15 +29,9 @@ class IntegrationTest extends WPTestCase
      */
     protected $tester;
 
-    /**
-     * @var EventDispatcher
-     */
-    private $dispatcher;
+    private ?\ItalyStrap\Event\EventDispatcher $dispatcher = null;
 
-    /**
-     * @var SubscriberRegister
-     */
-    private $register;
+    private ?\ItalyStrap\Event\SubscriberRegister $register = null;
 
     public function setUp(): void
     {
@@ -88,9 +82,7 @@ class IntegrationTest extends WPTestCase
 
         $this->dispatcher->addListener(
             ClassWithDispatchDependency::EVENT_NAME,
-            function (string $value) {
-                return 'New value';
-            }
+            fn(string $value) => 'New value'
         );
 
         $some_class->filterValue();
