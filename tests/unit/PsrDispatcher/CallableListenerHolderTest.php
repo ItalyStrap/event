@@ -2,39 +2,22 @@
 
 declare(strict_types=1);
 
-namespace ItalyStrap\Tests;
+namespace ItalyStrap\Tests\Unit\PsrDispatcher;
 
-use Codeception\Test\Unit;
 use Fig\EventDispatcher\ParameterDeriverTrait;
+use ItalyStrap\Tests\UnitTestCase;
 use ItalyStrap\PsrDispatcher\CallableListenerHolder;
 use ItalyStrap\PsrDispatcher\ListenerHolderInterface;
+use ItalyStrap\Tests\ListenerChangeValueToText;
 use PHPUnit\Framework\Assert;
 use Psr\EventDispatcher\StoppableEventInterface;
 use stdClass;
-use UnitTester;
 
-// phpcs:disable
-require_once codecept_data_dir( '/fixtures/psr-14.php' );
-// phpcs:enable
-
-class CallableListenerHolderTest extends Unit
+class CallableListenerHolderTest extends UnitTestCase
 {
     use ParameterDeriverTrait;
 
-    /**
-     * @var UnitTester
-     */
-    protected $tester;
-
-	// phpcs:ignore -- Method from Codeception
-	protected function _before() {
-    }
-
-	// phpcs:ignore -- Method from Codeception
-	protected function _after() {
-    }
-
-    private function getInstance(callable $listener)
+    private function makeInstance(callable $listener): CallableListenerHolder
     {
         $sut = new CallableListenerHolder($listener);
         $this->assertInstanceOf(ListenerHolderInterface::class, $sut, '');
@@ -46,7 +29,7 @@ class CallableListenerHolderTest extends Unit
      */
     public function itShouldBeInstantiable()
     {
-        $sut = $this->getInstance(static function (object $event) {
+        $sut = $this->makeInstance(static function (object $event) {
         });
     }
 
@@ -57,7 +40,7 @@ class CallableListenerHolderTest extends Unit
     {
         $listener = static function (object $event) {
         };
-        $sut = $this->getInstance($listener);
+        $sut = $this->makeInstance($listener);
         $this->assertSame($listener, $sut->listener(), '');
     }
 
@@ -72,7 +55,7 @@ class CallableListenerHolderTest extends Unit
         $listener = static function (object $event) {
             $event->value = 42;
         };
-        $sut = $this->getInstance($listener);
+        $sut = $this->makeInstance($listener);
         $sut->nullListener();
         $sut($event);
 
@@ -94,7 +77,7 @@ class CallableListenerHolderTest extends Unit
             $calls++;
         };
 
-        $sut = $this->getInstance($listener);
+        $sut = $this->makeInstance($listener);
         $sut($event->reveal());
 
         $this->assertTrue(1 === $calls, '');
@@ -115,7 +98,7 @@ class CallableListenerHolderTest extends Unit
             $calls++;
         };
 
-        $sut = $this->getInstance($listener);
+        $sut = $this->makeInstance($listener);
         $sut($event->reveal());
 
         $this->assertTrue(0 === $calls, '');
@@ -129,7 +112,7 @@ class CallableListenerHolderTest extends Unit
         $event = new stdClass();
 
         $listener = new ListenerChangeValueToText();
-        $sut = $this->getInstance([ $listener, 'changeText' ]);
+        $sut = $this->makeInstance([ $listener, 'changeText' ]);
 
         $sut($event);
 

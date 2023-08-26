@@ -52,6 +52,17 @@
             "ItalyStrap\\PsrDispatcher\\": "src/PsrDispatcher/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "ItalyStrap\\Tests\\": "tests/src/",
+            "ItalyStrap\\Tests\\Unit\\": "tests/unit/",
+            "ItalyStrap\\Tests\\Integration\\": "tests/integration/"
+        },
+        "files": [
+            "tests/_data/fixtures/classes.php",
+            "tests/_data/fixtures/psr-14.php"
+        ]
+    },
     "provide": {
         "psr/event-dispatcher-implementation": "1.0"
     },
@@ -69,26 +80,41 @@
         "psalm": [
             "@php ./vendor/bin/psalm --no-cache"
         ],
-        "analyze": [
-            "vendor\\bin\\phpstan analyze --level=max && vendor\\bin\\psalm"
-        ],
         "unit": [
             "@php ./vendor/bin/codecept run unit"
         ],
+        "integration": [
+            "@php ./vendor/bin/codecept run integration"
+        ],
         "infection": [
-            "@php vendor/bin/infection --threads=8"
+            "echo \"Running Infection...\"",
+            "echo \"Also remember to escape suite correctly, example --skip=integration or --skip=wpunit\"",
+            "@php ./vendor/bin/infection --threads=max"
         ],
         "bench": [
-            "vendor\\bin\\phpbench run --report=performance"
+            "@php ./vendor/bin/phpbench run --report=performance"
         ],
         "metrics": [
-            "vendor\\bin\\phpmetrics --report-html='./tests/_output/report' ./src"
+            "@php ./vendor/bin/phpmetrics --report-html='./tests/_output/report' ./src"
         ],
         "insights": [
-            "vendor\\bin\\phpinsights"
+            "@php ./vendor/bin/phpinsights"
         ],
         "clean": [
-            "vendor\\bin\\codecept clean"
+            "@php ./vendor/bin/codecept clean"
+        ],
+        "qa": [
+            "@cs",
+            "@psalm",
+            "@unit",
+            "@integration",
+            "@infection"
+        ],
+        "rector": [
+            "@php ./vendor/bin/rector process --dry-run"
+        ],
+        "rector:dry:run": [
+            "@php ./vendor/bin/rector process --dry-run"
         ]
     },
     "support"    : {

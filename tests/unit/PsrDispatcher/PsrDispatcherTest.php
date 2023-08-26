@@ -2,82 +2,27 @@
 
 declare(strict_types=1);
 
-namespace ItalyStrap\Tests;
+namespace ItalyStrap\Tests\Unit\PsrDispatcher;
 
-use Codeception\Test\Unit;
-use ItalyStrap\Event\EventDispatcher;
-use ItalyStrap\PsrDispatcher\CallableFactoryInterface;
+use ItalyStrap\Tests\UnitTestCase;
 use ItalyStrap\PsrDispatcher\PsrDispatcher;
-use ItalyStrap\PsrDispatcher\CallableFactory;
 use ItalyStrap\PsrDispatcher\ListenerHolderInterface;
 use PHPUnit\Framework\Assert;
 use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
 use stdClass;
-use UnitTester;
 
 use function uniqid;
 
-/**
- * Class DispatcherTest
- * @package ItalyStrap\Tests
- */
-class PsrDispatcherTest extends Unit
+class PsrDispatcherTest extends UnitTestCase
 {
-    /**
-     * @var UnitTester
-     */
-    protected $tester;
-    private ?\Prophecy\Prophecy\ObjectProphecy $factory = null;
-
-    private ?\Prophecy\Prophecy\ObjectProphecy $dispatcher = null;
-
-    /**
-     * @return EventDispatcher
-     */
-    public function getDispatcher(): EventDispatcher
-    {
-        return $this->dispatcher->reveal();
-    }
-
-    /**
-     * @return CallableFactoryInterface
-     */
-    public function getFactory(): CallableFactoryInterface
-    {
-        return $this->factory->reveal();
-    }
-
-	// phpcs:ignore -- Method from Codeception
-	protected function _before() {
-        $this->factory = $this->prophesize(CallableFactory::class);
-        $this->dispatcher = $this->prophesize(EventDispatcher::class);
-        global $wp_filter;
-        $wp_filter = [];
-    }
-
-	// phpcs:ignore -- Method from Codeception
-	protected function _after() {
-        global $wp_filter;
-        $wp_filter = [];
-    }
-
-    public function getInstance()
+    public function makeInstance(): PsrDispatcher
     {
         global $wp_filter;
         $sut = new PsrDispatcher($wp_filter, $this->getFactory(), $this->getDispatcher());
         $this->assertInstanceOf(EventDispatcherInterface::class, $sut, '');
         return $sut;
-    }
-
-    /**
-     * @test
-     */
-    public function itShouldBeInstantiable()
-    {
-        $sut = $this->getInstance();
     }
 
     /**
@@ -102,8 +47,9 @@ class PsrDispatcherTest extends Unit
             })
             ->shouldBeCalled();
 
-        $sut = $this->getInstance();
-        $sut->dispatch($event);
+        $sut = $this->makeInstance();
+        $result = $sut->dispatch($event);
+        $this->assertSame($event, $result, 'It should return the same event');
     }
 
     /**
@@ -114,7 +60,7 @@ class PsrDispatcherTest extends Unit
         $eventObj = new stdClass();
         $eventName = get_class($eventObj);
 
-        $sut = $this->getInstance();
+        $sut = $this->makeInstance();
 
         $this->factory
             ->buildCallable(Argument::type('callable'))
@@ -159,7 +105,7 @@ class PsrDispatcherTest extends Unit
 
         $wp_filter[$eventName][10][ uniqid()]['function'] = $listener_holder->reveal();
 
-        $sut = $this->getInstance();
+        $sut = $this->makeInstance();
 
         $sut->removeListener($eventName, $listener);
     }
@@ -183,7 +129,7 @@ class PsrDispatcherTest extends Unit
 
         $wp_filter[$eventName][10] = null;
 
-        $sut = $this->getInstance();
+        $sut = $this->makeInstance();
 
         $this->assertFalse($sut->removeListener($eventName, $listener), '');
     }
@@ -209,7 +155,7 @@ class PsrDispatcherTest extends Unit
             'execute'
         ];
 
-        $sut = $this->getInstance();
+        $sut = $this->makeInstance();
 
         $this->expectException(RuntimeException::class);
         $sut->removeListener($eventName, $listener);

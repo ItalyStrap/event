@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace ItalyStrap\PsrDispatcher;
 
-use ItalyStrap\Event\EventDispatcher;
+use ItalyStrap\Event\EventDispatcherInterface;
 use Psr\EventDispatcher\EventDispatcherInterface as PsrDispatcherInterface;
 
+// https://make.wordpress.org/core/2016/09/08/wp_hook-next-generation-actions-and-filters/
 class PsrDispatcher implements PsrDispatcherInterface
 {
     /**
@@ -16,18 +17,12 @@ class PsrDispatcher implements PsrDispatcherInterface
 
     private \ItalyStrap\PsrDispatcher\CallableFactoryInterface $factory;
 
-    private \ItalyStrap\Event\EventDispatcher $dispatcher;
+    private \ItalyStrap\Event\EventDispatcherInterface $dispatcher;
 
-    /**
-     * Dispatcher constructor.
-     * @param array $wp_filter
-     * @param CallableFactoryInterface $factory
-     * @param EventDispatcher $dispatcher
-     */
     public function __construct(
         array &$wp_filter,
         CallableFactoryInterface $factory,
-        EventDispatcher $dispatcher
+        EventDispatcherInterface $dispatcher
     ) {
         $this->wp_filter = &$wp_filter;
         $this->factory = $factory;

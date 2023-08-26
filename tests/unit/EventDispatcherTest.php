@@ -2,55 +2,21 @@
 
 declare(strict_types=1);
 
-namespace ItalyStrap\Tests;
+namespace ItalyStrap\Tests\Unit;
 
 use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\EventDispatcherInterface;
+use ItalyStrap\Tests\UnitTestCase;
 use PHPUnit\Framework\Assert;
 use tad\FunctionMockerLe;
 
-/**
- * Class HooksTest
- * @package ItalyStrap\Tests
- */
-class EventDispatcherTest extends \Codeception\Test\Unit
+class EventDispatcherTest extends UnitTestCase
 {
-    /**
-     * @var \UnitTester
-     */
-    protected $tester;
-
-	// phpcs:ignore -- Method from Codeception
-	protected function _before() {
-    }
-
-	// phpcs:ignore -- Method from Codeception
-	protected function _after() {
-        FunctionMockerLe\undefineAll([
-            'do_action',
-            'add_filter',
-            'remove_filter',
-            'apply_filters',
-            'current_filter',
-            'has_filter',
-            'remove_all_filters'
-        ]);
-    }
-
-    public function getInstance(): EventDispatcher
+    public function makeInstance(): EventDispatcher
     {
         $sut = new EventDispatcher();
         $this->assertInstanceOf(EventDispatcherInterface::class, $sut);
-        $this->assertInstanceOf(EventDispatcher::class, $sut);
         return $sut;
-    }
-
-    /**
-     * @test
-     */
-    public function itShouldbeInstantiable()
-    {
-        $sut = $this->getInstance();
     }
 
     /**
@@ -58,7 +24,7 @@ class EventDispatcherTest extends \Codeception\Test\Unit
      */
     public function itShouldAddListener()
     {
-        $sut = $this->getInstance();
+        $sut = $this->makeInstance();
 
         $args = [
             'event',
@@ -85,7 +51,7 @@ class EventDispatcherTest extends \Codeception\Test\Unit
      */
     public function itShouldRemoveListener()
     {
-        $sut = $this->getInstance();
+        $sut = $this->makeInstance();
 
         $args = [
             'event',
@@ -140,7 +106,7 @@ class EventDispatcherTest extends \Codeception\Test\Unit
      */
     public function itShouldExecuteWith($args)
     {
-        $sut = $this->getInstance();
+        $sut = $this->makeInstance();
 
 		// phpcs:ignore -- Method from Codeception
 		FunctionMockerLe\define('do_action', function () use (&$calls, $args) {
@@ -159,7 +125,7 @@ class EventDispatcherTest extends \Codeception\Test\Unit
      */
     public function itShouldFiltersWith($args)
     {
-        $sut = $this->getInstance();
+        $sut = $this->makeInstance();
 
 		// phpcs:ignore -- Method from Codeception
 		FunctionMockerLe\define('apply_filters', function () use (&$calls, $args) {
@@ -177,7 +143,7 @@ class EventDispatcherTest extends \Codeception\Test\Unit
      */
     public function itShouldReturnCurrentHook()
     {
-        $sut = $this->getInstance();
+        $sut = $this->makeInstance();
 
         $hook_name = 'hook_name';
 
@@ -196,7 +162,7 @@ class EventDispatcherTest extends \Codeception\Test\Unit
      */
     public function itShouldHasListener()
     {
-        $sut = $this->getInstance();
+        $sut = $this->makeInstance();
 
         $return_val = true;
 
@@ -222,7 +188,7 @@ class EventDispatcherTest extends \Codeception\Test\Unit
      */
     public function itShouldRemoveAllListener()
     {
-        $sut = $this->getInstance();
+        $sut = $this->makeInstance();
 
         $return_val = true;
 

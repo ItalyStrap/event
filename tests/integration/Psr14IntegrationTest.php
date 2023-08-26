@@ -2,76 +2,21 @@
 
 declare(strict_types=1);
 
-namespace ItalyStrap\Tests;
+namespace ItalyStrap\Tests\Integration;
 
-use Codeception\TestCase\WPTestCase;
 use ItalyStrap\PsrDispatcher\PsrDispatcher;
 use ItalyStrap\PsrDispatcher\CallableFactory;
-use Psr\EventDispatcher\EventDispatcherInterface;
-use Psr\EventDispatcher\ListenerProviderInterface;
+use ItalyStrap\Tests\EventFirst;
+use ItalyStrap\Tests\IntegrationTestCase;
+use ItalyStrap\Tests\ListenerChangeValueToText;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use WpunitTester;
 
-// phpcs:disable
-require_once codecept_data_dir( '/fixtures/psr-14.php' );
-// phpcs:enable
-/**
- * Class Psr14IntegrationTest
- * @package ItalyStrap\Tests
- */
-class Psr14IntegrationTest extends WPTestCase
+class Psr14IntegrationTest extends IntegrationTestCase
 {
-    /**
-     * @var WpunitTester
-     */
-    protected $tester;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $event_dispatcher;
-
-    private ?\Psr\EventDispatcher\ListenerProviderInterface $listener = null;
-
-    /**
-     * @return object
-     */
-    public function getEventDispatcher()
+    private function makeDispatcher(): PsrDispatcher
     {
         global $wp_filter;
         return new PsrDispatcher($wp_filter, new CallableFactory(), new \ItalyStrap\Event\EventDispatcher());
-    }
-
-    public function setUp(): void
-    {
-        // Before...
-        parent::setUp();
-
-        $_SERVER['REQUEST_TIME'] = \time();
-
-        global $wp_filter, $wp_actions;
-        $wp_filter = $wp_actions = [];
-
-        $this->listener = new class implements ListenerProviderInterface {
-            /**
-             * @inheritDoc
-             */
-            public function getListenersForEvent(object $event): iterable
-            {
-                // TODO: Implement getListenersForEvent() method.
-            }
-        };
-        // Your set up methods here.
-    }
-
-    public function tearDown(): void
-    {
-        // Your tear down methods here.
-
-        global $wp_filter, $wp_actions;
-        unset($wp_filter, $wp_actions);
-        // Then...
-        parent::tearDown();
     }
 
     /**
@@ -80,9 +25,9 @@ class Psr14IntegrationTest extends WPTestCase
     public function itShouldAddFunctionListenerAndChangeValue()
     {
 
-        $sut = $this->getEventDispatcher();
+        $sut = $this->makeDispatcher();
 
-        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42');
+        $sut->addListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_42');
 
         /** @var object $event */
         $event = $sut->dispatch(new EventFirst());
@@ -97,10 +42,10 @@ class Psr14IntegrationTest extends WPTestCase
     public function itShouldRemoveFunctionListenerAndReturnValueWithoutChanges()
     {
 
-        $sut = $this->getEventDispatcher();
+        $sut = $this->makeDispatcher();
 
-        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42');
-        $sut->removeListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42');
+        $sut->addListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_42');
+        $sut->removeListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_42');
 
         /** @var object $event */
         $event = $sut->dispatch(new EventFirst());
@@ -115,14 +60,14 @@ class Psr14IntegrationTest extends WPTestCase
     public function itShouldStopPropagation()
     {
 
-        $sut = $this->getEventDispatcher();
+        $sut = $this->makeDispatcher();
 
-        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42');
+        $sut->addListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_42');
         $sut->addListener(EventFirst::class, [new ListenerChangeValueToText(), 'changeText' ]);
 
         // Here it will set value to false and stop propagation
-        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_false_and_stop_propagation');
-        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_77');
+        $sut->addListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation');
+        $sut->addListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_77');
 
 
         $event = new EventFirst();
@@ -140,11 +85,11 @@ class Psr14IntegrationTest extends WPTestCase
     public function itShouldNotStopPropagation()
     {
 
-        $sut = $this->getEventDispatcher();
+        $sut = $this->makeDispatcher();
 
-        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42');
+        $sut->addListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_42');
         $sut->addListener(EventFirst::class, [new ListenerChangeValueToText(), 'changeText' ]);
-        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_77');
+        $sut->addListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_77');
 
 
         $event = new EventFirst();
@@ -162,16 +107,16 @@ class Psr14IntegrationTest extends WPTestCase
     public function itShouldRemoveListenerAndReturnValue77()
     {
 
-        $sut = $this->getEventDispatcher();
+        $sut = $this->makeDispatcher();
 
-        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42');
+        $sut->addListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_42');
         $sut->addListener(EventFirst::class, [new ListenerChangeValueToText(), 'changeText' ]);
-        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_false_and_stop_propagation');
-        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_77');
+        $sut->addListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation');
+        $sut->addListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_77');
 
         $sut->removeListener(
             EventFirst::class,
-            __NAMESPACE__ . '\listener_change_value_to_false_and_stop_propagation'
+            'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation'
         );
 
         $event = new EventFirst();
@@ -189,12 +134,12 @@ class Psr14IntegrationTest extends WPTestCase
     public function ifSameEventIsDispatchedMoreThanOnceItShouldStopPropagationIfListenerStopPropagation()
     {
 
-        $sut = $this->getEventDispatcher();
+        $sut = $this->makeDispatcher();
 
-        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42');
+        $sut->addListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_42');
         $sut->addListener(EventFirst::class, [new ListenerChangeValueToText(), 'changeText' ]);
-        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_false_and_stop_propagation');
-        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_77');
+        $sut->addListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation');
+        $sut->addListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_77');
 
         $event = new EventFirst();
 
@@ -217,10 +162,10 @@ class Psr14IntegrationTest extends WPTestCase
     {
         $sut = new EventDispatcher();
 
-        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_42');
+        $sut->addListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_42');
         $sut->addListener(EventFirst::class, [new ListenerChangeValueToText(), 'changeText' ]);
-        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_false_and_stop_propagation');
-        $sut->addListener(EventFirst::class, __NAMESPACE__ . '\listener_change_value_to_77');
+        $sut->addListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation');
+        $sut->addListener(EventFirst::class, 'ItalyStrap\Tests\listener_change_value_to_77');
 
         $event = new EventFirst();
 

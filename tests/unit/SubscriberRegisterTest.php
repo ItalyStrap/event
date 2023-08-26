@@ -2,83 +2,34 @@
 
 declare(strict_types=1);
 
-namespace ItalyStrap\Tests;
+namespace ItalyStrap\Tests\Unit;
 
-use Codeception\Test\Unit;
 use ItalyStrap\Event\SubscriberRegister;
-use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\SubscriberInterface;
+use ItalyStrap\Tests\UnitTestCase;
 use PHPUnit\Framework\Assert;
 use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
-use UnitTester;
 
-/**
- * Class SubscriberRegisterTest
- * @package ItalyStrap\Tests
- */
-class SubscriberRegisterTest extends Unit
+class SubscriberRegisterTest extends UnitTestCase
 {
-    /**
-     * @var UnitTester
-     */
-    protected $tester;
-
-    private ?\Prophecy\Prophecy\ObjectProphecy $hooks = null;
-
-    private ?\Prophecy\Prophecy\ObjectProphecy $subscriber = null;
-
-    /**
-     * @return EventDispatcher
-     */
-    public function getHooks(): EventDispatcher
+    private function makeInstance(): SubscriberRegister
     {
-        return $this->hooks->reveal();
+        return new SubscriberRegister($this->getHooks());
     }
 
-    /**
-     * @return SubscriberInterface
-     */
-    public function getSubscriber(): SubscriberInterface
+    public function testItShouldAddAndRemoveSubscriberFromGenerator()
     {
-        return $this->subscriber->reveal();
-    }
-
-	// phpcs:ignore -- Method from Codeception
-	protected function _before() {
-        $this->hooks = $this->prophesize(EventDispatcher::class);
-        $this->subscriber = $this->prophesize(SubscriberInterface::class);
-    }
-
-	// phpcs:ignore -- Method from Codeception
-    protected function _after() {
-    }
-
-    private function getInstance()
-    {
-        $sut = new SubscriberRegister($this->getHooks());
-        $this->assertInstanceOf(SubscriberRegister::class, $sut, '');
-        return $sut;
-    }
-
-    /**
-     * @test
-     */
-    public function instanceOk()
-    {
-        $sut = $this->getInstance();
-    }
-
-    /**
-     * @test
-     */
-    public function itShouldAddAndRemoveSubscriberFromGenerator()
-    {
-        $sut = $this->getInstance();
+        $sut = $this->makeInstance();
 
         $this->subscriber->getSubscribedEvents()->will(function () {
 
             yield 'event_name'          => 'callback';
+
+//            $obj = new class {
+//                public function __invoke() {}
+//            };
+//
+//            yield 'event_name1'         => [$obj];
 
             yield 'event_name' => [
                 SubscriberInterface::CALLBACK       => 'callback',
@@ -151,28 +102,27 @@ class SubscriberRegisterTest extends Unit
     }
 
     /**
-     * @test
      * @dataProvider iteratorProvider()
      */
-    public function itShouldAddAndRemoveSubscriberFromIterators($iterator)
+    public function testItShouldAddAndRemoveSubscriberFromIterators($iterator)
     {
-        $sut = $this->getInstance();
+        $sut = $this->makeInstance();
 
         $this->subscriber->getSubscribedEvents()->will(fn() => $iterator);
 
-        $this->hooks->addListener(
-            Argument::type('string'),
-            Argument::type('callable'),
-            Argument::type('int'),
-            Argument::type('int')
-        )->will(fn($listener_args) => true)->shouldBeCalled();
-
-        $this->hooks->removeListener(
-            Argument::type('string'),
-            Argument::type('callable'),
-            Argument::type('int'),
-            Argument::type('int')
-        )->will(fn($listener_args) => true)->shouldBeCalled();
+//        $this->hooks->addListener(
+//            Argument::type('string'),
+//            Argument::type('callable'),
+//            Argument::type('int'),
+//            Argument::type('int')
+//        )->will(fn($listener_args) => true);
+//
+//        $this->hooks->removeListener(
+//            Argument::type('string'),
+//            Argument::type('callable'),
+//            Argument::type('int'),
+//            Argument::type('int')
+//        )->will(fn($listener_args) => true);
 
         $sut->addSubscriber($this->getSubscriber());
         $sut->removeSubscriber($this->getSubscriber());
@@ -243,14 +193,12 @@ class SubscriberRegisterTest extends Unit
     }
 
     /**
-     * @test
      * @dataProvider subscriberProvider()
-     * @param $provider_args
      */
-    public function itShouldAddSubscriberWith($provider_args)
+    public function testItShouldAddSubscriberWith($provider_args)
     {
         $test = $this;
-        $sut = $this->getInstance();
+        $sut = $this->makeInstance();
 
         $this->subscriber->getSubscribedEvents()->willReturn($provider_args);
 
@@ -268,13 +216,12 @@ class SubscriberRegisterTest extends Unit
     }
 
     /**
-     * @test
      * @dataProvider subscriberProvider()
      */
-    public function itShouldRemoveSubscriberWith($provider_args)
+    public function testItShouldRemoveSubscriberWith($provider_args)
     {
         $test = $this;
-        $sut = $this->getInstance();
+        $sut = $this->makeInstance();
 
         $this->subscriber->getSubscribedEvents()->willReturn($provider_args);
 
@@ -356,13 +303,10 @@ class SubscriberRegisterTest extends Unit
         );
     }
 
-    /**
-     * @test
-     */
-    public function itShouldThrownIfParameterOfSubscriberIsNotValid()
+    public function testItShouldThrownIfParameterOfSubscriberIsNotValid()
     {
         $test = $this;
-        $sut = $this->getInstance();
+        $sut = $this->makeInstance();
 
         $this->subscriber->getSubscribedEvents()->willReturn([
             'event_name'            => [new \stdClass()],

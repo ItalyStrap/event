@@ -2,59 +2,20 @@
 
 declare(strict_types=1);
 
-namespace ItalyStrap\Tests;
+namespace ItalyStrap\Tests\Unit\PsrDispatcher;
 
-use Codeception\Test\Unit;
+use ItalyStrap\Tests\UnitTestCase;
 use ItalyStrap\PsrDispatcher\DebugDispatcher;
 use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Psr\Log\LoggerInterface;
 use stdClass;
-use UnitTester;
 
-class DebugDispatcherTest extends Unit
+class DebugDispatcherTest extends UnitTestCase
 {
-    /**
-     * @var UnitTester
-     */
-    protected $tester;
-    private ?\Prophecy\Prophecy\ObjectProphecy $dispatcher = null;
-
-    /**
-     * @return EventDispatcherInterface
-     */
-    public function getDispatcher(): EventDispatcherInterface
-    {
-        return $this->dispatcher->reveal();
-    }
-
-    /**
-     * @return LoggerInterface
-     */
-    public function getLogger(): LoggerInterface
-    {
-        return $this->logger->reveal();
-    }
-    private ?\Prophecy\Prophecy\ObjectProphecy $logger = null;
-
-	// phpcs:ignore -- Method from Codeception
-	protected function _before() {
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
-        $this->logger = $this->prophesize(LoggerInterface::class);
-    }
-
-	// phpcs:ignore -- Method from Codeception
-	protected function _after() {
-    }
-
-    /**
-     * @return DebugDispatcher
-     */
-    private function getInstance()
+    private function makeInstance(): DebugDispatcher
     {
         $sut = new DebugDispatcher(
-            $this->getDispatcher(),
+            $this->getPsrDispatcher(),
             $this->getLogger()
         );
         $this->assertInstanceOf(EventDispatcherInterface::class, $sut, '');
@@ -64,24 +25,21 @@ class DebugDispatcherTest extends Unit
     /**
      * @test
      */
-    public function itShouldBeInstantiable()
-    {
-        $sut = $this->getInstance();
-    }
-
-    /**
-     * @test
-     */
     public function itShouldDispatchAndRecordLog()
     {
-        $sut = $this->getInstance();
+        $event = new stdClass();
+
+        $sut = $this->makeInstance();
 
         $this->logger
             ->debug(Argument::type('string'), Argument::type('array'))
             ->shouldBeCalled();
 
-        $this->dispatcher->dispatch(Argument::type('object'))->shouldBeCalled();
+        $this->psrDispatcher
+            ->dispatch(Argument::type('object'))
+            ->willReturn($event);
 
-        $sut->dispatch(new stdClass());
+        $actual = $sut->dispatch($event);
+        $this->assertSame($event, $actual, 'It should return the same event');
     }
 }

@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace ItalyStrap\Tests;
+namespace ItalyStrap\Tests\Integration;
 
-use Codeception\TestCase\WPTestCase;
 use ItalyStrap\Config\ConfigFactory;
 use ItalyStrap\Empress\AurynResolver;
 use ItalyStrap\Empress\Injector;
@@ -13,74 +12,49 @@ use ItalyStrap\Event\SubscribersConfigExtension;
 use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\EventDispatcherInterface;
 use ItalyStrap\Event\SubscriberInterface;
-use WpunitTester;
+use ItalyStrap\Tests\ClassWithDispatchDependency;
+use ItalyStrap\Tests\IntegrationTestCase;
+use ItalyStrap\Tests\Listener;
+use ItalyStrap\Tests\Subscriber;
 
-// phpcs:disable
-require_once codecept_data_dir( '/fixtures/classes.php' );
-// phpcs:enable
-/**
- * Class IntegrationTest
- * @package ItalyStrap\Tests
- */
-class IntegrationTest extends WPTestCase
+class IntegrationTest extends IntegrationTestCase
 {
-    /**
-     * @var WpunitTester
-     */
-    protected $tester;
-
-    private ?\ItalyStrap\Event\EventDispatcher $dispatcher = null;
-
-    private ?\ItalyStrap\Event\SubscriberRegister $register = null;
-
-    public function setUp(): void
+    private function makeDispatcher(): EventDispatcher
     {
-        // Before...
-        parent::setUp();
-
-        $_SERVER['REQUEST_TIME'] = \time();
-
-        global $wp_filter;
-        $wp_filter = [];
-
-        $this->dispatcher = new EventDispatcher();
-        $this->register = new SubscriberRegister($this->dispatcher);
-
-        // Your set up methods here.
+        return new EventDispatcher();
     }
 
-    public function tearDown(): void
+    public function testItShouldOutputTextOnEventName()
     {
-        // Your tear down methods here.
+        $sut = $this->makeDispatcher();
 
-        global $wp_filter;
-        $wp_filter = [];
-        // Then...
-        parent::tearDown();
-    }
-
-    /**
-     * @test
-     */
-    public function itShouldOutputTextOnEventName()
-    {
-
-        $this->dispatcher->addListener('event_name', function () {
+        $sut->addListener('event_name', function () {
             echo 'Value printed';
         });
 
         $this->expectOutputString('Value printed');
-        $this->dispatcher->dispatch('event_name');
+        $sut->dispatch('event_name');
     }
 
-    /**
-     * @test
-     */
+//    public function testItShouldOutputTextOnEventNamsgfsfe()
+//    {
+//        $sut = $this->makeDispatcher();
+//
+//        $sut->addListener('event_name', function ($arg) {
+//            return $arg;
+//        });
+//
+//        $result = $sut->dispatch('event_name', 'Value returned');
+//        $this->assertSame('Value returned', $result);
+//    }
+
     public function testClassWithDispatchDependency()
     {
-        $some_class = new ClassWithDispatchDependency($this->dispatcher);
+        $sut = $this->makeDispatcher();
 
-        $this->dispatcher->addListener(
+        $some_class = new ClassWithDispatchDependency($sut);
+
+        $sut->addListener(
             ClassWithDispatchDependency::EVENT_NAME,
             fn(string $value) => 'New value'
         );
@@ -90,11 +64,10 @@ class IntegrationTest extends WPTestCase
         $this->assertStringContainsString('New value', $some_class->value(), '');
     }
 
-    /**
-     * @test
-     */
-    public function subscriberShouldEchoTextWhenEventIsExecuted()
+    public function testSubscriberShouldEchoTextWhenEventIsExecuted()
     {
+
+        $sut = $this->makeDispatcher();
 
         $subscriber = new class implements SubscriberInterface {
             /**
@@ -103,6 +76,7 @@ class IntegrationTest extends WPTestCase
             public function getSubscribedEvents(): array
             {
                 return [
+//                    'invocable_event_name'    => $this,
                     'event_name'    => 'method',
                     'other_event_name'  => [
                         [
@@ -128,15 +102,24 @@ class IntegrationTest extends WPTestCase
             {
                 return $filtered . ' Value printed';
             }
+
+            public function __invoke(string $filtered)
+            {
+                echo 'Value invoked';
+            }
         };
 
-        $this->register->addSubscriber($subscriber);
+        $register = new SubscriberRegister(new EventDispatcher());
+        $register->addSubscriber($subscriber);
 
         $this->expectOutputString('Value printed');
-        $this->dispatcher->dispatch('event_name');
+        $sut->dispatch('event_name');
 
-        $filtered = (string) $this->dispatcher->filter('other_event_name', '');
+        $filtered = (string) $sut->filter('other_event_name', '');
         $this->assertStringContainsString('Value printed Value printed', $filtered, '');
+
+//        $filtered = (string) $sut->filter('invocable_event_name', '');
+//        $this->assertStringContainsString('Value invoked', $filtered, '');
     }
 
     /**

@@ -67,7 +67,6 @@ interface EventDispatcherInterface
      * @param string $event_name The name of the action to be executed.
      * @param mixed  ...$args    Optional. Additional arguments which are passed on to the
      *                           listeners to the action. Default empty.
-     * @return void
      */
     public function dispatch(string $event_name, ...$args);
 

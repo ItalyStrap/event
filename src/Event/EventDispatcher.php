@@ -13,10 +13,6 @@ use function has_filter;
 use function remove_all_filters;
 use function remove_filter;
 
-/**
- * Class Hooks
- * @package ItalyStrap\Event
- */
 class EventDispatcher implements EventDispatcherInterface
 {
     protected const ACCEPTED_ARGS = 3;
@@ -59,7 +55,7 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function execute(string $event_name, ...$args): void
     {
-        do_action(...func_get_args());
+        $this->dispatch(...func_get_args());
     }
 
     /**
@@ -67,7 +63,7 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function dispatch($event_name, ...$args)
     {
-        $this->execute(...func_get_args());
+        do_action(...func_get_args());
     }
 
     /**

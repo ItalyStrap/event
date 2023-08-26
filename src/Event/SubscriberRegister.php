@@ -34,6 +34,11 @@ class SubscriberRegister implements SubscriberRegisterInterface
     public function addSubscriber(Subscriber $subscriber): void
     {
         foreach ($subscriber->getSubscribedEvents() as $event_name => $parameters) {
+//            if (\is_callable($parameters)) {
+//                $this->addSubscriberListener($subscriber, $event_name, $parameters);
+//                continue;
+//            }
+
             if (isset($parameters[0]) && is_iterable($parameters[0])) {
                 foreach ($parameters as $listener) {
                     $this->addSubscriberListener($subscriber, $event_name, $listener);
@@ -107,9 +112,12 @@ class SubscriberRegister implements SubscriberRegisterInterface
         if (is_string($parameters)) {
             /** @var callable $callable */
             $callable = [$subscriber, $parameters];
-        } elseif (isset($parameters[ Subscriber::CALLBACK ])) {
+        } elseif (\is_callable($parameters)) {
             /** @var callable $callable */
-            $callable = [$subscriber, $parameters[ Subscriber::CALLBACK ]];
+            $callable = $parameters;
+        } elseif (isset($parameters[Subscriber::CALLBACK])) {
+            /** @var callable $callable */
+            $callable = [$subscriber, $parameters[Subscriber::CALLBACK]];
         } else {
             throw new RuntimeException(sprintf(
                 'Impossible to build a valid callable because $parameters is a type %s',
@@ -126,6 +134,13 @@ class SubscriberRegister implements SubscriberRegisterInterface
      */
     private function buildParameters($parameters): array
     {
+//        if (\is_callable($parameters)) {
+//            return [
+//                self::PRIORITY,
+//                self::ACCEPTED_ARGS,
+//            ];
+//        }
+
         return [
             $parameters[ Subscriber::PRIORITY ] ?? self::PRIORITY,
             $parameters[ Subscriber::ACCEPTED_ARGS ] ?? self::ACCEPTED_ARGS,
