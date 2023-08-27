@@ -21,18 +21,8 @@ class IntegrationTestCase extends WPTestCase
 
         $_SERVER['REQUEST_TIME'] = \time();
 
-        global $wp_filter, $wp_actions;
-        $wp_filter = $wp_actions = [];
-//
-//        $this->listener = new class implements ListenerProviderInterface {
-//            /**
-//             * @inheritDoc
-//             */
-//            public function getListenersForEvent(object $event): iterable
-//            {
-//                // TODO: Implement getListenersForEvent() method.
-//            }
-//        };
+        global $wp_filter, $wp_actions, $wp_filters, $wp_current_filter;
+        $wp_filter = $wp_actions = $wp_filters = $wp_current_filter = [];
 
         // Your set up methods here.
     }
@@ -41,8 +31,8 @@ class IntegrationTestCase extends WPTestCase
     {
         // Your tear down methods here.
 
-        global $wp_filter, $wp_actions;
-        unset($wp_filter, $wp_actions);
+        global $wp_filter, $wp_actions, $wp_filters, $wp_current_filter;
+        unset($wp_filter, $wp_actions, $wp_filters, $wp_current_filter);
 
         // Then...
         parent::tearDown();

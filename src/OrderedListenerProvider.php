@@ -6,18 +6,23 @@ namespace ItalyStrap\Event;
 
 use Psr\EventDispatcher\ListenerProviderInterface;
 
+/**
+ * @psalm-api
+ */
 class OrderedListenerProvider implements ListenerProviderInterface
 {
-    private array $eventCollection;
-
-    public function __construct(array $eventCollection)
-    {
-        $this->eventCollection = $eventCollection;
-    }
-
     public function addListener(string $eventName, callable $listener, int $priority = 10): void
     {
         \add_filter(
+            $eventName,
+            $listener,
+            $priority,
+        );
+    }
+
+    public function removeListener(string $eventName, callable $listener, int $priority = 10): void
+    {
+        \remove_filter(
             $eventName,
             $listener,
             $priority,

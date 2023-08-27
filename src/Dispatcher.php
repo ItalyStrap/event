@@ -6,6 +6,9 @@ namespace ItalyStrap\Event;
 
 use Psr\EventDispatcher\{ListenerProviderInterface, StoppableEventInterface};
 
+/**
+ * @psalm-api
+ */
 class Dispatcher implements \Psr\EventDispatcher\EventDispatcherInterface
 {
     private ListenerProviderInterface $listenerProvider;
@@ -26,7 +29,6 @@ class Dispatcher implements \Psr\EventDispatcher\EventDispatcherInterface
 
         foreach ($this->listenerProvider->getListenersForEvent($event) as $listener) {
             if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {
-                \remove_all_filters($eventName);
                 break;
             }
             $listener($event);

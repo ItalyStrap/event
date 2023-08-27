@@ -63,7 +63,7 @@
         },
         "files": [
             "tests/_data/fixtures/classes.php",
-            "tests/_data/fixtures/psr-14.php"
+            "tests/_data/fixtures/functions.php"
         ]
     },
     "provide": {
