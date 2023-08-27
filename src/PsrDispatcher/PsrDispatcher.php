@@ -75,7 +75,7 @@ class PsrDispatcher implements PsrDispatcherInterface
     /**
      * @inheritDoc
      */
-    public function dispatch(object $event)
+    public function dispatch(object $event): object
     {
         $this->dispatcher->dispatch(\get_class($event), $event);
         return $event;

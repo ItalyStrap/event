@@ -34,6 +34,10 @@ class SubscriberRegister implements SubscriberRegisterInterface
     public function addSubscriber(Subscriber $subscriber): void
     {
         foreach ($subscriber->getSubscribedEvents() as $event_name => $parameters) {
+//            if (\class_exists($parameters)) {
+//                $this->addSubscriberListener($subscriber, $event_name, $parameters);
+//                continue;
+//            }
 //            if (\is_callable($parameters)) {
 //                $this->addSubscriberListener($subscriber, $event_name, $parameters);
 //                continue;

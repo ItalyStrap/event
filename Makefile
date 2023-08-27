@@ -92,7 +92,7 @@ unit: up	### Run the unit tests
 .PHONY: integration
 integration: up	### Run the integration tests
 	@echo "Running the integration tests"
-	@$(DOCKER_DIR) ./codecept run integration
+	@$(DOCKER_DIR) ./codecept run integration --debug
 
 .PHONY: functional
 functional: up	### Run the functional tests
