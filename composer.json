@@ -54,7 +54,10 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "ItalyStrap\\Tests\\": "tests/src/",
+            "ItalyStrap\\Tests\\": [
+                "tests/src/",
+                "tests/_data/fixtures/src/"
+            ],
             "ItalyStrap\\Tests\\Unit\\": "tests/unit/",
             "ItalyStrap\\Tests\\Integration\\": "tests/integration/"
         },

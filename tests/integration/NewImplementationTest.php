@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Tests;
 
+use ItalyStrap\Event\Dispatcher;
+use ItalyStrap\Event\OrderedListenerProvider;
 use PHPUnit\Framework\Assert;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
@@ -13,78 +15,12 @@ class NewImplementationTest extends IntegrationTestCase
 {
     private function makeDispatcher(ListenerProviderInterface $listenerProvider): EventDispatcherInterface
     {
-        return new class ($listenerProvider) implements EventDispatcherInterface {
-            private ListenerProviderInterface $listenerProvider;
-
-            public function __construct(ListenerProviderInterface $listenerProvider)
-            {
-                $this->listenerProvider = $listenerProvider;
-            }
-
-            public function dispatch(object $event): object
-            {
-                $eventName = \get_class($event);
-                global $wp_current_filter, $wp_actions, $wp_filters;
-
-                $wp_current_filter[] = $eventName;
-                $wp_actions[$eventName] = ($wp_actions[$eventName] ?? 0) + 1;
-                $wp_filters[$eventName] = ($wp_filters[$eventName] ?? 0) + 1;
-
-                foreach ($this->listenerProvider->getListenersForEvent($event) as $listener) {
-                    if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {
-                        \remove_all_filters(\current_filter());
-                        break;
-                    }
-                    $listener($event);
-                }
-
-                \array_pop($wp_current_filter);
-
-                return $event;
-            }
-        };
+        return new Dispatcher($listenerProvider);
     }
 
     private function makeListenerProvider(): ListenerProviderInterface
     {
-        return new class ((array)$GLOBALS['wp_filter']) implements ListenerProviderInterface {
-            private array $eventCollection;
-
-            public function __construct(array $eventCollection)
-            {
-                $this->eventCollection = $eventCollection;
-            }
-
-            public function addListener(string $eventName, callable $listener, int $priority = 10): void
-            {
-                \add_filter(
-                    $eventName,
-                    $listener,
-                    $priority,
-                );
-            }
-
-            public function getListenersForEvent(object $event): iterable
-            {
-                global $wp_filter;
-                $callbacks = [];
-                $eventName = \get_class($event);
-
-                if (!\array_key_exists($eventName, $wp_filter)) {
-                    return $callbacks;
-                }
-
-                if (!$wp_filter[$eventName] instanceof \WP_Hook) {
-                    return $callbacks;
-                }
-
-                foreach ($wp_filter[$eventName]->callbacks as $priority => $callbacks) {
-                    foreach ($callbacks as $idx => $callback) {
-                        yield $callback['function'];
-                    }
-                }
-            }
-        };
+        return new OrderedListenerProvider((array)$GLOBALS['wp_filter']);
     }
 
     public function testItShouldDispatchEvent()
