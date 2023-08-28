@@ -27,7 +27,10 @@ class Psr14IntegrationTest extends IntegrationTestCase
 
         $sut = $this->makeDispatcher();
 
-        $sut->addListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_42');
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_42'
+        );
 
         /** @var object $event */
         $event = $sut->dispatch(new EventFirstStoppable());
@@ -44,8 +47,14 @@ class Psr14IntegrationTest extends IntegrationTestCase
 
         $sut = $this->makeDispatcher();
 
-        $sut->addListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_42');
-        $sut->removeListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_42');
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_42'
+        );
+        $sut->removeListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_42'
+        );
 
         /** @var object $event */
         $event = $sut->dispatch(new EventFirstStoppable());
@@ -62,12 +71,24 @@ class Psr14IntegrationTest extends IntegrationTestCase
 
         $sut = $this->makeDispatcher();
 
-        $sut->addListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_42');
-        $sut->addListener(EventFirstStoppable::class, [new ListenerChangeValueToText(), 'changeText' ]);
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_42'
+        );
+        $sut->addListener(
+            EventFirstStoppable::class,
+            [new ListenerChangeValueToText(), 'changeText' ]
+        );
 
         // Here it will set value to false and stop propagation
-        $sut->addListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation');
-        $sut->addListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_77');
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation'
+        );
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_77'
+        );
 
 
         $event = new EventFirstStoppable();
@@ -87,9 +108,18 @@ class Psr14IntegrationTest extends IntegrationTestCase
 
         $sut = $this->makeDispatcher();
 
-        $sut->addListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_42');
-        $sut->addListener(EventFirstStoppable::class, [new ListenerChangeValueToText(), 'changeText' ]);
-        $sut->addListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_77');
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_42'
+        );
+        $sut->addListener(
+            EventFirstStoppable::class,
+            [new ListenerChangeValueToText(), 'changeText' ]
+        );
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_77'
+        );
 
 
         $event = new EventFirstStoppable();
@@ -109,10 +139,22 @@ class Psr14IntegrationTest extends IntegrationTestCase
 
         $sut = $this->makeDispatcher();
 
-        $sut->addListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_42');
-        $sut->addListener(EventFirstStoppable::class, [new ListenerChangeValueToText(), 'changeText' ]);
-        $sut->addListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation');
-        $sut->addListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_77');
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_42'
+        );
+        $sut->addListener(
+            EventFirstStoppable::class,
+            [new ListenerChangeValueToText(), 'changeText' ]
+        );
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation'
+        );
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_77'
+        );
 
         $sut->removeListener(
             EventFirstStoppable::class,
@@ -136,10 +178,22 @@ class Psr14IntegrationTest extends IntegrationTestCase
 
         $sut = $this->makeDispatcher();
 
-        $sut->addListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_42');
-        $sut->addListener(EventFirstStoppable::class, [new ListenerChangeValueToText(), 'changeText' ]);
-        $sut->addListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation');
-        $sut->addListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_77');
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_42'
+        );
+        $sut->addListener(
+            EventFirstStoppable::class,
+            [new ListenerChangeValueToText(), 'changeText' ]
+        );
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation'
+        );
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_77'
+        );
 
         $event = new EventFirstStoppable();
 
@@ -162,10 +216,22 @@ class Psr14IntegrationTest extends IntegrationTestCase
     {
         $sut = new EventDispatcher();
 
-        $sut->addListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_42');
-        $sut->addListener(EventFirstStoppable::class, [new ListenerChangeValueToText(), 'changeText' ]);
-        $sut->addListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation');
-        $sut->addListener(EventFirstStoppable::class, 'ItalyStrap\Tests\listener_change_value_to_77');
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_42'
+        );
+        $sut->addListener(
+            EventFirstStoppable::class,
+            [new ListenerChangeValueToText(), 'changeText' ]
+        );
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation'
+        );
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_77'
+        );
 
         $event = new EventFirstStoppable();
 
@@ -179,11 +245,5 @@ class Psr14IntegrationTest extends IntegrationTestCase
 
         $this->assertEquals(false, $event->value, '');
         $this->assertTrue($event->isPropagationStopped(), '');
-    }
-
-    public function testServerRequest()
-    {
-        codecept_debug($_SERVER['REQUEST_TIME']);
-        codecept_debug(\json_encode(\is_int($_SERVER['REQUEST_TIME']), JSON_THROW_ON_ERROR));
     }
 }

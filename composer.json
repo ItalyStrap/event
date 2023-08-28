@@ -49,7 +49,7 @@
     "autoload": {
         "psr-4": {
             "ItalyStrap\\Event\\": "src/",
-            "ItalyStrap\\PsrDispatcher\\": "src/PsrDispatcher/"
+            "ItalyStrap\\PsrDispatcher\\": "tests/_data/experiment/PsrDispatcher/"
         }
     },
     "autoload-dev": {

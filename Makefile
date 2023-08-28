@@ -12,8 +12,8 @@ help: ## Display this help screen
 .PHONY: files/permission
 files/permission:	### Set the executable files in Docker folder permissions to 777
 	@echo "Checking files permissions"
-	@if [ -f "$(DOCKER_FOLDER)/codecept" ]; then chmod 777 $(DOCKER_FOLDER)/codecept; fi
-	@if [ -f "$(DOCKER_FOLDER)/composer" ]; then chmod 777 $(DOCKER_FOLDER)/composer; fi
+	@find $(DOCKER_FOLDER) -maxdepth 1 -type f -exec grep -lE '^#!' {} \; | xargs chmod 777
+	@find $(DOCKER_FOLDER) -maxdepth 1 -type f -exec grep -lqE '^#!' {} \; -exec ls -la {} \;
 	@echo "Files permissions ok"
 
 # Docker commands
@@ -21,7 +21,7 @@ files/permission:	### Set the executable files in Docker folder permissions to 7
 .PHONY: build
 build: files/permission	### Build the containers inside the ./docker folder
 	@echo "Building the containers"
-	$(DOCKER_DIR) docker-compose up -d --build --remove-orphans --force-recreate
+	$(DOCKER_DIR) docker-compose up -d --build --remove-orphans
 	@echo "Containers built"
 
 .PHONY: up

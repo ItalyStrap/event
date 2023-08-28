@@ -10,6 +10,7 @@ use ItalyStrap\Event\OrderedListenerProvider;
 use PHPUnit\Framework\Assert;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class DispatcherTest extends IntegrationTestCase
 {
@@ -41,12 +42,12 @@ class DispatcherTest extends IntegrationTestCase
         );
 
         $actual = $sut->dispatch($event);
-        $this->assertSame($event, $actual, 'The event should be the same');
-        $this->assertFalse($isCalled, 'The event should not be called');
+        Assert::assertSame($event, $actual, 'The event should be the same');
+        Assert::assertFalse($isCalled, 'The event should not be called');
 
         \do_action(\stdClass::class, $event);
-        $this->assertTrue(\property_exists($event, 'value'), 'The event should have the property value');
-        $this->assertTrue($isCalled, 'The event should not be called');
+        Assert::assertTrue(\property_exists($event, 'value'), 'The event should have the property value');
+        Assert::assertTrue($isCalled, 'The event should not be called');
     }
 
     public function testItShouldDoingEvent()
@@ -127,10 +128,10 @@ class DispatcherTest extends IntegrationTestCase
 
         $actual = $sut->dispatch($event);
 
-        $this->assertSame(42, $event->value, 'The event value should be 42');
-        $this->assertSame(84, $event->newValue, 'The event value should be 84');
-        $this->assertTrue((int)\did_action(\stdClass::class) > 0, 'The action should be called');
-        $this->assertTrue(\has_action(\stdClass::class), 'The action should be registered');
+        Assert::assertSame(42, $event->value, 'The event value should be 42');
+        Assert::assertSame(84, $event->newValue, 'The event value should be 84');
+        Assert::assertTrue((int)\did_action(\stdClass::class) > 0, 'The action should be called');
+        Assert::assertTrue(\has_action(\stdClass::class), 'The action should be registered');
     }
 
     public function testItShouldStopPropagation()
@@ -162,6 +163,194 @@ class DispatcherTest extends IntegrationTestCase
 
         $actual = $dispatcher->dispatch($event);
 
-        $this->assertSame(42, $actual->value, 'The event value should be 42');
+        Assert::assertSame(42, $actual->value, 'The event value should be 42');
+    }
+
+    public function testItShouldAddFunctionListenerAndChangeValue()
+    {
+
+        $provider = $this->makeListenerProvider();
+
+        $sut = $this->makeDispatcher(
+            $provider
+        );
+
+        $provider->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_42'
+        );
+
+        $event = $sut->dispatch(new EventFirstStoppable());
+
+        Assert::assertEquals(42, $event->value, '');
+        Assert::assertFalse($event->isPropagationStopped(), 'It should not stop propagation');
+    }
+
+    public function testItShouldRemoveFunctionListenerAndReturnValueWithoutChanges()
+    {
+
+        $provider = $this->makeListenerProvider();
+
+        $sut = $this->makeDispatcher(new OrderedListenerProvider());
+
+        $provider->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_42'
+        );
+        $provider->removeListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_42'
+        );
+
+        /** @var object $event */
+        $event = $sut->dispatch(new EventFirstStoppable());
+
+        Assert::assertEquals(0, $event->value, '');
+        Assert::assertFalse($event->isPropagationStopped(), 'It should not stop propagation');
+    }
+
+    public function testItShouldStopPropagationWithMoreListener()
+    {
+
+        $provider = new OrderedListenerProvider();
+
+        $sut = $this->makeDispatcher($provider);
+
+        $provider->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_42'
+        );
+        $provider->addListener(
+            EventFirstStoppable::class,
+            [new ListenerChangeValueToText(), 'changeText' ]
+        );
+
+        // Here it will set value to false and stop propagation
+        $provider->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation'
+        );
+        $provider->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_77'
+        );
+
+
+        $event = new EventFirstStoppable();
+
+        /** @var object $event */
+        $sut->dispatch($event);
+
+        Assert::assertEquals(false, $event->value, '');
+        Assert::assertTrue($event->isPropagationStopped(), '');
+    }
+
+    public function testItShouldRemoveListenerAndReturnValue77()
+    {
+        $provider = new OrderedListenerProvider();
+
+        $sut = $this->makeDispatcher($provider);
+
+        $provider->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_42'
+        );
+        $provider->addListener(
+            EventFirstStoppable::class,
+            [new ListenerChangeValueToText(), 'changeText' ]
+        );
+        $provider->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation'
+        );
+        $provider->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_77'
+        );
+
+        $provider->removeListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation'
+        );
+
+        $event = new EventFirstStoppable();
+
+        /** @var object $event */
+        $sut->dispatch($event);
+
+        Assert::assertEquals(77, $event->value, '');
+        Assert::assertFalse($event->isPropagationStopped(), '');
+    }
+
+    public function testIfSameEventIsDispatchedMoreThanOnceItShouldStopPropagationIfListenerStopPropagation()
+    {
+        $provider = new OrderedListenerProvider();
+
+        $sut = $this->makeDispatcher($provider);
+
+        $provider->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_42'
+        );
+        $provider->addListener(
+            EventFirstStoppable::class,
+            [new ListenerChangeValueToText(), 'changeText' ]
+        );
+        $provider->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation'
+        );
+        $provider->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_77'
+        );
+
+        $event = new EventFirstStoppable();
+
+        /** @var object $event */
+        $event = $sut->dispatch($event);
+
+        Assert::assertEquals(false, $event->value, '');
+        Assert::assertTrue($event->isPropagationStopped(), '');
+
+        $event = $sut->dispatch(new EventFirstStoppable());
+
+        Assert::assertEquals(false, $event->value, '');
+        Assert::assertTrue($event->isPropagationStopped(), '');
+    }
+
+    public function testIfSameEventIsDispatchedMoreThanOnceItShouldStopPropagationIfListenerStopPropagationWithSymfony()
+    {
+        $sut = new EventDispatcher();
+
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_42'
+        );
+        $sut->addListener(
+            EventFirstStoppable::class,
+            [new ListenerChangeValueToText(), 'changeText' ]
+        );
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation'
+        );
+        $sut->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_77'
+        );
+
+        $event = new EventFirstStoppable();
+
+        /** @var object $event */
+        $event = $sut->dispatch($event);
+
+        Assert::assertEquals(false, $event->value, '');
+        Assert::assertTrue($event->isPropagationStopped(), '');
+
+        $event = $sut->dispatch(new EventFirstStoppable());
+
+        Assert::assertEquals(false, $event->value, '');
+        Assert::assertTrue($event->isPropagationStopped(), '');
     }
 }
