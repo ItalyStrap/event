@@ -12,8 +12,7 @@ use ItalyStrap\Empress\Extension;
 use ItalyStrap\Empress\Injector;
 
 /**
- * Class EventResolverExtension
- * @package ItalyStrap\Event
+ * @psalm-api
  */
 class SubscribersConfigExtension implements Extension
 {

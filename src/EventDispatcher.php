@@ -13,6 +13,9 @@ use function has_filter;
 use function remove_all_filters;
 use function remove_filter;
 
+/**
+ * @psalm-api
+ */
 class EventDispatcher implements EventDispatcherInterface
 {
     protected const ACCEPTED_ARGS = 3;

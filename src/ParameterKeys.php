@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace ItalyStrap\Event;
 
 /**
- * Interface Keys
- * @package ItalyStrap\Event
  * @deprecated
  */
 final class ParameterKeys implements SubscriberInterface

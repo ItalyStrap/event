@@ -31,6 +31,7 @@ class OrderedListenerProvider implements ListenerProviderInterface
 
     public function getListenersForEvent(object $event): iterable
     {
+        /** @psalm-var array $wp_filter */
         global $wp_filter;
         $callbacks = [];
         $eventName = \get_class($event);
@@ -43,8 +44,27 @@ class OrderedListenerProvider implements ListenerProviderInterface
             return $callbacks;
         }
 
-        foreach ($wp_filter[$eventName]->callbacks as $priority => $callbacks) {
-            foreach ($callbacks as $idx => $callback) {
+        /**
+         * \WP_Hook::callbacks is a multidimensional array
+         * with priority as the first dimension and
+         * the callback as the second dimension.
+         * Example:
+         * [
+         *     10 => [ // priority
+         *        'callback1' => [
+         *           'function' => 'callback1', // 'callback1' is the name of the function or $idx
+         *           'accepted_args' => 1,
+         *        ],
+         *        'callback2' => [
+         *            'function' => 'callback2',
+         *            'accepted_args' => 1,
+         *        ],
+         *     ],
+         * ]
+         * @var array<int, array<string, array{function: callable, accepted_args: int}>> $callbacks
+         */
+        foreach ($wp_filter[$eventName]->callbacks as $callbacks) {
+            foreach ($callbacks as $callback) {
                 yield $callback['function'];
             }
         }

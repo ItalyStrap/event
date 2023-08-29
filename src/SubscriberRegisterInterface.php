@@ -5,8 +5,7 @@ namespace ItalyStrap\Event;
 use ItalyStrap\Event\SubscriberInterface as Subscriber;
 
 /**
- * Class SubscriberRegister
- * @package ItalyStrap\Event
+ * @psalm-api
  */
 interface SubscriberRegisterInterface
 {

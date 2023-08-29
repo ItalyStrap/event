@@ -12,6 +12,9 @@ use function is_iterable;
 use function is_string;
 use function sprintf;
 
+/**
+ * @psalm-api
+ */
 class SubscriberRegister implements SubscriberRegisterInterface
 {
     private const ACCEPTED_ARGS = 1;
