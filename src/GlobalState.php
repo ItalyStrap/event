@@ -11,9 +11,9 @@ class GlobalState implements StateInterface
 {
     private string $eventName = '';
 
-    public function forEvent(string $event): void
+    public function forEvent(object $event): void
     {
-        $this->eventName = $event;
+        $this->eventName = \get_class($event);
         global $wp_current_filter;
         $wp_current_filter[] = $this->eventName;
     }
@@ -22,15 +22,20 @@ class GlobalState implements StateInterface
     {
         switch ($state) {
             case self::BEFORE:
-                $this->incrementDispatchedEvent();
+                $this->incrDispatchedEvent();
                 break;
             case self::AFTER:
                 $this->dispatchedEvent();
                 break;
+            default:
+                throw new \InvalidArgumentException(\sprintf(
+                    'The state "%s" is not valid',
+                    $state
+                ));
         }
     }
 
-    private function incrementDispatchedEvent(): void
+    private function incrDispatchedEvent(): void
     {
         global $wp_actions, $wp_filters;
         /** @var array<string, int> $wp_actions*/
@@ -50,19 +55,29 @@ class GlobalState implements StateInterface
      * this method will return false instead of an empty string.
      * @psalm-suppress RedundantCastGivenDocblockType
      */
-    public function currentEvent(): string
+    public function currentEventName(): string
     {
         return (string)\current_filter();
     }
 
     public function dispatchedEventCount(): int
     {
-        // In this case I call did_action() instead of did_filter() because in unit test it was not defined.
+        // In this case I call did_action() instead of did_filter() because in unit test the function was not defined.
         return \did_action($this->eventName);
     }
 
-    public function dispatchingEvent(): bool
+    public function isDispatching(): bool
     {
         return \doing_filter($this->eventName);
+    }
+
+    public function __debugInfo()
+    {
+        return [
+            'eventName' => $this->eventName,
+            'currentEvent' => $this->currentEventName(),
+            'dispatchingEvent' => $this->isDispatching(),
+            'dispatchedEventCount' => $this->dispatchedEventCount(),
+        ];
     }
 }

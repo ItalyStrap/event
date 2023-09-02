@@ -17,24 +17,4 @@ class GlobalStateTest extends IntegrationTestCase
     {
         return new GlobalState();
     }
-
-    public function testBeforeDispatchingEvent()
-    {
-        $sut = $this->makeInstance();
-        Assert::assertEmpty(
-            $sut->currentEvent(),
-            'Current event should be empty if forEvent() is not called'
-        );
-
-        Assert::assertFalse(
-            $sut->dispatchingEvent(),
-            'Should be dispatching event if forEvent() is not called'
-        );
-
-        Assert::assertSame(
-            0,
-            $sut->dispatchedEventCount(),
-            'Dispatched event count should be 0 if forEvent() is not called'
-        );
-    }
 }

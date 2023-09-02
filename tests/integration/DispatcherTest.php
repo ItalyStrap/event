@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ItalyStrap\Tests;
 
 use ItalyStrap\Event\Dispatcher;
+use ItalyStrap\Event\GlobalState;
 use ItalyStrap\Event\NullListenerProvider;
 use ItalyStrap\Event\OrderedListenerProvider;
 use PHPUnit\Framework\Assert;
@@ -16,7 +17,10 @@ class DispatcherTest extends IntegrationTestCase
 {
     private function makeDispatcher(ListenerProviderInterface $listenerProvider): EventDispatcherInterface
     {
-        return new Dispatcher($listenerProvider);
+        return new Dispatcher(
+            $listenerProvider,
+            new GlobalState()
+        );
     }
 
     private function makeListenerProvider(): ListenerProviderInterface

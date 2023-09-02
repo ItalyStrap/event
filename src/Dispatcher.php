@@ -12,22 +12,20 @@ use Psr\EventDispatcher\{ListenerProviderInterface, StoppableEventInterface};
 class Dispatcher implements \Psr\EventDispatcher\EventDispatcherInterface
 {
     private ListenerProviderInterface $listenerProvider;
+    private StateInterface $state;
 
-    public function __construct(ListenerProviderInterface $listenerProvider)
-    {
+    public function __construct(
+        ListenerProviderInterface $listenerProvider,
+        StateInterface $state = null
+    ) {
         $this->listenerProvider = $listenerProvider;
+        $this->state = $state ?? new NullState();
     }
 
     public function dispatch(object $event): object
     {
-        $eventName = \get_class($event);
-
-        global $wp_current_filter, $wp_actions, $wp_filters;
-        $wp_current_filter[] = $eventName;
-        /** @var array<string, int> $wp_actions*/
-        $wp_actions[$eventName] = ($wp_actions[$eventName] ?? 0) + 1;
-        /** @var array<string, int> $wp_filters*/
-        $wp_filters[$eventName] = ($wp_filters[$eventName] ?? 0) + 1;
+        $this->state->forEvent($event);
+        $this->state->progress(StateInterface::BEFORE);
 
         /** @var callable $listener */
         foreach ($this->listenerProvider->getListenersForEvent($event) as $listener) {
@@ -43,7 +41,7 @@ class Dispatcher implements \Psr\EventDispatcher\EventDispatcherInterface
             }
         }
 
-        \array_pop($wp_current_filter);
+        $this->state->progress(StateInterface::AFTER);
 
         return $event;
     }

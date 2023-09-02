@@ -12,7 +12,9 @@ class DispatcherTest extends UnitTestCase
 {
     private function makeInstance(): Dispatcher
     {
-        return new Dispatcher(new NullListenerProvider());
+        return new Dispatcher(
+            new NullListenerProvider()
+        );
     }
 
     public function testDispatch(): void
