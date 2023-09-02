@@ -8,7 +8,7 @@ use ItalyStrap\Tests\IntegrationTestCase;
 
 class ImplementationTest extends IntegrationTestCase
 {
-    public function testDispatcherSimpleImplementation(): void
+    public function testDispatcherStatelessSimpleImplementation(): void
     {
         $listenerProvider = new \ItalyStrap\Event\OrderedListenerProvider();
 
@@ -41,12 +41,13 @@ class ImplementationTest extends IntegrationTestCase
         });
 
         $listener = new class ($state) {
-            private $state;
+            private \ItalyStrap\Event\GlobalState $state;
 
             public function __construct(\ItalyStrap\Event\GlobalState $state)
             {
                 $this->state = $state;
             }
+
             public function __invoke(object $event)
             {
                 $event->name .= ' World';
@@ -57,6 +58,7 @@ class ImplementationTest extends IntegrationTestCase
         $listenerProvider->addListener(\stdClass::class, $listener, 20);
 
         $dispatcher = new \ItalyStrap\Event\Dispatcher($listenerProvider, $state);
+
 
         $name = $dispatcher->dispatch($event)->name;
 
