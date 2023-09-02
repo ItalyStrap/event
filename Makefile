@@ -87,7 +87,7 @@ clean: up	### Clean the codeception suites
 .PHONY: unit
 unit: up	### Run the unit tests
 	@echo "Running the unit tests"
-	@$(DOCKER_DIR) ./codecept run unit
+	@$(DOCKER_DIR) ./codecept run unit --debug
 
 .PHONY: integration
 integration: up	### Run the integration tests
@@ -104,8 +104,11 @@ acceptance: up	### Run the acceptance tests
 	@echo "Running the acceptance tests"
 	@$(DOCKER_DIR) ./codecept run acceptance
 
+.PHONY: tests
+tests: unit integration	### Run unit and integration tests
+
 .PHONY: qa
-qa: cs psalm unit integration functional acceptance	### Run all the tests
+qa: cs psalm unit integration	### Run all the tests
 
 # Infection commands
 
@@ -117,6 +120,53 @@ infection: up	### Run the infection
 # Rector commands
 
 .PHONY: rector
-rector: up	### Run the rector
-	@echo "Running the rector"
+rector: up	### Run the rector with dry-run
+	@echo "Running the rector in dry-run mode, if you want to apply the refactorings run make rector/fix"
 	@$(DOCKER_DIR) ./composer rector
+
+.PHONY: rector/fix
+rector/fix: up	### Apply the rector refactorings
+	@echo "Running the rector"
+	@$(DOCKER_DIR) ./composer rector:fix
+
+# Benchmark commands
+
+.PHONY: bench
+bench:	### Run the benchmark in the local machine not in the docker container
+	@echo "Running the benchmark"
+	@composer bench
+
+# PhpMetrics commands
+
+.PHONY: docker/metrics
+docker/metrics:	### Run the phpmetrics
+	@echo "Running the phpmetrics"
+	@docker run --rm \
+         --user $(id -u):$(id -g) \
+         --volume `pwd`:/project \
+         herloct/phpmetrics --report-html=./tests/_output/report src
+
+# PhpMetrics commands from composer
+
+.PHONY: metrics
+metrics: up	### Run the composer/metrics
+	@echo "Running the psalm"
+	@$(DOCKER_DIR) ./composer metrics
+
+# Generate commands
+
+.PHONY: generate
+generate: up	### Run the codeception generate test files in unit and integration suite, use FILE=filename to generate a specific file
+	@echo "Running the tests"
+	@if [ ! -z "$(FILE)" -a ! -f "tests/unit/$(FILE)Test.php" ]; then \
+		echo "File does not exists, generating now."; \
+		./vendor/bin/codecept generate:test unit $(FILE); \
+	else \
+		echo "FILE variable empty or file already generated"; \
+	fi
+	@if [ ! -z "$(FILE)" -a ! -f "tests/integration/$(FILE)Test.php" ]; then \
+		echo "File does not exists, generating now."; \
+		./vendor/bin/codecept generate:wpunit integration $(FILE); \
+	else \
+		echo "FILE variable empty or file already generated"; \
+	fi

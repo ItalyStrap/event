@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ItalyStrap\Event;
 
 /**
+ * @psalm-api
  * @deprecated
  */
 final class ParameterKeys implements SubscriberInterface

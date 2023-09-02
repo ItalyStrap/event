@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ItalyStrap\Event;
 
 use ItalyStrap\Event\SubscriberInterface as Subscriber;

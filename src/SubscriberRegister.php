@@ -8,8 +8,11 @@ use ItalyStrap\Event\SubscriberInterface as Subscriber;
 use RuntimeException;
 
 use function gettype;
+use function is_array;
+use function is_callable;
 use function is_iterable;
 use function is_string;
+use function method_exists;
 use function sprintf;
 
 /**
@@ -20,33 +23,17 @@ class SubscriberRegister implements SubscriberRegisterInterface
     private const ACCEPTED_ARGS = 1;
     private const PRIORITY = 10;
 
-    private \ItalyStrap\Event\EventDispatcherInterface $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
-    /**
-     * EvenManager constructor.
-     * @param EventDispatcherInterface $dispatcher
-     */
     public function __construct(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function addSubscriber(Subscriber $subscriber): void
     {
         foreach ($subscriber->getSubscribedEvents() as $event_name => $parameters) {
-//            if (\class_exists($parameters)) {
-//                $this->addSubscriberListener($subscriber, $event_name, $parameters);
-//                continue;
-//            }
-//            if (\is_callable($parameters)) {
-//                $this->addSubscriberListener($subscriber, $event_name, $parameters);
-//                continue;
-//            }
-
-            if (isset($parameters[0]) && is_iterable($parameters[0])) {
+            if (is_array($parameters) && isset($parameters[0]) && is_iterable($parameters[0])) {
                 foreach ($parameters as $listener) {
                     $this->addSubscriberListener($subscriber, $event_name, $listener);
                 }
@@ -62,8 +49,8 @@ class SubscriberRegister implements SubscriberRegisterInterface
      * that listen to the given event.
      *
      * @param Subscriber $subscriber
-     * @param string               $event_name
-     * @param string|array         $parameters
+     * @param string $event_name
+     * @param mixed $parameters
      */
     private function addSubscriberListener(Subscriber $subscriber, string $event_name, $parameters): void
     {
@@ -74,13 +61,10 @@ class SubscriberRegister implements SubscriberRegisterInterface
         );
     }
 
-    /**
-     * @inheritDoc
-     */
     public function removeSubscriber(Subscriber $subscriber): void
     {
         foreach ($subscriber->getSubscribedEvents() as $event_name => $parameters) {
-            if (isset($parameters[0]) && is_iterable($parameters[0])) {
+            if (is_array($parameters) && isset($parameters[0]) && is_iterable($parameters[0])) {
                 foreach ($parameters as $listener) {
                     $this->removeSubscriberListener($subscriber, $event_name, $listener);
                 }
@@ -95,8 +79,8 @@ class SubscriberRegister implements SubscriberRegisterInterface
      * that listen to the given event.
      *
      * @param Subscriber $subscriber
-     * @param string               $event_name
-     * @param string|array         $parameters
+     * @param string $event_name
+     * @param mixed $parameters
      */
     private function removeSubscriberListener(Subscriber $subscriber, string $event_name, $parameters): void
     {
@@ -109,48 +93,55 @@ class SubscriberRegister implements SubscriberRegisterInterface
 
     /**
      * @param Subscriber $subscriber
-     * @param string|array $parameters
+     * @param mixed $parameters
      * @return callable
      */
     private function buildCallable(Subscriber $subscriber, $parameters): callable
     {
-        $callable = null;
-
-        if (is_string($parameters)) {
-            /** @var callable $callable */
-            $callable = [$subscriber, $parameters];
-        } elseif (\is_callable($parameters)) {
-            /** @var callable $callable */
-            $callable = $parameters;
-        } elseif (isset($parameters[Subscriber::CALLBACK])) {
-            /** @var callable $callable */
-            $callable = [$subscriber, $parameters[Subscriber::CALLBACK]];
-        } else {
-            throw new RuntimeException(sprintf(
-                'Impossible to build a valid callable because $parameters is a type %s',
-                gettype($parameters)
-            ));
+        if (is_callable($parameters)) {
+            return $parameters;
         }
 
-        return $callable;
+        if (is_string($parameters) && method_exists($subscriber, $parameters)) {
+            return [$subscriber, $parameters];
+        }
+
+        if (
+            isset($parameters[Subscriber::CALLBACK])
+            && is_callable($parameters[Subscriber::CALLBACK])
+        ) {
+            return $parameters[Subscriber::CALLBACK];
+        }
+
+        if (
+            isset($parameters[Subscriber::CALLBACK])
+            && method_exists($subscriber, (string)$parameters[Subscriber::CALLBACK])
+        ) {
+            return [$subscriber, $parameters[Subscriber::CALLBACK]];
+        }
+
+        throw new RuntimeException(sprintf(
+            'Impossible to build a valid callable because $parameters is a type of %s',
+            gettype($parameters)
+        ));
     }
 
     /**
      * @param mixed $parameters
-     * @return array
+     * @return array<int, int>
      */
     private function buildParameters($parameters): array
     {
-//        if (\is_callable($parameters)) {
-//            return [
-//                self::PRIORITY,
-//                self::ACCEPTED_ARGS,
-//            ];
-//        }
+        if (is_callable($parameters) || !is_array($parameters)) {
+            return [
+                self::PRIORITY,
+                self::ACCEPTED_ARGS,
+            ];
+        }
 
         return [
-            $parameters[ Subscriber::PRIORITY ] ?? self::PRIORITY,
-            $parameters[ Subscriber::ACCEPTED_ARGS ] ?? self::ACCEPTED_ARGS,
+            (int)($parameters[Subscriber::PRIORITY] ?? self::PRIORITY),
+            (int)($parameters[Subscriber::ACCEPTED_ARGS] ?? self::ACCEPTED_ARGS),
         ];
     }
 }

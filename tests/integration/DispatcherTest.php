@@ -50,7 +50,7 @@ class DispatcherTest extends IntegrationTestCase
         Assert::assertTrue($isCalled, 'The event should not be called');
     }
 
-    public function testItShouldDoingEvent()
+    public function testItShouldDispatchEvent()
     {
         $provider = $this->makeListenerProvider();
 
@@ -94,7 +94,7 @@ class DispatcherTest extends IntegrationTestCase
         Assert::assertTrue(\property_exists($event, 'value'), 'The event should have the property value');
     }
 
-    public function testItShouldDispatchEvent()
+    public function testItShouldDispatchEvent2()
     {
         $provider = $this->makeListenerProvider();
 
@@ -349,6 +349,43 @@ class DispatcherTest extends IntegrationTestCase
         Assert::assertTrue($event->isPropagationStopped(), '');
 
         $event = $sut->dispatch(new EventFirstStoppable());
+
+        Assert::assertEquals(false, $event->value, '');
+        Assert::assertTrue($event->isPropagationStopped(), '');
+    }
+
+    public function testCallDispatchTwoTimesWithSameEvent()
+    {
+        $provider = new OrderedListenerProvider();
+
+        $sut = $this->makeDispatcher($provider);
+
+        $provider->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_42'
+        );
+        $provider->addListener(
+            EventFirstStoppable::class,
+            [new ListenerChangeValueToText(), 'changeText' ]
+        );
+        $provider->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_false_and_stop_propagation'
+        );
+        $provider->addListener(
+            EventFirstStoppable::class,
+            'ItalyStrap\Tests\listener_change_value_to_77'
+        );
+
+        $event = new EventFirstStoppable();
+
+        /** @var object $event */
+        $event = $sut->dispatch($event);
+
+        Assert::assertEquals(false, $event->value, '');
+        Assert::assertTrue($event->isPropagationStopped(), '');
+
+        $event = $sut->dispatch($event);
 
         Assert::assertEquals(false, $event->value, '');
         Assert::assertTrue($event->isPropagationStopped(), '');

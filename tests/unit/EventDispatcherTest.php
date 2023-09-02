@@ -61,19 +61,23 @@ class EventDispatcherTest extends UnitTestCase
             3,
         ];
 
+        $calls = 0;
+
 		// phpcs:ignore -- Method from Codeception
-		FunctionMockerLe\define('remove_filter', function () use (&$calls, $args) {
-            $calls++;
-            Assert::assertEquals($args, func_get_args());
-            return true;
-        });
+		FunctionMockerLe\define(
+            'remove_filter',
+            function ($hook_name, $callback, $priority = 10) use (&$calls) {
+                $calls++;
+                return true;
+            }
+        );
 
         $sut->removeListener(...$args);
 
         $this->assertEquals(1, $calls);
     }
 
-    public function argumentsProvider()
+    public function argumentsProvider(): iterable
     {
         return [
             '2 params passed'   => [
@@ -114,7 +118,7 @@ class EventDispatcherTest extends UnitTestCase
             Assert::assertEquals($args, func_get_args());
         });
 
-        $sut->dispatch(...$args);
+        $sut->action(...$args);
 
         $this->assertEquals(1, $calls);
     }

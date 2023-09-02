@@ -50,7 +50,7 @@ class OrderedListenerProvider implements ListenerProviderInterface
          * the callback as the second dimension.
          * Example:
          * [
-         *     10 => [ // priority
+         *     10 => [ // $priority
          *        'callback1' => [
          *           'function' => 'callback1', // 'callback1' is the name of the function or $idx
          *           'accepted_args' => 1,

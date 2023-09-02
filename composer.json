@@ -96,7 +96,7 @@
             "@php ./vendor/bin/infection --threads=max"
         ],
         "bench": [
-            "@php ./vendor/bin/phpbench run --report=performance"
+            "@php ./vendor/bin/phpbench run tests/Benchmark --report=aggregate"
         ],
         "metrics": [
             "@php ./vendor/bin/phpmetrics --report-html='./tests/_output/report' ./src"
@@ -117,8 +117,8 @@
         "rector": [
             "@php ./vendor/bin/rector process --dry-run"
         ],
-        "rector:dry:run": [
-            "@php ./vendor/bin/rector process --dry-run"
+        "rector:fix": [
+            "@php ./vendor/bin/rector process"
         ]
     },
     "support"    : {

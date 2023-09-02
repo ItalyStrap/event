@@ -8,14 +8,14 @@ use ItalyStrap\Empress\AurynResolverInterface;
 use ItalyStrap\Empress\Extension;
 use ItalyStrap\Event\SubscribersConfigExtension;
 use ItalyStrap\Tests\UnitTestCase;
-use ItalyStrap\Tests\Subscriber;
+use ItalyStrap\Tests\SubscriberMock;
 use Prophecy\Argument;
 
-class ResolverExtensionTest extends UnitTestCase
+class SubscribersConfigExtensionTest extends UnitTestCase
 {
     protected function makeInstance(): SubscribersConfigExtension
     {
-        $sut = new SubscribersConfigExtension($this->getSubscriberRegister(), $this->getConfig());
+        $sut = new SubscribersConfigExtension($this->makeSubscriberRegister(), $this->makeConfig());
         $this->assertInstanceOf(Extension::class, $sut, '');
         return $sut;
     }
@@ -34,13 +34,13 @@ class ResolverExtensionTest extends UnitTestCase
      */
     public function callbackShouldSubscribeListenersWithIndexedArray()
     {
-        $subscriber = $this->prophesize(Subscriber::class);
+        $subscriber = $this->prophesize(SubscriberMock::class);
 
         $this->subscriberRegister->addSubscriber($subscriber->reveal())->shouldBeCalled();
         $this->config->get()->shouldNotBeCalled();
 
         $this->fake_injector->share(Argument::type('string'))
-            ->willReturn($this->getFakeInjector())
+            ->willReturn($this->makeFakeInjector())
             ->shouldBeCalled();
 
         $this->fake_injector->make(Argument::type('string'))
@@ -48,7 +48,7 @@ class ResolverExtensionTest extends UnitTestCase
             ->shouldBeCalled();
 
         $sut = $this->makeInstance();
-        $sut->walk(Subscriber::class, 0, $this->getFakeInjector());
+        $sut->walk(SubscriberMock::class, 0, $this->makeFakeInjector());
     }
 
     /**
@@ -56,7 +56,7 @@ class ResolverExtensionTest extends UnitTestCase
      */
     public function callbackShouldSubscribeListenersFormAssociativeArrayWithTrueOptionKey()
     {
-        $subscriber = $this->prophesize(Subscriber::class);
+        $subscriber = $this->prophesize(SubscriberMock::class);
         $config = [
             'key'   => true
         ];
@@ -66,7 +66,7 @@ class ResolverExtensionTest extends UnitTestCase
         $this->config->get($key, false)->willReturn($config[$key])->shouldBeCalled();
 
         $this->fake_injector->share(Argument::type('string'))
-            ->willReturn($this->getFakeInjector())
+            ->willReturn($this->makeFakeInjector())
             ->shouldBeCalled();
 
         $this->fake_injector->make(Argument::type('string'))
@@ -74,7 +74,7 @@ class ResolverExtensionTest extends UnitTestCase
             ->shouldBeCalled();
 
         $sut = $this->makeInstance();
-        $sut->walk(Subscriber::class, $key, $this->getFakeInjector());
+        $sut->walk(SubscriberMock::class, $key, $this->makeFakeInjector());
     }
 
     /**
@@ -82,7 +82,7 @@ class ResolverExtensionTest extends UnitTestCase
      */
     public function callbackShouldNotSubscribeListenersFromAssociativeArrayWithFalseOptionKey()
     {
-        $subscriber = $this->prophesize(Subscriber::class);
+        $subscriber = $this->prophesize(SubscriberMock::class);
         $config = [
             'key'   => false
         ];
@@ -92,7 +92,7 @@ class ResolverExtensionTest extends UnitTestCase
         $this->config->get($key, false)->willReturn($config[$key])->shouldBeCalled();
 
         $this->fake_injector->share(Argument::type('string'))
-            ->willReturn($this->getFakeInjector())
+            ->willReturn($this->makeFakeInjector())
             ->shouldNotBeCalled();
 
         $this->fake_injector->make(Argument::type('string'))
@@ -100,7 +100,7 @@ class ResolverExtensionTest extends UnitTestCase
             ->shouldNotBeCalled();
 
         $sut = $this->makeInstance();
-        $sut->walk(Subscriber::class, $key, $this->getFakeInjector());
+        $sut->walk(SubscriberMock::class, $key, $this->makeFakeInjector());
     }
 
     /**

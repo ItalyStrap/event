@@ -20,3 +20,7 @@ function listener_change_value_to_77( object $event ): void {
 function get_text() {
 	return 'new value';
 }
+
+function on_callback(...$args) {
+
+}

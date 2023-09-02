@@ -27,21 +27,28 @@ class UnitTestCase extends Unit
 
     protected ObjectProphecy $hooks;
 
-    protected function getHooks(): EventDispatcherInterface
+    protected function makeHooks(): EventDispatcherInterface
     {
         return $this->hooks->reveal();
     }
 
     protected ObjectProphecy $subscriber;
 
-    protected function getSubscriber(): SubscriberInterface
+    protected function makeSubscriber(): SubscriberInterface
     {
         return $this->subscriber->reveal();
     }
 
+    protected ObjectProphecy $subscriberMock;
+
+    protected function makeSubscriberMock(): SubscriberMock
+    {
+        return $this->subscriberMock->reveal();
+    }
+
     protected \Prophecy\Prophecy\ObjectProphecy $config;
 
-    protected function getConfig(): Config
+    protected function makeConfig(): Config
     {
         return $this->config->reveal();
     }
@@ -49,28 +56,28 @@ class UnitTestCase extends Unit
 
     protected \Prophecy\Prophecy\ObjectProphecy $fake_injector;
 
-    protected function getFakeInjector(): Injector
+    protected function makeFakeInjector(): Injector
     {
         return $this->fake_injector->reveal();
     }
 
     protected \Prophecy\Prophecy\ObjectProphecy $subscriberRegister;
 
-    protected function getSubscriberRegister(): SubscriberRegister
+    protected function makeSubscriberRegister(): SubscriberRegister
     {
         return $this->subscriberRegister->reveal();
     }
 
     protected \Prophecy\Prophecy\ObjectProphecy $dispatcher;
 
-    protected function getDispatcher(): EventDispatcherInterface
+    protected function makeDispatcher(): EventDispatcherInterface
     {
         return $this->dispatcher->reveal();
     }
 
     protected \Prophecy\Prophecy\ObjectProphecy $psrDispatcher;
 
-    protected function getPsrDispatcher(): PsrEventDispatcherInterface
+    protected function makePsrDispatcher(): PsrEventDispatcherInterface
     {
         return $this->psrDispatcher->reveal();
     }
@@ -80,7 +87,7 @@ class UnitTestCase extends Unit
     /**
      * @return CallableFactoryInterface
      */
-    protected function getFactory(): CallableFactoryInterface
+    protected function makeFactory(): CallableFactoryInterface
     {
         return $this->factory->reveal();
     }
@@ -89,7 +96,7 @@ class UnitTestCase extends Unit
     /**
      * @return LoggerInterface
      */
-    protected function getLogger(): LoggerInterface
+    protected function makeLogger(): LoggerInterface
     {
         return $this->logger->reveal();
     }
@@ -100,6 +107,7 @@ class UnitTestCase extends Unit
         $this->hooks = $this->prophesize(EventDispatcherInterface::class);
         $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
         $this->subscriber = $this->prophesize(SubscriberInterface::class);
+        $this->subscriberMock = $this->prophesize(SubscriberMock::class);
 
         $this->fake_injector = $this->prophesize(Injector::class);
         $this->subscriberRegister = $this->prophesize(SubscriberRegister::class);

@@ -25,7 +25,7 @@ interface EventDispatcherInterface
         callable $listener,
         int $priority,
         int $accepted_args
-    );
+    ): bool;
 
     /**
      * Removes the given event listener from the list of event listeners
@@ -37,30 +37,29 @@ interface EventDispatcherInterface
      *
      * @return bool
      */
-    public function removeListener(string $event_name, callable $listener, int $priority);
+    public function removeListener(string $event_name, callable $listener, int $priority): bool;
 
     /**
-     * Remove all of the listener from an event.
+     * Remove all the listener from an event.
      *
      * @param string $event_name
-     * @param bool $priority
+     * @param false|int $priority
      * @return bool
      */
-    public function removeAllListener(string $event_name, $priority = false);
+    public function removeAllListener(string $event_name, $priority = false): bool;
 
     /**
      * Executes all the callbacks registered with the given event.
-     *
-     * @deprecated Use EventDispatcherInterface::dispatch()
      *
      * @param string $event_name The name of the action to be executed.
      * @param mixed  ...$args    Optional. Additional arguments which are passed on to the
      *                           listeners to the action. Default empty.
      * @return void
      */
-    public function execute(string $event_name, ...$args);
+    public function action(string $event_name, ...$args);
 
     /**
+     * @psalm-suppress MissingReturnType
      * Executes all the callbacks registered with the given event.
      *
      * @param string $event_name The name of the action to be executed.
@@ -95,13 +94,13 @@ interface EventDispatcherInterface
      * there's any callbacks registered to the event.
      *
      * @param string        $event_name               The name of the event name.
-     * @param callable|bool $function_to_check Optional. The callback to check for. Default false.
-     * @return false|int If $function_to_check is omitted, returns boolean for whether the event has
+     * @param array|callable|false|string $callback Optional. The callback to check for. Default false.
+     * @return bool|int If $function_to_check is omitted, returns boolean for whether the event has
      *                   anything registered. When checking a specific function, the priority of that
      *                   event is returned, or false if the function is not attached. When using the
      *                   $function_to_check argument, this function may return a non-boolean value
      *                   that evaluates to false (e.g.) 0, so use the === operator for testing the
      *                   return value.
      */
-    public function hasListener(string $event_name, $function_to_check = false);
+    public function hasListener(string $event_name, $callback = false);
 }

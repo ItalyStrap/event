@@ -24,6 +24,9 @@ RUN  set -eux; \
      less # Needed for the WP-CLI \
      rm -rf /var/lib/apt/lists/*
 
+# Git add safe directory for the working directory
+
+
 # Needed for Db driver
 # https://github.com/Codeception/Codeception/issues/3605
 RUN docker-php-ext-install \

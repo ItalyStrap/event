@@ -43,18 +43,18 @@ class Subscriber implements SubscriberInterface {
 	}
 }
 
-class SubscriberServiceProvider extends Subscriber implements SubscriberInterface {
-	private \ItalyStrap\Tests\Subscriber $subscriber;
+class SubscriberServiceProvider extends SubscriberMock implements SubscriberInterface {
+	private \ItalyStrap\Tests\SubscriberMock $subscriber;
 
-	public function getSubscriberObj(): Subscriber {
+	public function getSubscriberObj(): SubscriberMock {
 		return $this->subscriber;
 	}
 
 	/**
 	 *  constructor.
-	 * @param Subscriber $subscriber
+	 * @param SubscriberMock $subscriber
 	 */
-	public function __construct( Subscriber $subscriber  ) {
+	public function __construct(SubscriberMock $subscriber  ) {
 		$this->subscriber = $subscriber;
 	}
 
@@ -70,15 +70,15 @@ class SubscriberServiceProvider extends Subscriber implements SubscriberInterfac
 	}
 }
 
-class SubscriberServiceProviderCallable extends Subscriber implements SubscriberInterface {
+class SubscriberServiceProviderCallable extends SubscriberMock implements SubscriberInterface {
 	/**
-	 * @var Subscriber
+	 * @var SubscriberMock
 	 */
 	private $subscriber;
 
 	/**
 	 *  constructor.
-	 * @param Subscriber $subscriber
+	 * @param SubscriberMock $subscriber
 	 */
 	public function __construct( callable $subscriber  ) {
 		$this->subscriber = $subscriber;

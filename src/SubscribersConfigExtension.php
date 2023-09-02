@@ -64,6 +64,8 @@ class SubscribersConfigExtension implements Extension
             return;
         }
 
-        $this->event_manager->addSubscriber($injector->share($class)->make($class));
+        /** @var SubscriberInterface $subscriber */
+        $subscriber = $injector->share($class)->make($class);
+        $this->event_manager->addSubscriber($subscriber);
     }
 }

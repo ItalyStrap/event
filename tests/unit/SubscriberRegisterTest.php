@@ -5,305 +5,74 @@ declare(strict_types=1);
 namespace ItalyStrap\Tests\Unit;
 
 use ItalyStrap\Event\SubscriberRegister;
-use ItalyStrap\Event\SubscriberInterface;
+use ItalyStrap\Tests\SubscriberMock;
+use ItalyStrap\Tests\SubscriberRegisterTestTrait;
 use ItalyStrap\Tests\UnitTestCase;
-use PHPUnit\Framework\Assert;
 use Prophecy\Argument;
 
 class SubscriberRegisterTest extends UnitTestCase
 {
+    use SubscriberRegisterTestTrait;
+
     private function makeInstance(): SubscriberRegister
     {
-        return new SubscriberRegister($this->getHooks());
+        return new SubscriberRegister($this->makeHooks());
     }
 
-    public function testItShouldAddAndRemoveSubscriberFromGenerator()
+    /**
+     * @dataProvider subscriberProvider()
+     */
+    public function testItShouldAddSubscriberWith($provider_args): void
     {
+        $test = $this;
         $sut = $this->makeInstance();
 
-        $this->subscriber->getSubscribedEvents()->will(function () {
+        $this->subscriberMock
+            ->executeCallable()
+            ->willReturn(true);
 
-            yield 'event_name'          => 'callback';
-
-//            $obj = new class {
-//                public function __invoke() {}
-//            };
-//
-//            yield 'event_name1'         => [$obj];
-
-            yield 'event_name' => [
-                SubscriberInterface::CALLBACK       => 'callback',
-                SubscriberInterface::PRIORITY       => 20,
-            ];
-
-            yield 'event_name1' => [
-                SubscriberInterface::CALLBACK       => 'callback',
-                SubscriberInterface::PRIORITY       => 20,
-            ];
-
-            yield 'event_name' => [
-                [
-                    SubscriberInterface::CALLBACK       => 'onCallback',
-                    SubscriberInterface::PRIORITY       => 10,
-                    SubscriberInterface::ACCEPTED_ARGS  => 6,
-                ],
-                [
-                    SubscriberInterface::CALLBACK       => 'onCallback',
-                    SubscriberInterface::PRIORITY       => 20,
-                    SubscriberInterface::ACCEPTED_ARGS  => 6,
-                ],
-            ];
-
-            return [
-                'event_name'            => 'callback',
-                'event_name1'           => 'callback',
-            ];
-        });
+        $this->subscriberMock
+            ->getSubscribedEvents()
+            ->willReturn($provider_args);
 
         $this->hooks->addListener(
             Argument::type('string'),
             Argument::type('callable'),
             Argument::type('int'),
             Argument::type('int')
-        )->will(fn($listener_args) => true)->shouldBeCalled();
+        )->willReturn(true)->shouldBeCalled();
+
+        $sut->addSubscriber($this->makeSubscriberMock());
+    }
+
+    /**
+     * @dataProvider subscriberProvider()
+     */
+    public function testItShouldRemoveSubscriberWith($provider_args): void
+    {
+        $test = $this;
+        $sut = $this->makeInstance();
+        $subscriber = new SubscriberMock($provider_args);
+
+        $this->subscriberMock
+            ->executeCallable()
+            ->willReturn(true);
+
+        $this->subscriberMock
+            ->getSubscribedEvents()
+            ->willReturn($provider_args);
 
         $this->hooks->removeListener(
             Argument::type('string'),
             Argument::type('callable'),
             Argument::type('int'),
             Argument::type('int')
-        )->will(fn($listener_args) => true)->shouldBeCalled();
+        )->willReturn(true)->shouldBeCalled();
 
-        $sut->addSubscriber($this->getSubscriber());
-        $sut->removeSubscriber($this->getSubscriber());
+        $sut->removeSubscriber($this->makeSubscriberMock());
     }
 
-    public function iteratorProvider()
-    {
-
-        yield 'ArrayObject' => [
-            new \ArrayObject(['event_name' => 'callback']),
-        ];
-
-        yield 'ConfigObject' => [
-            new \ItalyStrap\Config\Config(['event_name' => 'callback']),
-        ];
-
-        yield 'ConfigObjectWithAdd' => [
-            (new \ItalyStrap\Config\Config())->add('event_name', 'callback'),
-        ];
-
-        yield 'ArrayIterator' => [
-            new \ArrayIterator([
-                'event_name'            => 'callback',
-                'event_name1'           => 'callback',
-            ]),
-        ];
-    }
-
-    /**
-     * @dataProvider iteratorProvider()
-     */
-    public function testItShouldAddAndRemoveSubscriberFromIterators($iterator)
-    {
-        $sut = $this->makeInstance();
-
-        $this->subscriber->getSubscribedEvents()->will(fn() => $iterator);
-
-//        $this->hooks->addListener(
-//            Argument::type('string'),
-//            Argument::type('callable'),
-//            Argument::type('int'),
-//            Argument::type('int')
-//        )->will(fn($listener_args) => true);
-//
-//        $this->hooks->removeListener(
-//            Argument::type('string'),
-//            Argument::type('callable'),
-//            Argument::type('int'),
-//            Argument::type('int')
-//        )->will(fn($listener_args) => true);
-
-        $sut->addSubscriber($this->getSubscriber());
-        $sut->removeSubscriber($this->getSubscriber());
-    }
-
-    public function subscriberProvider()
-    {
-        return [
-            /**
-             * @TODO Potrebbe essere utile chiamare direttamente
-             *       una callback
-             */
-//          'event_name => callable'                    => [
-//              [
-//                  'event_name'            => function () {},
-//                  'event_name1'           => [ new \stdClass(), 'run' ],
-//              ]
-//          ],
-            'event_name => callback'                    => [
-                [
-                    'event_name'            => 'callback',
-                    'event_name1'           => 'callback',
-                ]
-            ],
-            'event_name => [callback|priority]'     => [
-                [
-                    'event_name' => [
-                        SubscriberInterface::CALLBACK       => 'callback',
-                        SubscriberInterface::PRIORITY       => 20,
-                    ],
-                    'event_name1' => [
-                        SubscriberInterface::CALLBACK       => 'callback',
-                        SubscriberInterface::PRIORITY       => 20,
-                    ],
-                ]
-            ],
-            'event_name => [callback|priority|args]'    => [
-                [
-                    'event_name' => [
-                        SubscriberInterface::CALLBACK       => 'callback',
-                        SubscriberInterface::PRIORITY       => 20,
-                        SubscriberInterface::ACCEPTED_ARGS  => 6,
-                    ],
-                    'event_name1' => [
-                        SubscriberInterface::CALLBACK       => 'callback',
-                        SubscriberInterface::PRIORITY       => 20,
-                        SubscriberInterface::ACCEPTED_ARGS  => 6,
-                    ],
-                ]
-            ],
-            'event_name => [[callback|priority|args]]'  => [
-                [
-                    'event_name' => [
-                        [
-                            SubscriberInterface::CALLBACK       => 'onCallback',
-                            SubscriberInterface::PRIORITY       => 10,
-                            SubscriberInterface::ACCEPTED_ARGS  => 6,
-                        ],
-                        [
-                            SubscriberInterface::CALLBACK       => 'onCallback',
-                            SubscriberInterface::PRIORITY       => 20,
-                            SubscriberInterface::ACCEPTED_ARGS  => 6,
-                        ],
-                    ],
-                ]
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider subscriberProvider()
-     */
-    public function testItShouldAddSubscriberWith($provider_args)
-    {
-        $test = $this;
-        $sut = $this->makeInstance();
-
-        $this->subscriber->getSubscribedEvents()->willReturn($provider_args);
-
-        $this->hooks->addListener(
-            Argument::type('string'),
-            Argument::type('callable'),
-            Argument::type('int'),
-            Argument::type('int')
-        )->will(function ($listener_args) use ($provider_args, $test) {
-            $test->assertArgsPassedAreCorrect($listener_args, $provider_args);
-            return true;
-        })->shouldBeCalled();
-
-        $sut->addSubscriber($this->getSubscriber());
-    }
-
-    /**
-     * @dataProvider subscriberProvider()
-     */
-    public function testItShouldRemoveSubscriberWith($provider_args)
-    {
-        $test = $this;
-        $sut = $this->makeInstance();
-
-        $this->subscriber->getSubscribedEvents()->willReturn($provider_args);
-
-        $this->hooks->removeListener(
-            Argument::type('string'),
-            Argument::type('callable'),
-            Argument::type('int'),
-            Argument::type('int')
-        )->will(function ($listener_args) use ($provider_args, $test) {
-            $test->assertArgsPassedAreCorrect($listener_args, $provider_args);
-            return true;
-        })->shouldBeCalled();
-
-        $sut->removeSubscriber($this->getSubscriber());
-    }
-
-    /**
-     * @param $listener_args
-     * @param $provider_args
-     */
-    private function assertArgsPassedAreCorrect($listener_args, $provider_args): void
-    {
-
-        /**
-         * $args[0] Is the 'event_name'
-         * $args[1] Is the callback
-         * $args[2] Is the priority
-         * $args[3] Is the number of passed arguments
-         */
-
-        $event_name = $listener_args[ 0 ];
-//      $called_method = \is_callable( $listener_args[ 1 ] ) ? $listener_args[ 1 ] : $listener_args[ 1 ][ 1 ];
-        $called_method = $listener_args[ 1 ][ 1 ];
-        $priority = $listener_args[ 2 ];
-        $accepted_args = $listener_args[ 3 ];
-
-        Assert::assertArrayHasKey($event_name, $provider_args, 'Both should be the "event_name"');
-
-        if (isset($provider_args[ $event_name ][0]) && is_array($provider_args[ $event_name ][0])) {
-            foreach ($provider_args[ $event_name ] as $arg) {
-                $this->assertValueFromArrayAreCorrect(
-                    [$event_name => $arg],
-                    $called_method,
-                    $event_name,
-                    $arg[SubscriberInterface::PRIORITY],
-                    $arg[SubscriberInterface::ACCEPTED_ARGS]
-                );
-            }
-            return;
-        }
-
-        $this->assertValueFromArrayAreCorrect($provider_args, $called_method, $event_name, $priority, $accepted_args);
-    }
-
-    private function assertValueFromArrayAreCorrect(
-        $args,
-        $called_method,
-        $event_name,
-        $priority,
-        $accepted_args
-    ): void {
-        Assert::assertEquals(
-            $called_method,
-            $args[ $event_name ][ SubscriberInterface::CALLBACK ] ?? $args[ $event_name ],
-            'Should be callback name'
-        );
-
-        Assert::assertEquals(
-            $priority,
-            $args[ $event_name ][ SubscriberInterface::PRIORITY ] ?? 10, // 10 is the default priority
-            'Should be default priority'
-        );
-
-        Assert::assertEquals(
-            $accepted_args,
-            $args[ $event_name ][ SubscriberInterface::ACCEPTED_ARGS ]
-                ?? 1, // 1 is the defaul number of passed argument
-            'Should be default accepted args'
-        );
-    }
-
-    public function testItShouldThrownIfParameterOfSubscriberIsNotValid()
+    public function testItShouldThrownIfParameterOfSubscriberIsNotValid(): void
     {
         $test = $this;
         $sut = $this->makeInstance();
@@ -315,6 +84,6 @@ class SubscriberRegisterTest extends UnitTestCase
         $this->hooks->addListener()->shouldNotBeCalled();
 
         $this->expectException(\RuntimeException::class);
-        $sut->addSubscriber($this->getSubscriber());
+        $sut->addSubscriber($this->makeSubscriber());
     }
 }

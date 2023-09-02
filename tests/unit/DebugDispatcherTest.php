@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ItalyStrap\Tests\Unit\PsrDispatcher;
+namespace ItalyStrap\Tests\Unit;
 
-use ItalyStrap\Tests\UnitTestCase;
 use ItalyStrap\PsrDispatcher\DebugDispatcher;
+use ItalyStrap\Tests\UnitTestCase;
 use Prophecy\Argument;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use stdClass;
@@ -15,8 +15,8 @@ class DebugDispatcherTest extends UnitTestCase
     private function makeInstance(): DebugDispatcher
     {
         $sut = new DebugDispatcher(
-            $this->getPsrDispatcher(),
-            $this->getLogger()
+            $this->makePsrDispatcher(),
+            $this->makeLogger()
         );
         $this->assertInstanceOf(EventDispatcherInterface::class, $sut, '');
         return $sut;
