@@ -21,20 +21,20 @@ class EventDispatcher implements EventDispatcherInterface
     protected const PRIORITY = 10;
 
     public function addListener(
-        string $event_name,
+        string $eventName,
         callable $listener,
         int $priority = self::PRIORITY,
         int $accepted_args = self::ACCEPTED_ARGS
     ): bool {
-        return add_filter($event_name, $listener, $priority, $accepted_args);
+        return add_filter($eventName, $listener, $priority, $accepted_args);
     }
 
     public function removeListener(
-        string $event_name,
+        string $eventName,
         callable $listener,
         int $priority = self::PRIORITY
     ): bool {
-        return remove_filter($event_name, $listener, $priority);
+        return remove_filter($eventName, $listener, $priority);
     }
 
     public function removeAllListener(string $event_name, $priority = false): bool

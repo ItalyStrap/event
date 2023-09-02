@@ -11,6 +11,7 @@ use ItalyStrap\Tests\OrderedListenerProviderTestTrait;
 class OrderedListenerProviderTest extends IntegrationTestCase
 {
     use OrderedListenerProviderTestTrait;
+
     private function makeInstance(): OrderedListenerProvider
     {
         return new OrderedListenerProvider();

@@ -9,22 +9,34 @@ use Psr\EventDispatcher\ListenerProviderInterface;
 /**
  * @psalm-api
  */
-class OrderedListenerProvider implements ListenerProviderInterface
+class OrderedListenerProvider implements ListenerProviderInterface, ListenerRegistryInterface
 {
-    public function addListener(string $eventName, callable $listener, int $priority = 10): void
-    {
-        \add_filter(
+    public function addListener(
+        string $eventName,
+        callable $listener,
+        int $priority = 10,
+        int $accepted_args = null
+    ): bool {
+        return \add_filter(
             $eventName,
             $listener,
             $priority,
         );
     }
 
-    public function removeListener(string $eventName, callable $listener, int $priority = 10): void
+    public function removeListener(string $eventName, callable $listener, int $priority = 10): bool
     {
-        \remove_filter(
+        return \remove_filter(
             $eventName,
             $listener,
+            $priority,
+        );
+    }
+
+    public function removeAllListener(string $event_name, $priority = false): bool
+    {
+        return \remove_all_filters(
+            $event_name,
             $priority,
         );
     }
