@@ -7,7 +7,7 @@ namespace ItalyStrap\Tests;
 use ItalyStrap\Event\Dispatcher;
 use ItalyStrap\Event\GlobalState;
 use ItalyStrap\Event\NullListenerProvider;
-use ItalyStrap\Event\OrderedListenerProvider;
+use ItalyStrap\Event\GlobalOrderedListenerProvider;
 use PHPUnit\Framework\Assert;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
@@ -25,7 +25,7 @@ class DispatcherTest extends IntegrationTestCase
 
     private function makeListenerProvider(): ListenerProviderInterface
     {
-        return new OrderedListenerProvider();
+        return new GlobalOrderedListenerProvider();
     }
 
     public function testItShouldDoNothingWithNullProvider()
@@ -195,7 +195,7 @@ class DispatcherTest extends IntegrationTestCase
 
         $provider = $this->makeListenerProvider();
 
-        $sut = $this->makeDispatcher(new OrderedListenerProvider());
+        $sut = $this->makeDispatcher(new GlobalOrderedListenerProvider());
 
         $provider->addListener(
             EventFirstStoppable::class,
@@ -216,7 +216,7 @@ class DispatcherTest extends IntegrationTestCase
     public function testItShouldStopPropagationWithMoreListener()
     {
 
-        $provider = new OrderedListenerProvider();
+        $provider = new GlobalOrderedListenerProvider();
 
         $sut = $this->makeDispatcher($provider);
 
@@ -251,7 +251,7 @@ class DispatcherTest extends IntegrationTestCase
 
     public function testItShouldRemoveListenerAndReturnValue77()
     {
-        $provider = new OrderedListenerProvider();
+        $provider = new GlobalOrderedListenerProvider();
 
         $sut = $this->makeDispatcher($provider);
 
@@ -288,7 +288,7 @@ class DispatcherTest extends IntegrationTestCase
 
     public function testIfSameEventIsDispatchedMoreThanOnceItShouldStopPropagationIfListenerStopPropagation()
     {
-        $provider = new OrderedListenerProvider();
+        $provider = new GlobalOrderedListenerProvider();
 
         $sut = $this->makeDispatcher($provider);
 
@@ -360,7 +360,7 @@ class DispatcherTest extends IntegrationTestCase
 
     public function testCallDispatchTwoTimesWithSameEvent()
     {
-        $provider = new OrderedListenerProvider();
+        $provider = new GlobalOrderedListenerProvider();
 
         $sut = $this->makeDispatcher($provider);
 

@@ -22,7 +22,7 @@ class ImplementationTest extends IntegrationTestCase
      */
     public function testDispatcherStatelessSimpleImplementation(): void
     {
-        $listenerProvider = new \ItalyStrap\Event\OrderedListenerProvider();
+        $listenerProvider = new \ItalyStrap\Event\GlobalOrderedListenerProvider();
 
         $event = new \stdClass();
 
@@ -63,7 +63,7 @@ class ImplementationTest extends IntegrationTestCase
      */
     public function testDispatcherWithGlobalStateImplementation(): void
     {
-        $listenerProvider = new \ItalyStrap\Event\OrderedListenerProvider();
+        $listenerProvider = new \ItalyStrap\Event\GlobalOrderedListenerProvider();
         $state = new \ItalyStrap\Event\GlobalState();
 
         $event = new \stdClass();
@@ -137,7 +137,7 @@ class ImplementationTest extends IntegrationTestCase
      */
     public function testDispatcherWithGlobalImplementationAndStoppableImplementation(): void
     {
-        $listenerProvider = new \ItalyStrap\Event\OrderedListenerProvider();
+        $listenerProvider = new \ItalyStrap\Event\GlobalOrderedListenerProvider();
         $state = new \ItalyStrap\Event\GlobalState();
 
         $event = new class implements StoppableEventInterface {

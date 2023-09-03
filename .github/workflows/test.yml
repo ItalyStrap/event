@@ -91,3 +91,4 @@ jobs:
         run: |
           ./vendor/bin/codecept run unit --coverage-text
           ./vendor/bin/codecept run integration
+          composer bench
