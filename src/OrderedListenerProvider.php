@@ -33,12 +33,17 @@ class OrderedListenerProvider implements ListenerProviderInterface, ListenerRegi
         );
     }
 
-    public function removeAllListener(string $event_name, $priority = false): bool
+    public function removeAllListener(string $eventName, $priority = false): bool
     {
         return \remove_all_filters(
-            $event_name,
+            $eventName,
             $priority,
         );
+    }
+
+    public function hasListener(string $eventName, $callback = false)
+    {
+        return \has_filter($eventName, $callback);
     }
 
     public function getListenersForEvent(object $event): iterable

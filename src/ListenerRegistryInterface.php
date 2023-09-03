@@ -42,9 +42,26 @@ interface ListenerRegistryInterface
     /**
      * Remove all the listener from an event.
      *
-     * @param string $event_name
+     * @param string $eventName
      * @param false|int $priority
      * @return bool
      */
-    public function removeAllListener(string $event_name, $priority = false): bool;
+    public function removeAllListener(string $eventName, $priority = false): bool;
+
+    /**
+     * Checks the WordPress plugin API to see if the given event has
+     * the given callback. The priority of the callback will be returned
+     * or false. If no callback is given will return true or false if
+     * there's any callbacks registered to the event.
+     *
+     * @param string        $eventName               The name of the event name.
+     * @param array|callable|false|string $callback Optional. The callback to check for. Default false.
+     * @return bool|int If $function_to_check is omitted, returns boolean for whether the event has
+     *                   anything registered. When checking a specific function, the priority of that
+     *                   event is returned, or false if the function is not attached. When using the
+     *                   $function_to_check argument, this function may return a non-boolean value
+     *                   that evaluates to false (e.g.) 0, so use the === operator for testing the
+     *                   return value.
+     */
+    public function hasListener(string $eventName, $callback = false);
 }

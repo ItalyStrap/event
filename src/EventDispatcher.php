@@ -17,14 +17,11 @@ use function remove_filter;
  */
 class EventDispatcher implements EventDispatcherInterface
 {
-    protected const ACCEPTED_ARGS = 3;
-    protected const PRIORITY = 10;
-
     public function addListener(
         string $eventName,
         callable $listener,
-        int $priority = self::PRIORITY,
-        int $accepted_args = self::ACCEPTED_ARGS
+        int $priority = 10,
+        int $accepted_args = 3
     ): bool {
         return add_filter($eventName, $listener, $priority, $accepted_args);
     }
@@ -32,14 +29,19 @@ class EventDispatcher implements EventDispatcherInterface
     public function removeListener(
         string $eventName,
         callable $listener,
-        int $priority = self::PRIORITY
+        int $priority = 3
     ): bool {
         return remove_filter($eventName, $listener, $priority);
     }
 
-    public function removeAllListener(string $event_name, $priority = false): bool
+    public function removeAllListener(string $eventName, $priority = false): bool
     {
-        return remove_all_filters($event_name, $priority);
+        return remove_all_filters($eventName, $priority);
+    }
+
+    public function hasListener(string $eventName, $callback = false)
+    {
+        return has_filter($eventName, $callback);
     }
 
     /**
@@ -111,10 +113,5 @@ D_MESSAGE;
     public function currentEventName()
     {
         return current_filter();
-    }
-
-    public function hasListener(string $event_name, $callback = false)
-    {
-        return has_filter($event_name, $callback);
     }
 }
