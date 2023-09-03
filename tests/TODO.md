@@ -33,6 +33,11 @@ Essendo compatibile con lo standard PSR-14, è possibile ovviamente utilizzare l
 
 Il provider si chiama `OrderedListenerProvider` perché di default le API di WordPress ritornano una lista preordinata di listener in base alla priorità, che è comunque possibile indicare nei metodi `addListener()` e `removeListener()` allo stesso modo in cui viene fatto con le funzioni di WordPress `add_filter()` e `remove_filter()`.
 
+=======
+
+Non so ancora se GlobalState è la scelta migliore perché la API `current_filter()`, `doing_filter` and `did_action()` sono funzioni dove, la prima funzione ritorna il nome dell'evento corrente e la stessa cosa si può ottenere con `\get_class($event)`, le altre due funzioni prendono come parametro il nome dell'evento che è sempre possibile ottenere con `get_class($event)`.
+Ora `StateInterface` serve principalmente per avere codice più OOP oriented, ad ogni modo ulteriori test sono necessari per capire se è la scelta migliore.
+
 ## Migrazione
 
 
