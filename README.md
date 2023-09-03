@@ -434,7 +434,7 @@ $dependencies = ConfigFactory::make([
         EventDispatcher::class,
         SubscriberRegister::class,
     ],
-    // Now add in the array all your subscribers that implemente the ItalyStrap\Event\SubscriberInterface
+    // Now add in the array all your subscribers that implement the ItalyStrap\Event\SubscriberInterface
     // The instances create are shared by default for later removing like you se above.
     SubscribersConfigExtension::SUBSCRIBERS	=> [
         Subscriber::class,
@@ -442,7 +442,7 @@ $dependencies = ConfigFactory::make([
     // You can also add more configuration for the AurynResolver https://github.com/ItalyStrap/empress
 ]);
 
-// This wil instantiate the EventResolverExtension::class
+// This will instantiate the EventResolverExtension::class
 $event_resolver = $injector->make( SubscribersConfigExtension::class, [
     // In the EventResolverExtension object you can pass a config key value pair for adding or not listener at runtime
     // from your theme or plugin options
@@ -560,7 +560,7 @@ $dependencies = ConfigFactory::make([
     AurynResolver::PROXY  => [
         MyBusinessLogic::class,
     ],
-    // Now add in the array all your subscribers that implemente the ItalyStrap\Event\SubscriberInterface
+    // Now add in the array all your subscribers that implement the ItalyStrap\Event\SubscriberInterface
     // The instances create are shared by default for later removing like you se above.
     SubscribersConfigExtension::SUBSCRIBERS	=> [
         MyClassSubscriber::class,
@@ -568,7 +568,7 @@ $dependencies = ConfigFactory::make([
     // You can also add more configuration for the AurynResolver https://github.com/ItalyStrap/empress
 ]);
 
-// This wil instantiate the EventResolverExtension::class
+// This will instantiate the EventResolverExtension::class
 $event_resolver = $injector->make( SubscribersConfigExtension::class, [
     // In the EventResolverExtension object you can pass a config key value pair for adding or not listener at runtime
     // from your theme or plugin options
