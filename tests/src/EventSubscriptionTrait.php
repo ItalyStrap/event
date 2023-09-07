@@ -18,6 +18,8 @@ trait EventSubscriptionTrait
 
     public function testShouldBeInstantiable()
     {
+        $this->callback = function () {
+        };
         $sut = $this->makeInstance();
         $this->assertInstanceOf(EventSubscription::class, $sut);
     }

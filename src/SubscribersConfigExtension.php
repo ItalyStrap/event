@@ -19,18 +19,18 @@ class SubscribersConfigExtension implements Extension
     /** @var string */
     public const SUBSCRIBERS = 'subscribers';
 
-    private \ItalyStrap\Event\SubscriberRegister $event_manager;
+    private \ItalyStrap\Event\SubscriberRegister $subscriberRegister;
 
     private \ItalyStrap\Config\ConfigInterface $config;
 
     /**
      * EventResolverExtension constructor.
-     * @param SubscriberRegister $event_manager
+     * @param SubscriberRegister $subscriberRegister
      * @param ConfigInterface $config
      */
-    public function __construct(SubscriberRegister $event_manager, ConfigInterface $config)
+    public function __construct(SubscriberRegister $subscriberRegister, ConfigInterface $config)
     {
-        $this->event_manager = $event_manager;
+        $this->subscriberRegister = $subscriberRegister;
         $this->config = $config;
     }
 
@@ -47,7 +47,7 @@ class SubscribersConfigExtension implements Extension
      */
     public function execute(AurynConfigInterface $application): void
     {
-        $application->walk($this->name(), [$this, 'walk']);
+        $application->walk($this->name(), $this);
     }
 
     /**
@@ -57,7 +57,7 @@ class SubscribersConfigExtension implements Extension
      * @throws ConfigException
      * @throws InjectionException
      */
-    public function walk(string $class, $index_or_optionName, Injector $injector): void
+    public function __invoke(string $class, $index_or_optionName, Injector $injector): void
     {
 
         if (\is_string($index_or_optionName) && empty($this->config->get($index_or_optionName, false))) {
@@ -66,6 +66,6 @@ class SubscribersConfigExtension implements Extension
 
         /** @var SubscriberInterface $subscriber */
         $subscriber = $injector->share($class)->make($class);
-        $this->event_manager->addSubscriber($subscriber);
+        $this->subscriberRegister->addSubscriber($subscriber);
     }
 }

@@ -48,7 +48,7 @@ class SubscribersConfigExtensionTest extends UnitTestCase
             ->shouldBeCalled();
 
         $sut = $this->makeInstance();
-        $sut->walk(SubscriberMock::class, 0, $this->makeFakeInjector());
+        $sut(SubscriberMock::class, 0, $this->makeFakeInjector());
     }
 
     /**
@@ -74,7 +74,7 @@ class SubscribersConfigExtensionTest extends UnitTestCase
             ->shouldBeCalled();
 
         $sut = $this->makeInstance();
-        $sut->walk(SubscriberMock::class, $key, $this->makeFakeInjector());
+        $sut(SubscriberMock::class, $key, $this->makeFakeInjector());
     }
 
     /**
@@ -100,7 +100,7 @@ class SubscribersConfigExtensionTest extends UnitTestCase
             ->shouldNotBeCalled();
 
         $sut = $this->makeInstance();
-        $sut->walk(SubscriberMock::class, $key, $this->makeFakeInjector());
+        $sut(SubscriberMock::class, $key, $this->makeFakeInjector());
     }
 
     /**

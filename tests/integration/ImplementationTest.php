@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace ItalyStrap\Tests\Integration;
 
 use Crell\Tukio\OrderedListenerProvider;
+use Fig\EventDispatcher\AggregateProvider;
+use Fig\EventDispatcher\TaggedProviderTrait;
+use ItalyStrap\Event\GlobalOrderedListenerProvider;
 use ItalyStrap\Tests\EventForRenderer;
 use ItalyStrap\Tests\IntegrationTestCase;
 use ItalyStrap\Tests\RendererAsEvent;
@@ -492,7 +495,7 @@ class ImplementationTest extends IntegrationTestCase
     public function testWordPressListenerWithExternalPackage(): void
     {
         $listenerProvider = new class extends OrderedListenerProvider implements ListenerProviderInterface {
-            public function addListener(
+            public function addListenerFromCallable(
                 callable $listener,
                 ?int $priority = null,
                 ?string $id = null,
@@ -517,7 +520,7 @@ class ImplementationTest extends IntegrationTestCase
             $event->rendered = 'Hello there';
         };
 
-        $listenerProvider->addListener($listener, null, null, EventForRenderer::class);
+        $listenerProvider->addListenerFromCallable($listener, null, null, EventForRenderer::class);
 
         Assert::assertSame('Hello there', $dispatcher->dispatch($event)->rendered);
 
@@ -528,6 +531,147 @@ class ImplementationTest extends IntegrationTestCase
         $event = new EventForRenderer();
         $value = \apply_filters(EventForRenderer::class, $event);
         Assert::assertSame('Hello there', $event->rendered);
+        // Because the $listener callback does not return a value the $value will be null
         Assert::assertNull($value, 'The return value of the filter should be null');
+    }
+
+    /**
+     * If you want to use string event name you can still do it with `addListener()` method
+     * because the `addListener()` method use the `add_filter()` function to register the listener,
+     * but pay attention, if you want to dispatch the event you need to use one of the WordPress Hooks API
+     * `do_action()` or `apply_filters()`.
+     *
+     * The simple explanation is that the `dispatch()` method is only aware of the event as object
+     * and under the hood when loop the stack of listeners only a listener that match
+     * the event object name will be executed.
+     */
+    public function testAddListenerForRendererWithEventString(): void
+    {
+        $listenerProvider = new \ItalyStrap\Event\GlobalOrderedListenerProvider();
+
+        $dispatcher = new \ItalyStrap\Event\Dispatcher($listenerProvider);
+
+        $listener = function (object $event) {
+            $event->rendered = 'Hello there';
+        };
+
+        $listenerProvider->addListener('event_name', $listener);
+
+        $event = new EventForRenderer();
+        \do_action('event_name', $event);
+
+        Assert::assertSame('Hello there', $event->rendered);
+
+        $dispatcher->dispatch($event);
+        // As you can see the `dispatch()` method does not change the event.
+        Assert::assertSame('Hello there', $event->rendered);
+    }
+
+    /**
+     * Now this example shows the possibility to use an alias for the event name, so instead of using
+     * the object event name you can use a string event name and bind it to the object event name.
+     * Right now is still experimental, need to be tested more.
+     *
+     * But this could be dangerous because if you bind for example an event name to a string that is already
+     * used by classic `do_action` or `apply_filters()` you could have some unexpected behaviour, just to name a few:
+     * - the_title
+     * - the_content
+     * - the_excerpt
+     * and so on.
+     */
+    public function testAddListenerForRendererWithEventStringAsAlias(): void
+    {
+        $listenerProvider = new class implements ListenerProviderInterface {
+            private ListenerProviderInterface $listenerProvider;
+            private array $aliases = [];
+
+            public function __construct()
+            {
+                $this->listenerProvider = new GlobalOrderedListenerProvider();
+            }
+
+            public function alias(string $alias, string $eventName): void
+            {
+                $this->aliases[$eventName] = $alias;
+            }
+
+            public function addListener(string $eventName, callable $listener, int $priority = 10): bool
+            {
+                return $this->listenerProvider->addListener($eventName, $listener, $priority);
+            }
+
+            public function getListenersForEvent(object $event): iterable
+            {
+                global $wp_filter;
+                $callbacks = [];
+                $eventName = \get_class($event);
+                $eventName = $this->aliases[$eventName] ?? $eventName;
+
+                if (!\array_key_exists($eventName, $wp_filter)) {
+                    return $callbacks;
+                }
+
+                if (!$wp_filter[$eventName] instanceof \WP_Hook) {
+                    return $callbacks;
+                }
+
+                foreach ($wp_filter[$eventName]->callbacks as $callbacks) {
+                    foreach ($callbacks as $callback) {
+                        yield $callback['function'];
+                    }
+                }
+            }
+        };
+
+        $dispatcher = new \ItalyStrap\Event\Dispatcher($listenerProvider);
+
+        $listener = function (object $event) {
+            $event->rendered = 'Hello there';
+        };
+
+        $listenerProvider->alias('event_name', EventForRenderer::class);
+        $listenerProvider->addListener('event_name', $listener);
+
+        $event = new EventForRenderer();
+        Assert::assertSame('Hello World', $event->rendered);
+
+        // This event name is aliased so calling the `do_action()` with alias name will change the event
+        \do_action('event_name', $event);
+        // As you can see the event is changed
+        Assert::assertSame('Hello there', $event->rendered);
+
+        // Revert the event name to the original
+        $event = new EventForRenderer();
+        Assert::assertSame('Hello World', $event->rendered);
+
+        // Because is aliased now the `dispatch()` method is triggered.
+        $dispatcher->dispatch($event);
+        // And the event is changed
+        Assert::assertSame('Hello there', $event->rendered);
+
+        /**
+         * Just a reminder, because we add an alias name to `add_filter()`
+         * `do_action()` and `apply_filters()` know only the alias name and not the original object event name.
+         */
+    }
+
+    public function testAggregateProvider(): void
+    {
+        $aggregateProvider = new AggregateProvider();
+        $listenerProvider = new \ItalyStrap\Event\GlobalOrderedListenerProvider();
+        $aggregateProvider->addProvider($listenerProvider);
+        $dispatcher = new \ItalyStrap\Event\Dispatcher($aggregateProvider);
+
+        $event = new EventForRenderer();
+        Assert::assertSame('Hello World', $event->rendered);
+
+        $listener = function (object $event) {
+            $event->rendered = 'Hello there';
+        };
+
+        $listenerProvider->addListener(EventForRenderer::class, $listener);
+
+        $dispatcher->dispatch($event);
+        Assert::assertSame('Hello there', $event->rendered);
     }
 }

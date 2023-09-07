@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Event;
 
-use Psr\EventDispatcher\{ListenerProviderInterface, StoppableEventInterface};
+use Psr\EventDispatcher\{
+    EventDispatcherInterface,
+    ListenerProviderInterface,
+    StoppableEventInterface
+};
 
 /**
  * @psalm-api
  */
-class Dispatcher implements \Psr\EventDispatcher\EventDispatcherInterface
+class Dispatcher implements EventDispatcherInterface
 {
     private ListenerProviderInterface $listenerProvider;
     private StateInterface $state;

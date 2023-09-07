@@ -17,7 +17,7 @@ class EventSubscription
      * @param int $acceptedArgs
      */
     public function __construct(
-        $callback,
+        callable $callback,
         int $priority = 10,
         int $acceptedArgs = 3
     ) {

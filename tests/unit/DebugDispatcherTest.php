@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Tests\Unit;
 
-use ItalyStrap\PsrDispatcher\DebugDispatcher;
+use ItalyStrap\Event\DebugDispatcher;
 use ItalyStrap\Tests\UnitTestCase;
 use Prophecy\Argument;
 use Psr\EventDispatcher\EventDispatcherInterface;

@@ -64,7 +64,7 @@ class GlobalOrderedListenerProvider implements ListenerProviderInterface, Listen
         /**
          * \WP_Hook::callbacks is a multidimensional array
          * with priority as the first dimension and
-         * the callback as the second dimension.
+         * the callback name as the second dimension.
          * Example:
          * [
          *     10 => [ // $priority
