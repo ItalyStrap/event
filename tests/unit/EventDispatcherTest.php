@@ -118,7 +118,7 @@ class EventDispatcherTest extends UnitTestCase
             Assert::assertEquals($args, func_get_args());
         });
 
-        $sut->action(...$args);
+        $sut->trigger(...$args);
 
         $this->assertEquals(1, $calls);
     }

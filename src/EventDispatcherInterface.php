@@ -17,7 +17,7 @@ interface EventDispatcherInterface extends ListenerRegisterInterface
      *                           listeners to the action. Default empty.
      * @return void
      */
-    public function action(string $event_name, ...$args);
+    public function trigger(string $event_name, ...$args);
 
     /**
      * @psalm-suppress MissingReturnType

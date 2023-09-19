@@ -97,10 +97,10 @@ D_MESSAGE;
             \E_USER_DEPRECATED
         );
 
-        $this->action($event_name, ...$args);
+        $this->trigger($event_name, ...$args);
     }
 
-    public function action(string $event_name, ...$args): void
+    public function trigger(string $event_name, ...$args): void
     {
         do_action($event_name, ...$args);
     }

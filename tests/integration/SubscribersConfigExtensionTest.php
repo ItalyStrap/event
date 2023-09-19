@@ -50,6 +50,6 @@ class SubscribersConfigExtensionTest extends IntegrationTestCase
         $empress->resolve();
 
         $this->expectOutputString('Some text');
-        ( $injector->make(EventDispatcher::class) )->action('event');
+        ( $injector->make(EventDispatcher::class) )->trigger('event');
     }
 }

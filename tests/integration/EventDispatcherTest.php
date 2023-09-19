@@ -24,7 +24,7 @@ class EventDispatcherTest extends IntegrationTestCase
         });
 
         $this->expectOutputString('Value printed');
-        $sut->action('event_name');
+        $sut->trigger('event_name');
     }
 
     public function testClassWithDispatchDependency()
