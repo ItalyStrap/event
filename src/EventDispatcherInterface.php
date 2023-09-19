@@ -7,7 +7,7 @@ namespace ItalyStrap\Event;
 /**
  * @psalm-api
  */
-interface EventDispatcherInterface extends ListenerRegistryInterface
+interface EventDispatcherInterface extends ListenerRegisterInterface
 {
     /**
      * Executes all the callbacks registered with the given event.

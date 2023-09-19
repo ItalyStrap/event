@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Event;
 
-trait ListenerRegistryTrait
+trait ListenerRegisterTrait
 {
     /**
      * Right now is only an experimental method, an idea to fetch $eventName

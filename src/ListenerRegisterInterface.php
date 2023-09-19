@@ -7,7 +7,7 @@ namespace ItalyStrap\Event;
 /**
  * @psalm-api
  */
-interface ListenerRegistryInterface
+interface ListenerRegisterInterface
 {
     /**
      * Adds the given event listener to the list of event listeners

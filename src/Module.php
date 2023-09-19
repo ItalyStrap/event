@@ -21,7 +21,7 @@ class Module
                 // PSR-14
                 \Psr\EventDispatcher\EventDispatcherInterface::class => Dispatcher::class,
                 ListenerProviderInterface::class => GlobalOrderedListenerProvider::class,
-                ListenerRegistryInterface::class => GlobalOrderedListenerProvider::class,
+                ListenerRegisterInterface::class => GlobalOrderedListenerProvider::class,
                 StateInterface::class => GlobalState::class,
             ],
             'sharing' => [

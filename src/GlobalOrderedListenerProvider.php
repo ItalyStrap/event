@@ -9,7 +9,7 @@ use Psr\EventDispatcher\ListenerProviderInterface;
 /**
  * @psalm-api
  */
-class GlobalOrderedListenerProvider implements ListenerProviderInterface, ListenerRegistryInterface
+class GlobalOrderedListenerProvider implements ListenerProviderInterface, ListenerRegisterInterface
 {
     public function addListener(
         string $eventName,
