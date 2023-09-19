@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Event;
 
-class NullState implements StateInterface
+final class NullState implements StateInterface
 {
     public function forEvent(object $event): void
     {

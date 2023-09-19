@@ -7,7 +7,7 @@ namespace ItalyStrap\Event;
 /**
  * @psalm-api
  */
-class GlobalState implements StateInterface
+final class GlobalState implements StateInterface
 {
     private string $eventName = '';
 

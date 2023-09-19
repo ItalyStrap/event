@@ -7,7 +7,7 @@ namespace ItalyStrap\Event;
 /**
  * @psalm-api
  */
-class EventSubscription
+final class EventSubscription
 {
     private array $eventSubscriber;
 

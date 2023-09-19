@@ -13,7 +13,7 @@ use Psr\EventDispatcher\{
 /**
  * @psalm-api
  */
-class Dispatcher implements EventDispatcherInterface
+final class Dispatcher implements EventDispatcherInterface
 {
     private ListenerProviderInterface $listenerProvider;
     private StateInterface $state;

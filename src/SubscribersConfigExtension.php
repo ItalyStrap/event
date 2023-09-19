@@ -14,7 +14,7 @@ use ItalyStrap\Empress\Injector;
 /**
  * @psalm-api
  */
-class SubscribersConfigExtension implements Extension
+final class SubscribersConfigExtension implements Extension
 {
     /** @var string */
     public const SUBSCRIBERS = 'subscribers';

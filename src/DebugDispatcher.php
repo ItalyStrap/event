@@ -13,7 +13,7 @@ use function get_class;
  * @author Larry Garfield https://github.com/Crell/Tukio
  * @psalm-api
  */
-class DebugDispatcher implements EventDispatcherInterface
+final class DebugDispatcher implements EventDispatcherInterface
 {
     public const M_DEBUG = 'Processing event of type {type}.';
 

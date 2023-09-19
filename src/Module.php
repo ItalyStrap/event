@@ -9,7 +9,7 @@ use Psr\EventDispatcher\ListenerProviderInterface;
 /**
  * @psalm-api
  */
-class Module
+final class Module
 {
     public function __invoke(): array
     {
