@@ -6,9 +6,9 @@ namespace ItalyStrap\Event\Tests\Integration;
 
 use ItalyStrap\Event\DebugDispatcher;
 use ItalyStrap\Event\Dispatcher;
-use ItalyStrap\Event\NullListenerProvider;
 use ItalyStrap\Tests\IntegrationTestCase;
 use PHPUnit\Framework\Assert;
+use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Log\NullLogger;
 
 class DebugDispatcherTest extends IntegrationTestCase
@@ -16,7 +16,12 @@ class DebugDispatcherTest extends IntegrationTestCase
     private function makeInstance(): DebugDispatcher
     {
         return new DebugDispatcher(
-            new Dispatcher(new NullListenerProvider()),
+            new Dispatcher(new class implements ListenerProviderInterface {
+                public function getListenersForEvent(object $event): iterable
+                {
+                    return [];
+                }
+            }),
             new NullLogger()
         );
     }

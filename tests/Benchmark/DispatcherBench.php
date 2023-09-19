@@ -6,7 +6,7 @@ namespace ItalyStrap\Tests\Benchmarks;
 
 use Crell\Tukio\OrderedListenerProvider;
 use ItalyStrap\Event\Dispatcher;
-use ItalyStrap\Event\NullListenerProvider;
+use Psr\EventDispatcher\ListenerProviderInterface;
 
 /**
  * @BeforeMethods({"setUp"})
@@ -15,10 +15,16 @@ class DispatcherBench
 {
     private ?Dispatcher $dispatcherWithNullListener = null;
     private ?\stdClass $event = null;
+    private Dispatcher $dispatcherWithOrderedListener;
 
     public function setUp(): void
     {
-        $this->dispatcherWithNullListener = new Dispatcher(new NullListenerProvider());
+        $this->dispatcherWithNullListener = new Dispatcher(new class implements ListenerProviderInterface {
+            public function getListenersForEvent(object $event): iterable
+            {
+                return [];
+            }
+        });
         $orderedListenerProvider = new OrderedListenerProvider();
         $orderedListenerProvider->addListener(function (\stdClass $event) {
             $event->value = 'Value printed';

@@ -5,15 +5,20 @@ declare(strict_types=1);
 namespace ItalyStrap\Event\Tests\Unit;
 
 use ItalyStrap\Event\Dispatcher;
-use ItalyStrap\Event\NullListenerProvider;
 use ItalyStrap\Tests\UnitTestCase;
+use Psr\EventDispatcher\ListenerProviderInterface;
 
 class DispatcherTest extends UnitTestCase
 {
     private function makeInstance(): Dispatcher
     {
         return new Dispatcher(
-            new NullListenerProvider()
+            new class implements ListenerProviderInterface {
+                public function getListenersForEvent(object $event): iterable
+                {
+                    return [];
+                }
+            }
         );
     }
 

@@ -6,7 +6,6 @@ namespace ItalyStrap\Tests;
 
 use ItalyStrap\Event\Dispatcher;
 use ItalyStrap\Event\GlobalState;
-use ItalyStrap\Event\NullListenerProvider;
 use ItalyStrap\Event\GlobalOrderedListenerProvider;
 use PHPUnit\Framework\Assert;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -31,7 +30,12 @@ class DispatcherTest extends IntegrationTestCase
     public function testItShouldDoNothingWithNullProvider()
     {
         $sut = $this->makeDispatcher(
-            new NullListenerProvider()
+            new class implements ListenerProviderInterface {
+                public function getListenersForEvent(object $event): iterable
+                {
+                    return [];
+                }
+            }
         );
 
         $event = new \stdClass();
