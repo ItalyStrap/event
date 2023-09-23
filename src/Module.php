@@ -26,7 +26,7 @@ final class Module
             ],
             'sharing' => [
                 // Global
-                EventDispatcher::class,
+                GlobalDispatcher::class,
                 SubscriberRegister::class,
                 // PSR-14
                 Dispatcher::class,

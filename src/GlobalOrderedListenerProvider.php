@@ -14,8 +14,8 @@ final class GlobalOrderedListenerProvider implements ListenerProviderInterface, 
     public function addListener(
         string $eventName,
         callable $listener,
-        int $priority = 10,
-        int $accepted_args = 3
+        int $priority = ListenerRegisterInterface::PRIORITY,
+        int $accepted_args = ListenerRegisterInterface::ACCEPTED_ARGS
     ): bool {
         return \add_filter($eventName, $listener, $priority, $accepted_args);
     }
@@ -23,7 +23,7 @@ final class GlobalOrderedListenerProvider implements ListenerProviderInterface, 
     public function removeListener(
         string $eventName,
         callable $listener,
-        int $priority = 10
+        int $priority = ListenerRegisterInterface::PRIORITY
     ): bool {
         return \remove_filter($eventName, $listener, $priority);
     }

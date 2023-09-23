@@ -9,6 +9,9 @@ namespace ItalyStrap\Event;
  */
 interface ListenerRegisterInterface
 {
+    public const PRIORITY = 10;
+    public const ACCEPTED_ARGS = 5;
+
     /**
      * Adds the given event listener to the list of event listeners
      * that listen to the given event.
