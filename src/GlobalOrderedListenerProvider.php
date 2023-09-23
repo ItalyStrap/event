@@ -15,30 +15,22 @@ final class GlobalOrderedListenerProvider implements ListenerProviderInterface, 
         string $eventName,
         callable $listener,
         int $priority = 10,
-        int $accepted_args = null
+        int $accepted_args = 3
     ): bool {
-        return \add_filter(
-            $eventName,
-            $listener,
-            $priority,
-        );
+        return \add_filter($eventName, $listener, $priority, $accepted_args);
     }
 
-    public function removeListener(string $eventName, callable $listener, int $priority = 10): bool
-    {
-        return \remove_filter(
-            $eventName,
-            $listener,
-            $priority,
-        );
+    public function removeListener(
+        string $eventName,
+        callable $listener,
+        int $priority = 10
+    ): bool {
+        return \remove_filter($eventName, $listener, $priority);
     }
 
     public function removeAllListener(string $eventName, $priority = false): bool
     {
-        return \remove_all_filters(
-            $eventName,
-            $priority,
-        );
+        return \remove_all_filters($eventName, $priority);
     }
 
     public function hasListener(string $eventName, $callback = false)

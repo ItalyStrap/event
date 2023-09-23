@@ -37,12 +37,7 @@ final class Dispatcher implements EventDispatcherInterface
                 break;
             }
 
-            try {
-                $listener($event);
-            } catch (\Throwable $e) {
-//                $this->dispatch(new ExceptionEvent($e, $event));
-                throw $e;
-            }
+            $listener($event);
         }
 
         $this->state->progress(StateInterface::AFTER);

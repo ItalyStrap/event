@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ItalyStrap\PsrDispatcher;
 
 use ItalyStrap\Event\EventDispatcherInterface;
+use ItalyStrap\Event\ListenerRegisterInterface;
 use Psr\EventDispatcher\EventDispatcherInterface as PsrDispatcherInterface;
 
 // https://make.wordpress.org/core/2016/09/08/wp_hook-next-generation-actions-and-filters/
@@ -18,15 +19,18 @@ class PsrDispatcher implements PsrDispatcherInterface
     private \ItalyStrap\PsrDispatcher\CallableFactoryInterface $factory;
 
     private \ItalyStrap\Event\EventDispatcherInterface $dispatcher;
+    private ListenerRegisterInterface $listenerRegister;
 
     public function __construct(
         array &$wp_filter,
         CallableFactoryInterface $factory,
+        ListenerRegisterInterface $listenerRegister,
         EventDispatcherInterface $dispatcher
     ) {
         $this->wp_filter = &$wp_filter;
         $this->factory = $factory;
         $this->dispatcher = $dispatcher;
+        $this->listenerRegister = $listenerRegister;
     }
 
     /**
@@ -40,7 +44,7 @@ class PsrDispatcher implements PsrDispatcherInterface
     ): bool {
         /** @var callable $callback */
         $callback = $this->factory->buildCallable($listener);
-        return $this->dispatcher->addListener($event_name, $callback, $priority, $accepted_args);
+        return $this->listenerRegister->addListener($event_name, $callback, $priority, $accepted_args);
     }
 
     /**
@@ -77,7 +81,7 @@ class PsrDispatcher implements PsrDispatcherInterface
      */
     public function dispatch(object $event): object
     {
-        $this->dispatcher->dispatch(\get_class($event), $event);
+        $this->dispatcher->trigger(\get_class($event), $event);
         return $event;
     }
 }

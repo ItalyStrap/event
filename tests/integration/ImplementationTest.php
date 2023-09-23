@@ -674,4 +674,94 @@ class ImplementationTest extends IntegrationTestCase
         $dispatcher->dispatch($event);
         Assert::assertSame('Hello there', $event->rendered);
     }
+
+    public function testTryToCreateBridgeBetweenEventNameAndPSR14(): void
+    {
+        $title = \apply_filters('the_title', 'Hello World');
+
+        Assert::assertSame('Hello World', $title);
+
+        $theTitleEvent = new class ('Hello World') {
+            public string $title;
+
+            public function __construct(string $title)
+            {
+                $this->title = $title;
+            }
+
+            public function __toString()
+            {
+                return \apply_filters('the_title', $this->title, \get_the_ID());
+            }
+        };
+
+        $listenerProvider = new \ItalyStrap\Event\GlobalOrderedListenerProvider();
+        $dispatcher = new \ItalyStrap\Event\Dispatcher($listenerProvider);
+
+        $listener = function (object $event) {
+            $event->title = 'Hello Universe';
+        };
+
+        $listenerProvider->addListener(\get_class($theTitleEvent), $listener);
+
+        $title = (string)$dispatcher->dispatch($theTitleEvent);
+
+        Assert::assertSame('Hello Universe', $title);
+
+        $customTitleEvent = new class ('Hello World') {
+            public const EVENT_NAME = 'custom_title';
+
+            public string $title;
+
+            public function __construct(string $title)
+            {
+                $this->title = $title;
+            }
+
+            public function __toString()
+            {
+                return $this->title;
+            }
+        };
+
+        $titleEvent = (object)\apply_filters($customTitleEvent::EVENT_NAME, $customTitleEvent);
+
+        Assert::assertSame('Hello World', $titleEvent->title);
+    }
+
+    public function testApplyFiltersAndDoActionApproachWithObjectEvent(): void
+    {
+        $listenerProvider = new \ItalyStrap\Event\GlobalOrderedListenerProvider();
+        $dispatcher = new \ItalyStrap\Event\Dispatcher($listenerProvider);
+
+        $event = new EventForRenderer();
+        Assert::assertSame('Hello World', $event->rendered);
+
+        /**
+         * If we use object for the classic Hook WordPress API and we want to use
+         * in particular the `apply_filters()` remember that the listener
+         * must return the value.
+         */
+        $listener = function (object $event): object {
+            $event->rendered = 'Hello there';
+            return $event;
+        };
+
+        $listenerProvider->addListener(EventForRenderer::class, $listener);
+
+        $dispatcher->dispatch($event);
+        Assert::assertSame('Hello there', $event->rendered);
+
+        $event = new EventForRenderer();
+        Assert::assertSame('Hello World', $event->rendered);
+
+        \do_action(EventForRenderer::class, $event);
+        Assert::assertSame('Hello there', $event->rendered);
+
+        $event = new EventForRenderer();
+        Assert::assertSame('Hello World', $event->rendered);
+
+        $event = (object)\apply_filters(EventForRenderer::class, $event);
+        Assert::assertSame('Hello there', $event->rendered);
+    }
 }

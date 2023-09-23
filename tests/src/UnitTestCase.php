@@ -8,6 +8,7 @@ use Codeception\Test\Unit;
 use ItalyStrap\Config\Config;
 use ItalyStrap\Empress\Injector;
 use ItalyStrap\Event\EventDispatcherInterface;
+use ItalyStrap\Event\ListenerRegisterInterface;
 use ItalyStrap\Event\SubscriberInterface;
 use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\PsrDispatcher\CallableFactory;
@@ -46,7 +47,7 @@ class UnitTestCase extends Unit
         return $this->subscriberMock->reveal();
     }
 
-    protected \Prophecy\Prophecy\ObjectProphecy $config;
+    protected ObjectProphecy $config;
 
     protected function makeConfig(): Config
     {
@@ -54,35 +55,42 @@ class UnitTestCase extends Unit
     }
 
 
-    protected \Prophecy\Prophecy\ObjectProphecy $fake_injector;
+    protected ObjectProphecy $fake_injector;
 
     protected function makeFakeInjector(): Injector
     {
         return $this->fake_injector->reveal();
     }
 
-    protected \Prophecy\Prophecy\ObjectProphecy $subscriberRegister;
+    protected ObjectProphecy $subscriberRegister;
 
     protected function makeSubscriberRegister(): SubscriberRegister
     {
         return $this->subscriberRegister->reveal();
     }
 
-    protected \Prophecy\Prophecy\ObjectProphecy $dispatcher;
+    protected ObjectProphecy $globalDispatcher;
 
     protected function makeDispatcher(): EventDispatcherInterface
     {
-        return $this->dispatcher->reveal();
+        return $this->globalDispatcher->reveal();
     }
 
-    protected \Prophecy\Prophecy\ObjectProphecy $psrDispatcher;
+    protected ObjectProphecy $listenerRegister;
+
+    protected function makeListenerRegister(): ListenerRegisterInterface
+    {
+        return $this->listenerRegister->reveal();
+    }
+
+    protected ObjectProphecy $psrDispatcher;
 
     protected function makePsrDispatcher(): PsrEventDispatcherInterface
     {
         return $this->psrDispatcher->reveal();
     }
 
-    protected \Prophecy\Prophecy\ObjectProphecy $factory;
+    protected ObjectProphecy $factory;
 
     /**
      * @return CallableFactoryInterface
@@ -92,7 +100,7 @@ class UnitTestCase extends Unit
         return $this->factory->reveal();
     }
 
-    protected \Prophecy\Prophecy\ObjectProphecy $logger;
+    protected ObjectProphecy $logger;
     /**
      * @return LoggerInterface
      */
@@ -101,11 +109,11 @@ class UnitTestCase extends Unit
         return $this->logger->reveal();
     }
 
-
     // phpcs:ignore -- Method from Codeception
     protected function _before() {
         $this->hooks = $this->prophesize(EventDispatcherInterface::class);
-        $this->dispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->globalDispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->listenerRegister = $this->prophesize(ListenerRegisterInterface::class);
         $this->subscriber = $this->prophesize(SubscriberInterface::class);
         $this->subscriberMock = $this->prophesize(SubscriberMock::class);
 

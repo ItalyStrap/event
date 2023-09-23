@@ -16,7 +16,7 @@ class SubscriberRegisterTest extends UnitTestCase
 
     private function makeInstance(): SubscriberRegister
     {
-        return new SubscriberRegister($this->makeHooks());
+        return new SubscriberRegister($this->makeListenerRegister());
     }
 
     /**
@@ -35,7 +35,7 @@ class SubscriberRegisterTest extends UnitTestCase
             ->getSubscribedEvents()
             ->willReturn($provider_args);
 
-        $this->hooks->addListener(
+        $this->listenerRegister->addListener(
             Argument::type('string'),
             Argument::type('callable'),
             Argument::type('int'),
@@ -62,7 +62,7 @@ class SubscriberRegisterTest extends UnitTestCase
             ->getSubscribedEvents()
             ->willReturn($provider_args);
 
-        $this->hooks->removeListener(
+        $this->listenerRegister->removeListener(
             Argument::type('string'),
             Argument::type('callable'),
             Argument::type('int'),
@@ -81,7 +81,7 @@ class SubscriberRegisterTest extends UnitTestCase
             'event_name'            => [new \stdClass()],
         ]);
 
-        $this->hooks->addListener()->shouldNotBeCalled();
+        $this->listenerRegister->addListener()->shouldNotBeCalled();
 
         $this->expectException(\RuntimeException::class);
         $sut->addSubscriber($this->makeSubscriber());

@@ -51,7 +51,10 @@
         "psr-4": {
             "ItalyStrap\\Event\\": "src/",
             "ItalyStrap\\PsrDispatcher\\": "tests/_data/experiment/PsrDispatcher/"
-        }
+        },
+        "files": [
+            "namespace-bc-aliases.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

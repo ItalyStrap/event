@@ -23,11 +23,11 @@ class SubscriberRegister implements SubscriberRegisterInterface
     private const ACCEPTED_ARGS = 1;
     private const PRIORITY = 10;
 
-    private EventDispatcherInterface $listenerRegistry;
+    private ListenerRegisterInterface $listenerRegister;
 
-    public function __construct(EventDispatcherInterface $listenerRegistry)
+    public function __construct(ListenerRegisterInterface $listenerRegister)
     {
-        $this->listenerRegistry = $listenerRegistry;
+        $this->listenerRegister = $listenerRegister;
     }
 
     public function addSubscriber(Subscriber $subscriber): void
@@ -54,7 +54,7 @@ class SubscriberRegister implements SubscriberRegisterInterface
      */
     private function addSubscriberListener(Subscriber $subscriber, string $event_name, $parameters): void
     {
-        $this->listenerRegistry->addListener(
+        $this->listenerRegister->addListener(
             $event_name,
             $this->buildCallable($subscriber, $parameters),
             ...$this->buildParameters($parameters)
@@ -84,7 +84,7 @@ class SubscriberRegister implements SubscriberRegisterInterface
      */
     private function removeSubscriberListener(Subscriber $subscriber, string $event_name, $parameters): void
     {
-        $this->listenerRegistry->removeListener(
+        $this->listenerRegister->removeListener(
             $event_name,
             $this->buildCallable($subscriber, $parameters),
             ...$this->buildParameters($parameters)

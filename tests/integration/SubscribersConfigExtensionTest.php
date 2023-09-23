@@ -9,6 +9,7 @@ use ItalyStrap\Empress\AurynResolver;
 use ItalyStrap\Empress\Injector;
 use ItalyStrap\Event\EventDispatcher;
 use ItalyStrap\Event\EventDispatcherInterface;
+use ItalyStrap\Event\ListenerRegisterInterface;
 use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\SubscribersConfigExtension;
 use ItalyStrap\Tests\IntegrationTestCase;
@@ -23,6 +24,7 @@ class SubscribersConfigExtensionTest extends IntegrationTestCase
         $injector->share($injector);
 
         $injector->alias(EventDispatcherInterface::class, EventDispatcher::class);
+        $injector->alias(ListenerRegisterInterface::class, EventDispatcher::class);
         $injector->share(EventDispatcherInterface::class);
         $injector->share(SubscriberRegister::class);
         $injector->defineParam('provider_args', [

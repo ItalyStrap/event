@@ -20,9 +20,12 @@ class PsrDispatcherTest extends UnitTestCase
     public function makeInstance(): PsrDispatcher
     {
         global $wp_filter;
-        $sut = new PsrDispatcher($wp_filter, $this->makeFactory(), $this->makeDispatcher());
-        $this->assertInstanceOf(EventDispatcherInterface::class, $sut, '');
-        return $sut;
+        return new PsrDispatcher(
+            $wp_filter,
+            $this->makeFactory(),
+            $this->makeListenerRegister(),
+            $this->makeDispatcher()
+        );
     }
 
     /**
@@ -36,8 +39,8 @@ class PsrDispatcherTest extends UnitTestCase
             'event'         => $event,
         ];
 
-        $this->dispatcher
-            ->dispatch(
+        $this->globalDispatcher
+            ->trigger(
                 Argument::type('string'),
                 Argument::type('object')
             )
@@ -67,7 +70,7 @@ class PsrDispatcherTest extends UnitTestCase
             ->will(fn($args) => static fn() => $eventObj)
             ->shouldBeCalled();
 
-        $this->dispatcher
+        $this->listenerRegister
             ->addListener(
                 Argument::type('string'),
                 Argument::type('callable'),

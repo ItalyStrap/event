@@ -7,7 +7,7 @@ namespace ItalyStrap\Event;
 /**
  * @psalm-api
  */
-interface EventDispatcherInterface extends ListenerRegisterInterface
+interface GlobalDispatcherInterface
 {
     /**
      * Executes all the callbacks registered with the given event.
@@ -20,16 +20,6 @@ interface EventDispatcherInterface extends ListenerRegisterInterface
     public function trigger(string $event_name, ...$args);
 
     /**
-     * @psalm-suppress MissingReturnType
-     * Executes all the callbacks registered with the given event.
-     *
-     * @param string $event_name The name of the action to be executed.
-     * @param mixed  ...$args    Optional. Additional arguments which are passed on to the
-     *                           listeners to the action. Default empty.
-     */
-    public function dispatch(string $event_name, ...$args);
-
-    /**
      * Filters the given value by applying all the changes from the callbacks
      * registered with the given event. Returns the filtered value.
      *
@@ -39,12 +29,4 @@ interface EventDispatcherInterface extends ListenerRegisterInterface
      * @return mixed The filtered value after all listeners are applied to it.
      */
     public function filter(string $event_name, $value, ...$args);
-
-    /**
-     * Get the name of the event that WordPress plugin API is executing. Returns
-     * false if it isn't executing an event.
-     *
-     * @return string|bool
-     */
-    public function currentEventName();
 }

@@ -16,7 +16,7 @@ final class Module
         return [
             'aliases' => [
                 // Global
-                EventDispatcherInterface::class => EventDispatcher::class,
+                GlobalDispatcherInterface::class => GlobalDispatcher::class,
                 SubscriberRegisterInterface::class => SubscriberRegister::class,
                 // PSR-14
                 \Psr\EventDispatcher\EventDispatcherInterface::class => Dispatcher::class,
@@ -25,6 +25,7 @@ final class Module
                 StateInterface::class => GlobalState::class,
             ],
             'sharing' => [
+                // Global
                 EventDispatcher::class,
                 SubscriberRegister::class,
                 // PSR-14

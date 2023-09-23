@@ -30,7 +30,7 @@ Domain Path: Domain Path
 */
 
 add_action('plugins_loaded', function () {
-	require( __DIR__ . '/vendor/autoload.php' );
+	require __DIR__ . '/vendor/autoload.php';
 
     $listenerProvider = new \ItalyStrap\Event\GlobalOrderedListenerProvider();
     $state = new \ItalyStrap\Event\GlobalState();
