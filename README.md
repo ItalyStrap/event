@@ -15,10 +15,12 @@ WordPress Hooks Events plus Psr-14 Events API the OOP way
 ## Table Of Contents
 
 * [Installation](#installation)
+* [Introduction](#introduction)
 * [Basic Usage](#basic-usage)
 * [Advanced Usage](#advanced-usage)
 * [Contributing](#contributing)
 * [License](#license)
+* [Credits](#credits)
 
 ## Installation
 
@@ -29,31 +31,183 @@ composer require italystrap/event
 ```
 This package adheres to the [SemVer](http://semver.org/) specification and will be fully backward compatible between minor versions.
 
+## Introduction
+
+Welcome to the documentation for ItalyStrap Event! In this introductory section, we will provide you with an overview of event-driven programming in the context of PHP development, WordPress and highlight the benefits of adopting this approach.
+
+### Event-Driven Programming: An Overview
+
+Event-driven programming is a paradigm widely used in software development to handle reactive scenarios and manage interactions within a software system. It revolves around the concept of events, which represent specific occurrences or interactions.
+
+In event-driven programming, software components (listeners or subscribers) register their interest in specific events and define how they should respond when those events occur. This decoupled and reactive architecture promotes modularity, flexibility, and maintainability in complex applications.
+Advantages of Event-Driven Programming
+
+Event-driven programming offers several advantages that make it a valuable approach in various software development contexts:
+
+#### 1. Loose Coupling
+Events act as communication channels between different parts of a system, allowing them to interact without tight dependencies. This loose coupling enhances code reusability and promotes the separation of concerns.
+
+#### 2. Scalability
+Event-driven systems can effectively handle a large number of concurrent events, ensuring that the system remains responsive and adaptable to varying workloads.
+
+#### 3. Flexibility
+Event-driven architectures are flexible and extensible. New functionality can be added by introducing new events and listeners without major changes to existing code.
+
+#### 4. Testability
+Isolating event listeners allows for easier unit testing, as you can focus on testing individual components without the need for complex integration testing.
+
+In the following sections of this documentation, we will delve deeper into the specifics of event-driven programming within the PHP ecosystem. We will explore how to work with events in WordPress, the core APIs for event handling, and how to seamlessly integrate the PSR-14 standard into your projects.
+
+Let's continue our journey into the world of event-driven programming!
+
+##  How an Event-Driven System Works
+
+In this section, we'll provide an overview of how an event-driven system operates, explaining fundamental concepts, highlighting key components, and offering examples of common use cases for event-driven systems.
+
+### Understanding Event-Driven Programming
+
+Event-driven programming is a software architecture that relies on events to trigger and manage the flow of a program. Here are some key concepts to grasp:
+
+#### Events
+
+Events represent specific occurrences or interactions within a system. They serve as signals or notifications that something has happened or needs attention. Events can range from user actions (e.g., button clicks) to system-generated notifications (e.g., data updates).
+
+#### Event Handlers (Listeners)
+
+Event handlers, often referred to as listeners or subscribers, are components responsible for responding to specific events. These listeners register their interest in particular events and execute predefined actions when those events occur.
+
+#### Event Loop
+
+The event loop is a fundamental part of event-driven systems. It continuously monitors for events and dispatches them to the appropriate event handlers. The loop ensures that events are processed in the order they occur, providing a responsive and non-blocking execution environment.
+
+### Key Components of an Event-Driven System
+
+An event-driven system typically consists of the following components:
+
+#### 1. Events
+
+Events define what can happen in the system and encapsulate relevant data associated with those occurrences.
+
+#### 2. Event Handlers (Listeners)
+
+Event handlers, or listeners, respond to specific events by executing the corresponding actions or functions.
+
+#### 3. Event Loop
+
+The event loop manages the flow of events, ensuring they are dispatched to the correct listeners.
+
+#### 4. Dispatcher
+
+The dispatcher is responsible for coordinating the dispatch of events to their respective listeners. It acts as the central hub for event handling.
+
+### Common Use Cases for Event-Driven Systems
+
+Event-driven systems are versatile and find applications in various domains. Here are some common use cases:
+
+### 1. User Interfaces
+
+Graphical user interfaces (GUIs) often rely on event-driven architectures to respond to user interactions such as button clicks, mouse movements, and keyboard inputs.
+
+#### 2. Real-Time Applications
+
+Systems requiring real-time processing, such as online games, chat applications, and financial trading platforms, benefit from event-driven designs to ensure responsiveness.
+
+#### 3. Notifications and Alerts
+
+Event-driven systems are well-suited for delivering notifications and alerts based on specific triggers or conditions.
+
+#### 4. IoT (Internet of Things)
+
+IoT applications use event-driven principles to manage and process data generated by connected devices and sensors.
+
+In the upcoming sections, we'll explore how event-driven programming is implemented in WordPress, dive into the core APIs for event handling, and demonstrate how to seamlessly integrate the PSR-14 standard into your projects.
+
+Let's continue our journey into the world of event-driven programming!
+
+## How the WordPress Event System Works: Core APIs
+
+In this section, we will dive into the core APIs used for event handling in WordPress. These APIs are essential for managing actions and filters, which serve as the building blocks of WordPress event-driven architecture.
+Unfortunately WordPress Event API use global variables under the hood, and this is a bad practice, but we can't do anything about it because WordPress will never change this, so we need to live with it and close our nose.
+
+### Actions and Filters
+
+#### Actions
+
+Actions in WordPress are events triggered at specific points during the execution of a request. Actions are instrumental for executing side effects or custom code at predefined moments within the WordPress lifecycle.
+
+Actions do not return any values; instead, they serve as a signal for event handlers to perform tasks. When an action is fired, all attached action handlers (known as "action hooks") are executed sequentially.
+
+Example of dispatching a simple action event (hook) without any arguments in WordPress:
+
+```php
+\do_action('my_custom_action');
+```
+
+And here the same event as above but with arguments this time:
+
+```php
+\do_action('my_custom_action', $arg1, $arg2);
+```
+
+Here, 'my_custom_action' represents the event name or hook. WordPress provides numerous predefined action hooks that developers can leverage to extend and customize the platform.
+To naming a few registered in the core:
+
+* `init`
+* `wp_loaded`
+* `admin_init`
+* `admin_menu`
+* and so on...
+
+#### Filters
+
+Filters in WordPress are events similar to actions but with an important distinction: filters allow modification of data before it is used elsewhere in the system. Filters are used when you want to modify a value, content, or data passed through the filter (yes, you could also do this with actions, but I will talk about it later).
+
+Filters return a modified or unaltered value, always, and multiple filter handlers (listener) can be applied in sequence as you can do with actions. Filters are widely used for customizing and manipulating data within WordPress.
+
+Example of defining a filter hook and applying a filter:
+
+```php
+$data_to_modify = 'Some data to modify';
+$filtered_data = \apply_filters('my_custom_filter', $data_to_modify);
+```
+
+Here, 'my_custom_filter' denotes the filter's event name or hook. WordPress allows developers to create their custom filters in addition to utilizing predefined filters.
+
+Understanding the concept of hook/event names is crucial when working with actions and filters in WordPress. Event names serve as identifiers for specific points in the execution flow where custom code can be attached. Developers can use both WordPress-defined hooks and create custom hooks to extend and customize WordPress functionality.
+
+So to remember **actions** and **filters** are mostly the same thing, and they are the **dispatcher** of the event system in WordPress.
+
+WordPress use string as event name and in the WordPress documentation they are called **hooks**.
+
+**Dangerous things to know about dispatching actions and filters:**
+Never ever dispatch an event inside a constructor of a class, this is a very bad practice and if you do that you are a bad developer.
+
+[🆙](#table-of-contents)
+
 ## Basic Usage
 
-The `EventDispatcher::class` is a wrapper around the (WordPress Plugin API)[https://developer.wordpress.org/plugins/hooks/]
+The `\ItalyStrap\Event\GlobalDispatcher::class`, `\ItalyStrap\Event\GlobalOrderedListenerProvider::class` and `\ItalyStrap\Event\GlobalState::class` are wrappers around the (WordPress Plugin API)[https://developer.wordpress.org/plugins/hooks/]
+
+The `\ItalyStrap\Event\Dispatcher::class` and `\ItalyStrap\Event\GlobalOrderedListenerProvider::class` implement the (PSR-14)[https://www.php-fig.org/psr/psr-14/] Event Dispatcher.
 
 ### Simple example for actions
 
 ```php
-use ItalyStrap\Event\EventDispatcher;
-
-$dispatcher = new EventDispatcher();
+$listenerProvider = new \ItalyStrap\Event\GlobalOrderedListenerProvider();
 // Listen for `event_name`
-$dispatcher->addListener( 'event_name', function () { echo 'Event Called'; }, 10 );
+$listenerProvider->addListener( 'event_name', function () { echo 'Event Called'; }, 10 );
 
+$globalDispatcher = new \ItalyStrap\Event\GlobalDispatcher();
 // This will echo 'Event Called' on `event_name`
-$dispatcher->dispatch( 'event_name' );
+$globalDispatcher->trigger( 'event_name' );
 ```
 
 ### Simple example for filters
 
 ```php
-use ItalyStrap\Event\EventDispatcher;
-
-$dispatcher = new EventDispatcher();
+$listenerProvider = new \ItalyStrap\Event\GlobalOrderedListenerProvider();
 // Listen for `event_name`
-$dispatcher->addListener( 'event_name', function ( array $value ) {
+$listenerProvider->addListener( 'event_name', function ( array $value ) {
     // $value['some-key'] === 'some-value'; true
 
     // Do your stuff here in the same ways you do with filters
@@ -62,38 +216,13 @@ $dispatcher->addListener( 'event_name', function ( array $value ) {
 
 /** @var array $value */
 $value = [ 'some-key' => 'some-value' ];
-// This will filters '$value' on `event_name`
-$filtered_value = $dispatcher->filter( 'event_name', $value );
+$globalDispatcher = new \ItalyStrap\Event\GlobalDispatcher();
+// This will filter '$value' on `event_name`
+$filtered_value = $globalDispatcher->filter( 'event_name', $value );
 ```
 
 Ok, so, for now it is very straightforward, you will use it like you use the WordPress Plugin API but more OOP oriented,
-you can inject the `EventDispatcher::class` into yours classes.
-
-```php
-use ItalyStrap\Event\EventDispatcher;
-use ItalyStrap\Event\EventDispatcherInterface;
-
-$dispatcher = new EventDispatcher();
-
-class MyClass {
-
-    /**
-     * @var EventDispatcherInterface 
-     */
-    private $dispatcher;
-    public function __construct( EventDispatcherInterface $dispatcher ) {
-        $this->dispatcher = $dispatcher;
-    }
-
-    public function doSomeStuffWithDispatcher() {
-        // Do your stuff here with hooks
-        // $this->dispatcher->dispatch() or $this->dispatcher->addEventListener() or $this->dispatcher->removeEventListener()
-    }
-}
-
-$my_class = new MyClass( $dispatcher );
-$my_class->doSomeStuffWithDispatcher();
-```
+you can inject the `GlobalDispatcher::class` or `GlobalOrderedListenerProvider::class` into yours classes.
 
 ### The SubscriberRegister
 
@@ -101,11 +230,12 @@ What about the Subscriber Register?
 Here a simple example:
 
 ```php
-use ItalyStrap\Event\EventDispatcher;
+use ItalyStrap\Event\GlobalDispatcher;
+use ItalyStrap\Event\GlobalOrderedListenerProvider;
 use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\SubscriberInterface;
 
-// Your class must implements the ItalyStrap\Event\SubscriberInterface
+// Your class must implement the ItalyStrap\Event\SubscriberInterface
 class MyClassSubscriber implements SubscriberInterface {
 
     // Now add the method from the interface and return an iterable with
@@ -114,21 +244,22 @@ class MyClassSubscriber implements SubscriberInterface {
         return ['event_name' => 'methodName'];
     }
 
-    public function methodName(/* could have some arguments if you use the ::filter() method */){
+    public function methodName(/* could have some arguments */){
         // Do some stuff with hooks
     }
 }
 
 $subscriber = new MyClassSubscriber();
 
-$dispatcher = new EventDispatcher();
-$subscriber_register = new SubscriberRegister( $dispatcher );
-$subscriber_register->addSubscriber( $subscriber );
+$globalDispatcher = new GlobalDispatcher();
+$listenerProvider = new GlobalOrderedListenerProvider();
+$subscriberRegister = new SubscriberRegister($listenerProvider);
+$subscriberRegister->addSubscriber($subscriber);
 
 // It will execute the subscriber MyClassSubscriber::methodName
-$dispatcher->dispatch( 'event_name' );
+$globalDispatcher->trigger('event_name', $some_value);
 // or
-$dispatcher->filter( 'event_name', $some_value );
+$globalDispatcher->filter('event_name', $some_value);
 ```
 A subscriber is a class that implements the `ItalyStrap\Event\SubscriberInterface::class` interface
 and could be the listener itself or a class wrapper that delegates the execution of the method on certain event
@@ -288,7 +419,7 @@ In case the subscriber has a lot of events to subscribe it is better to (separat
 subscriber in another class and then use the subscriber to do the registration of the other class like this:
 
 ```php
-use ItalyStrap\Event\EventDispatcher;
+use ItalyStrap\Event\GlobalDispatcher;
 use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\SubscriberInterface;
 
@@ -336,12 +467,12 @@ class MyClassSubscriber implements SubscriberInterface {
 $logic = new MyBusinessLogic();
 $subscriber = new MyClassSubscriber( $logic );
 
-$dispatcher = new EventDispatcher();
+$dispatcher = new GlobalDispatcher();
 $subscriber_register = new SubscriberRegister( $dispatcher );
 $subscriber_register->addSubscriber( $subscriber );
 
 // It will execute the subscriber MyClassSubscriber::methodName
-$dispatcher->dispatch( 'event_name' );
+$dispatcher->trigger( 'event_name' );
 // or
 $dispatcher->filter( 'event_name', ['some_value'] );
 
@@ -349,69 +480,44 @@ $dispatcher->filter( 'event_name', ['some_value'] );
 $subscriber_register->removeSubscriber( $subscriber );
 
 // The instance of the subscriber you want to remove MUST BE the same instance of the subscriber you
-// added earlier and BEFORE you dispatch the event.
+// added earlier, and BEFORE you dispatch the event.
 ```
 
-This library is similar to the (Symfony Event Dispatcher)[https://symfony.com/doc/current/components/event_dispatcher.html]
+This library is similar to the [Symfony Event Dispatcher](https://symfony.com/doc/current/components/event_dispatcher.html)
 
-### Example with WordPress event name
-```php
-// Filter the title
-use ItalyStrap\Event\EventDispatcher;
-
-$dispatcher = new EventDispatcher();
-$dispatcher->filter( 'the_title', function ( string $title ): string {
-    return \mb_strtoupper( $title ); // A very dumb example
-} );
-
-// Execute some action
-$dispatcher->dispatch( 'after_setup_theme', function (): void {
-    // Bootstrap your logic for theme configuration
-} );
-```
+[🆙](#table-of-contents)
 
 ## Advanced Usage
 
-If you want more power you can use the (Empress library)[https://github.com/ItalyStrap/empress] with this library
+If you want more power you can use the [Empress library](https://github.com/ItalyStrap/empress) with this library
 The benefit is that now you can do auto-wiring for your application, lazy loading you listener/subscriber and so on.
 
 ```php
 use ItalyStrap\Config\ConfigFactory;
-use ItalyStrap\Empress\AurynResolver;
+use ItalyStrap\Empress\AurynConfig;
 use ItalyStrap\Empress\Injector;
 use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\SubscribersConfigExtension;
-use ItalyStrap\Event\EventDispatcher;
+use ItalyStrap\Event\GlobalDispatcher;
+use ItalyStrap\Event\GlobalOrderedListenerProvider;
 use ItalyStrap\Event\SubscriberInterface;
 
 // From Subscriber.php
 class Subscriber implements SubscriberInterface {
 
-	public $check = 0;
+	public int $check = 0;
 
-	/**
-	 * @var \stdClass
-	 */
-	private $stdClass;
+	private \stdClass $stdClass;
 
-	/**
-	 * Subscriber constructor.
-	 * @param \stdClass $stdClass
-	 */
-	public function __construct( \stdClass $stdClass  ) {
+	public function __construct(\stdClass $stdClass) {
 		$this->stdClass = $stdClass;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function getSubscribedEvents(): array {
-		return [
-			'event'	=> 'method',
-		];
+	    yield 'event' => $this;
 	}
 
-	public function method() {
+	public function __invoke() {
 		echo 'Some text';
 	}
 }
@@ -427,11 +533,11 @@ $injector = new Injector();
 // Do not use it for locating services
 $injector->share($injector);
 
-// Now it's time to create a configuration for dependencies to inject in the AurynResolver
+// Now it's time to create a configuration for dependencies to inject in the AurynConfig
 $dependencies = ConfigFactory::make([
-    // Share the instances of the EventDispatcher and SubscriberRegister
-    AurynResolver::SHARING	=> [
-        EventDispatcher::class,
+    // Share the instances of the GlobalDispatcher and SubscriberRegister
+    AurynConfig::SHARING	=> [
+        GlobalDispatcher::class,
         SubscriberRegister::class,
     ],
     // Now add in the array all your subscribers that implement the ItalyStrap\Event\SubscriberInterface
@@ -439,53 +545,55 @@ $dependencies = ConfigFactory::make([
     SubscribersConfigExtension::SUBSCRIBERS	=> [
         Subscriber::class,
     ],
-    // You can also add more configuration for the AurynResolver https://github.com/ItalyStrap/empress
+    // You can also add more configuration for the AurynConfig https://github.com/ItalyStrap/empress
 ]);
 
 // This will instantiate the EventResolverExtension::class
-$event_resolver = $injector->make( SubscribersConfigExtension::class, [
+$eventResolver = $injector->make(SubscribersConfigExtension::class, [
     // In the EventResolverExtension object you can pass a config key value pair for adding or not listener at runtime
     // from your theme or plugin options
     ':config'	=> ConfigFactory::make([
         // If the 'option_key_for_subscriber' is true than the Subscriber::class will load
         'option_key_for_subscriber' => Subscriber::class // Optional
     ]),
-] );
+]);
 
-// Create the object for the AurynResolver::class and pass the instance of $injector and the dependencies collection
-$empress = new AurynResolver( $injector, $dependencies );
+// Create the object for the AurynConfig::class and pass the instance of $injector and the dependencies collection
+$empress = new \ItalyStrap\Empress\AurynConfig($injector, $dependencies);
 
 // Is the same as above if you want to use Auryn and you have shared the Auryn instance:
-$empress = $injector->make( AurynResolver::class, [
+$empress = $injector->make(AurynConfig::class, [
     ':dependencies'  => $dependencies
-] );
+]);
 
 // Pass the $event_resolver object created earlier
-$empress->extend( $event_resolver );
+$empress->extend($eventResolver);
 
 // When you are ready call the resolve() method for auto-wiring your application
 $empress->resolve();
 
 
 $this->expectOutputString( 'Some text' );
-( $injector->make( EventDispatcher::class ) )->dispatch( 'event' );
+($injector->make(GlobalDispatcher::class))->trigger('event');
 // or
-$dispatcher = $injector->make( EventDispatcher::class );
-$dispatcher->dispatch( 'event' );
+$dispatcher = $injector->make(GlobalDispatcher::class);
+$dispatcher->trigger('event');
 
 // $dispatcher will be the same instance because you have shared it in the above code
 ```
 ### Lazy Loading a subscriber
 
-To lazy load a subscriber you can simply add in the AurynResolver configuration a new value
+To lazy load a subscriber you can simply add in the AurynConfig configuration a new value
 for proxy, see the example below:
+
 ```php
 use ItalyStrap\Config\ConfigFactory;
-use ItalyStrap\Empress\AurynResolver;
+use ItalyStrap\Empress\AurynConfig;
 use ItalyStrap\Empress\Injector;
 use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\SubscribersConfigExtension;
-use ItalyStrap\Event\EventDispatcher;
+use ItalyStrap\Event\GlobalDispatcher;
+use ItalyStrap\Event\GlobalOrderedListenerProvider;
 use ItalyStrap\Event\SubscriberInterface;
 
 // From MyBusinessLogic.php
@@ -505,11 +613,9 @@ class MyBusinessLogic {
 }
 // From MyClassSubscriber.php
 class MyClassSubscriber implements SubscriberInterface {
-    /**
-     * @var MyBusinessLogic 
-     */
-    private $logic;
-    public function __construct( MyBusinessLogic $logic ) {
+
+    private MyBusinessLogic $logic;
+    public function __construct(MyBusinessLogic $logic) {
         // This will be the proxy version of the $logic object
         $this->logic = $logic;
     }
@@ -548,16 +654,16 @@ $injector = new Injector();
 // Do not use it for locating services
 $injector->share($injector);
 
-// Now it's time to create a configuration for dependencies to inject in the AurynResolver
+// Now it's time to create a configuration for dependencies to inject in the AurynConfig
 $dependencies = ConfigFactory::make([
-    // Share the instances of the EventDispatcher and SubscriberRegister
-    AurynResolver::SHARING	=> [
-        EventDispatcher::class,
+    // Share the instances of the GlobalDispatcher and SubscriberRegister
+    AurynConfig::SHARING	=> [
+        GlobalDispatcher::class,
         SubscriberRegister::class,
     ],
     // Now we declare what class we need to lazy load
     // In our case is the MyBusinessLogic::class injected in the MyClassSubscriber::class
-    AurynResolver::PROXY  => [
+    AurynConfig::PROXY  => [
         MyBusinessLogic::class,
     ],
     // Now add in the array all your subscribers that implement the ItalyStrap\Event\SubscriberInterface
@@ -565,7 +671,7 @@ $dependencies = ConfigFactory::make([
     SubscribersConfigExtension::SUBSCRIBERS	=> [
         MyClassSubscriber::class,
     ],
-    // You can also add more configuration for the AurynResolver https://github.com/ItalyStrap/empress
+    // You can also add more configuration for the AurynConfig https://github.com/ItalyStrap/empress
 ]);
 
 // This will instantiate the EventResolverExtension::class
@@ -578,11 +684,11 @@ $event_resolver = $injector->make( SubscribersConfigExtension::class, [
     ]),
 ] );
 
-// Create the object for the AurynResolver::class and pass the instance of $injector and the dependencies collection
-$empress = new AurynResolver( $injector, $dependencies );
+// Create the object for the AurynConfig::class and pass the instance of $injector and the dependencies collection
+$empress = new AurynConfig( $injector, $dependencies );
 
 // Is the same as above if you want to use Auryn and you have shared the Auryn instance:
-$empress = $injector->make( AurynResolver::class, [
+$empress = $injector->make( AurynConfig::class, [
     ':dependencies'  => $dependencies
 ] );
 
@@ -592,34 +698,40 @@ $empress->extend( $event_resolver );
 // When you are ready call the resolve() method for auto-wiring your application
 $empress->resolve();
 
-$dispatcher = $injector->make( EventDispatcher::class );
-$dispatcher->dispatch( 'event_name_one' );
-$dispatcher->dispatch( 'event_name_two' );
-$dispatcher->dispatch( 'event_name_three' );
+$dispatcher = $injector->make(GlobalDispatcher::class);
+$dispatcher->trigger('event_name_one');
+$dispatcher->trigger('event_name_two');
+$dispatcher->trigger('event_name_three');
 ```
 Remember that the proxy version of an object is a "dumb" object that do nothing until you
 call some method, and the real object will be executed, this is useful for run code only when
 you need it to run.
 
-Example with pseudo code;
+Example with pseudocode;
 ```php
 \do_action('save_post', [$proxyObject, 'executeOnlyOnSavePost']);
 ```
 
-You can find more information about the (EmpressAurynResolver here)[https://github.com/ItalyStrap/empress]
+You can find more information about the (Empress\AurynConfig here)[https://github.com/ItalyStrap/empress]
 You can find an implementation in the (ItalyStrap Theme Framework)[https://github.com/ItalyStrap/italystrap]
 
 > TODO https://inpsyde.com/en/remove-wordpress-hooks/
 
+[🆙](#table-of-contents)
+
 ## Contributing
 
 All feedback / bug reports / pull requests are welcome.
+
+[🆙](#table-of-contents)
 
 ## License
 
 Copyright (c) 2019 Enea Overclokk, ItalyStrap
 
 This code is licensed under the [MIT](LICENSE).
+
+[🆙](#table-of-contents)
 
 ## Credits
 
