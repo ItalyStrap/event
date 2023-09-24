@@ -340,12 +340,9 @@ class ImplementationTest extends IntegrationTestCase
         $state = new \ItalyStrap\Event\GlobalState();
 
         $event = new class implements StoppableEventInterface {
-            public bool $stopped = false;
+            use \ItalyStrap\Event\PropagationAwareTrait;
+
             public string $name = '';
-            public function isPropagationStopped(): bool
-            {
-                return $this->stopped;
-            }
         };
 
         $eventName = \get_class($event);
@@ -355,7 +352,7 @@ class ImplementationTest extends IntegrationTestCase
         }, 10);
 
         $listenerProvider->addListener($eventName, function (object $event) {
-            $event->stopped = true;
+            \method_exists($event, 'stopPropagation') and $event->stopPropagation();
         }, 11);
 
         $listenerProvider->addListener($eventName, function (object $event) {
