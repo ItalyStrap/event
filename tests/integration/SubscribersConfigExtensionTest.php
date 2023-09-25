@@ -7,8 +7,9 @@ namespace ItalyStrap\Tests\Integration;
 use ItalyStrap\Config\ConfigFactory;
 use ItalyStrap\Empress\AurynResolver;
 use ItalyStrap\Empress\Injector;
-use ItalyStrap\Event\EventDispatcher;
-use ItalyStrap\Event\EventDispatcherInterface;
+use ItalyStrap\Event\GlobalDispatcher;
+use ItalyStrap\Event\GlobalDispatcherInterface;
+use ItalyStrap\Event\GlobalOrderedListenerProvider;
 use ItalyStrap\Event\ListenerRegisterInterface;
 use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Event\SubscribersConfigExtension;
@@ -23,9 +24,9 @@ class SubscribersConfigExtensionTest extends IntegrationTestCase
         $injector = new Injector();
         $injector->share($injector);
 
-        $injector->alias(EventDispatcherInterface::class, EventDispatcher::class);
-        $injector->alias(ListenerRegisterInterface::class, EventDispatcher::class);
-        $injector->share(EventDispatcherInterface::class);
+        $injector->alias(GlobalDispatcherInterface::class, GlobalDispatcher::class);
+        $injector->alias(ListenerRegisterInterface::class, GlobalOrderedListenerProvider::class);
+        $injector->share(GlobalDispatcherInterface::class);
         $injector->share(SubscriberRegister::class);
         $injector->defineParam('provider_args', [
             'event'  => function () {
@@ -52,6 +53,6 @@ class SubscribersConfigExtensionTest extends IntegrationTestCase
         $empress->resolve();
 
         $this->expectOutputString('Some text');
-        ( $injector->make(EventDispatcher::class) )->trigger('event');
+        ( $injector->make(GlobalDispatcher::class) )->trigger('event');
     }
 }

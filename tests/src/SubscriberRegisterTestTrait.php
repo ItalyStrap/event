@@ -10,11 +10,6 @@ trait SubscriberRegisterTestTrait
 {
     public function subscriberProvider(): iterable
     {
-//        yield 'event_name => From class string FQCN'         => [
-//            [
-//                'event_name'            => ListenerCallable::class,
-//            ]
-//        ];
 
         $obj = new class {
             public function __invoke(): bool

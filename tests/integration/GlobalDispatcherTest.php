@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace ItalyStrap\Tests\Integration;
 
 use ItalyStrap\Event\EventDispatcher;
+use ItalyStrap\Event\GlobalOrderedListenerProvider;
 use ItalyStrap\Tests\ClassWithDispatchDependency;
 use ItalyStrap\Tests\IntegrationTestCase;
 
-class EventDispatcherTest extends IntegrationTestCase
+class GlobalDispatcherTest extends IntegrationTestCase
 {
     private function makeDispatcher(): EventDispatcher
     {
@@ -18,8 +19,9 @@ class EventDispatcherTest extends IntegrationTestCase
     public function testItShouldOutputTextOnEventName()
     {
         $sut = $this->makeDispatcher();
+        $listenerRegister = new GlobalOrderedListenerProvider();
 
-        $sut->addListener('event_name', function () {
+        $listenerRegister->addListener('event_name', function () {
             echo 'Value printed';
         });
 
@@ -30,10 +32,11 @@ class EventDispatcherTest extends IntegrationTestCase
     public function testClassWithDispatchDependency()
     {
         $sut = $this->makeDispatcher();
+        $listenerRegister = new GlobalOrderedListenerProvider();
 
         $some_class = new ClassWithDispatchDependency($sut);
 
-        $sut->addListener(
+        $listenerRegister->addListener(
             ClassWithDispatchDependency::EVENT_NAME,
             fn(string $value) => 'New value'
         );

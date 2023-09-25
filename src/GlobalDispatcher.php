@@ -10,7 +10,7 @@ use function do_action;
 /**
  * @psalm-api
  */
-class GlobalDispatcher implements EventDispatcherInterface, ListenerRegisterInterface
+class GlobalDispatcher implements GlobalDispatcherInterface, ListenerRegisterInterface
 {
     use LegacyEventDispatcherMethodsDeprecatedTrait;
 

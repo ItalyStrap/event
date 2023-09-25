@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ItalyStrap\Tests\Integration;
 
 use ItalyStrap\Event\EventDispatcher;
+use ItalyStrap\Event\GlobalOrderedListenerProvider;
 use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Tests\IntegrationTestCase;
 use ItalyStrap\Tests\SubscriberMock;
@@ -17,7 +18,7 @@ class SubscriberRegisterTest extends IntegrationTestCase
     private function makeInstance(): SubscriberRegister
     {
         return new SubscriberRegister(
-            new EventDispatcher()
+            new GlobalOrderedListenerProvider()
         );
     }
 
