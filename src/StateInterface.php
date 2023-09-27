@@ -12,9 +12,9 @@ interface StateInterface
     public const BEFORE = 'before';
     public const AFTER = 'after';
 
-    public function forEvent(object $event): void;
+    public function forEvent(object $event, \Psr\EventDispatcher\EventDispatcherInterface $provider): void;
 
-    public function progress(string $state): void;
+    public function progress(string $state, \Psr\EventDispatcher\EventDispatcherInterface $provider): void;
 
     public function currentEventName(): string;
 

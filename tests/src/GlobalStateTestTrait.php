@@ -33,8 +33,8 @@ trait GlobalStateTestTrait
     {
         $sut = $this->makeInstance();
 
-        $sut->forEvent(new \stdClass());
-        $sut->progress(StateInterface::BEFORE);
+        $sut->forEvent(new \stdClass(), $this->makeDispatcher());
+        $sut->progress(StateInterface::BEFORE, $this->makeDispatcher());
 
         Assert::assertSame(
             1,
@@ -58,11 +58,11 @@ trait GlobalStateTestTrait
     {
         $sut = $this->makeInstance();
 
-        $sut->forEvent(new \stdClass());
-        $sut->progress(StateInterface::BEFORE);
+        $sut->forEvent(new \stdClass(), $this->makeDispatcher());
+        $sut->progress(StateInterface::BEFORE, $this->makeDispatcher());
 
-        $sut->forEvent(new \stdClass());
-        $sut->progress(StateInterface::BEFORE);
+        $sut->forEvent(new \stdClass(), $this->makeDispatcher());
+        $sut->progress(StateInterface::BEFORE, $this->makeDispatcher());
 
         Assert::assertSame(
             2,
@@ -75,8 +75,8 @@ trait GlobalStateTestTrait
     {
         $sut = $this->makeInstance();
 
-        $sut->forEvent(new \stdClass());
-        $sut->progress(StateInterface::BEFORE);
+        $sut->forEvent(new \stdClass(), $this->makeDispatcher());
+        $sut->progress(StateInterface::BEFORE, $this->makeDispatcher());
 
         Assert::assertSame(
             1,
@@ -95,7 +95,7 @@ trait GlobalStateTestTrait
             'Should be dispatching event'
         );
 
-        $sut->progress(StateInterface::AFTER);
+        $sut->progress(StateInterface::AFTER, $this->makeDispatcher());
 
         Assert::assertSame(
             1,

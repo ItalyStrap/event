@@ -6,11 +6,11 @@ namespace ItalyStrap\Event;
 
 final class NullState implements StateInterface
 {
-    public function forEvent(object $event): void
+    public function forEvent(object $event, \Psr\EventDispatcher\EventDispatcherInterface $provider): void
     {
     }
 
-    public function progress(string $state): void
+    public function progress(string $state, \Psr\EventDispatcher\EventDispatcherInterface $provider): void
     {
     }
 

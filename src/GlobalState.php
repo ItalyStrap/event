@@ -11,14 +11,14 @@ final class GlobalState implements StateInterface
 {
     private string $eventName = '';
 
-    public function forEvent(object $event): void
+    public function forEvent(object $event, \Psr\EventDispatcher\EventDispatcherInterface $provider): void
     {
         $this->eventName = \get_class($event);
         global $wp_current_filter;
         $wp_current_filter[] = $this->eventName;
     }
 
-    public function progress(string $state): void
+    public function progress(string $state, \Psr\EventDispatcher\EventDispatcherInterface $provider): void
     {
         switch ($state) {
             case self::BEFORE:

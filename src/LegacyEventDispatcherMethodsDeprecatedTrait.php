@@ -45,6 +45,11 @@ trait LegacyEventDispatcherMethodsDeprecatedTrait
         return remove_filter($eventName, $listener, $priority);
     }
 
+    /**
+     * @param string $eventName
+     * @param int|false $priority
+     * @return bool
+     */
     public function removeAllListener(string $eventName, $priority = false): bool
     {
 
@@ -57,6 +62,11 @@ trait LegacyEventDispatcherMethodsDeprecatedTrait
         return remove_all_filters($eventName, $priority);
     }
 
+    /**
+     * @param string $eventName
+     * @param array|callable|false|string $callback
+     * @return bool|int
+     */
     public function hasListener(string $eventName, $callback = false)
     {
 

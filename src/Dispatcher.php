@@ -28,8 +28,8 @@ final class Dispatcher implements EventDispatcherInterface
 
     public function dispatch(object $event): object
     {
-        $this->state->forEvent($event);
-        $this->state->progress(StateInterface::BEFORE);
+        $this->state->forEvent($event, $this);
+        $this->state->progress(StateInterface::BEFORE, $this);
 
         /** @var callable $listener */
         foreach ($this->listenerProvider->getListenersForEvent($event) as $listener) {
@@ -40,7 +40,7 @@ final class Dispatcher implements EventDispatcherInterface
             $listener($event);
         }
 
-        $this->state->progress(StateInterface::AFTER);
+        $this->state->progress(StateInterface::AFTER, $this);
 
         return $event;
     }
