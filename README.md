@@ -1,6 +1,6 @@
-# ItalyStrap Event API
+# ItalyStrap PSR- 14 Event API integrations with WordPress and WordPress Plugin API implementation
 
-[![Build Status](https://travis-ci.org/ItalyStrap/event.svg?branch=master)](https://travis-ci.org/ItalyStrap/event)
+[![Tests Status](https://github.com/ItalyStrap/event/actions/workflows/test.yml/badge.svg)](https://github.com/ItalyStrap/event/actions)
 [![Latest Stable Version](https://img.shields.io/packagist/v/italystrap/event.svg)](https://packagist.org/packages/italystrap/event)
 [![Total Downloads](https://img.shields.io/packagist/dt/italystrap/event.svg)](https://packagist.org/packages/italystrap/event)
 [![Latest Unstable Version](https://img.shields.io/packagist/vpre/italystrap/event.svg)](https://packagist.org/packages/italystrap/event)
