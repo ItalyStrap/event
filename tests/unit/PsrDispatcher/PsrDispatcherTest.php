@@ -1,216 +1,166 @@
 <?php
+
 declare(strict_types=1);
 
-namespace ItalyStrap\Tests;
+namespace ItalyStrap\Tests\Unit\PsrDispatcher;
 
-use Codeception\Test\Unit;
-use ItalyStrap\Event\EventDispatcher;
-use ItalyStrap\PsrDispatcher\CallableFactoryInterface;
+use ItalyStrap\Tests\UnitTestCase;
 use ItalyStrap\PsrDispatcher\PsrDispatcher;
-use ItalyStrap\PsrDispatcher\CallableFactory;
 use ItalyStrap\PsrDispatcher\ListenerHolderInterface;
 use PHPUnit\Framework\Assert;
 use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
 use stdClass;
-use UnitTester;
+
 use function uniqid;
 
-/**
- * Class DispatcherTest
- * @package ItalyStrap\Tests
- */
-class PsrDispatcherTest extends Unit {
+class PsrDispatcherTest extends UnitTestCase
+{
+    public function makeInstance(): PsrDispatcher
+    {
+        global $wp_filter;
+        return new PsrDispatcher(
+            $wp_filter,
+            $this->makeFactory(),
+            $this->makeListenerRegister(),
+            $this->makeDispatcher()
+        );
+    }
 
-	/**
-	 * @var UnitTester
-	 */
-	protected $tester;
-	/**
-	 * @var ObjectProphecy
-	 */
-	private $factory;
+    /**
+     * @test
+     */
+    public function itShouldDispatch()
+    {
+        $event = new stdClass();
+        $expected = [
+            'event_name'    => get_class($event),
+            'event'         => $event,
+        ];
 
-	/**
-	 * @var ObjectProphecy
-	 */
-	private $dispatcher;
+        $this->globalDispatcher
+            ->trigger(
+                Argument::type('string'),
+                Argument::type('object')
+            )
+            ->will(function ($args) use ($expected) {
+                Assert::assertSame($expected['event_name'], $args[0]);
+                Assert::assertSame($expected['event'], $args[1]);
+            })
+            ->shouldBeCalled();
 
-	/**
-	 * @return EventDispatcher
-	 */
-	public function getDispatcher(): EventDispatcher {
-		return $this->dispatcher->reveal();
-	}
+        $sut = $this->makeInstance();
+        $result = $sut->dispatch($event);
+        $this->assertSame($event, $result, 'It should return the same event');
+    }
 
-	/**
-	 * @return CallableFactoryInterface
-	 */
-	public function getFactory(): CallableFactoryInterface {
-		return $this->factory->reveal();
-	}
+    /**
+     * @test
+     */
+    public function itShouldAddListener()
+    {
+        $eventObj = new stdClass();
+        $eventName = get_class($eventObj);
 
-	// phpcs:ignore -- Method from Codeception
-	protected function _before() {
-		$this->factory = $this->prophesize( CallableFactory::class );
-		$this->dispatcher = $this->prophesize( EventDispatcher::class );
-		global $wp_filter;
-		$wp_filter = [];
-	}
+        $sut = $this->makeInstance();
 
-	// phpcs:ignore -- Method from Codeception
-	protected function _after() {
-		global $wp_filter;
-		$wp_filter = [];
-	}
+        $this->factory
+            ->buildCallable(Argument::type('callable'))
+            ->will(fn($args) => static fn() => $eventObj)
+            ->shouldBeCalled();
 
-	public function getInstance() {
-		global $wp_filter;
-		$sut = new PsrDispatcher( $wp_filter, $this->getFactory(), $this->getDispatcher() );
-		$this->assertInstanceOf( EventDispatcherInterface::class, $sut, '' );
-		return $sut;
-	}
+        $this->listenerRegister
+            ->addListener(
+                Argument::type('string'),
+                Argument::type('callable'),
+                Argument::type('integer'),
+                Argument::type('integer')
+            )
+            ->will(function ($args) use ($eventName): bool {
+                Assert::assertSame($eventName, $args[0], '');
+                return true;
+            })
+            ->shouldBeCalled();
 
-	/**
-	 * @test
-	 */
-	public function itShouldBeInstantiable() {
-		$sut = $this->getInstance();
-	}
+        $sut->addListener($eventName, static function (object $event) {
+            //No called here
+        });
+    }
 
-	/**
-	 * @test
-	 */
-	public function itShouldDispatch() {
-		$event = new stdClass();
-		$expected = [
-			'event_name'	=> get_class( $event ),
-			'event'			=> $event,
-		];
+    /**
+     * @test
+     */
+    public function itShouldRemoveListener()
+    {
 
-		$this->dispatcher
-			->dispatch(
-				Argument::type('string'),
-				Argument::type('object')
-			)
-			->will(function ( $args ) use ( $expected ) {
-				Assert::assertSame( $expected['event_name'], $args[0] );
-				Assert::assertSame( $expected['event'], $args[1] );
-			})
-			->shouldBeCalled();
+        global $wp_filter;
+        $eventObj = new stdClass();
+        $eventName = get_class($eventObj);
 
-		$sut = $this->getInstance();
-		$sut->dispatch( $event );
-	}
+        $listener = static function (object $event) {
+            //No called here
+        };
 
-	/**
-	 * @test
-	 */
-	public function itShouldAddListener() {
-		$eventObj = new stdClass();
-		$eventName = get_class( $eventObj );
+        $listener_holder = $this->prophesize(ListenerHolderInterface::class);
+        $listener_holder->listener()->willReturn($listener)->shouldBeCalled();
+        $listener_holder->nullListener()->shouldBeCalled();
 
-		$sut = $this->getInstance();
+        $wp_filter[$eventName][10][ uniqid()]['function'] = $listener_holder->reveal();
 
-		$this->factory
-			->buildCallable(Argument::type('callable'))
-			->will(function ($args) use ($eventObj) {
-				return static function () use ($eventObj) {
-					return $eventObj;
-				};
-			})
-			->shouldBeCalled();
+        $sut = $this->makeInstance();
 
-		$this->dispatcher
-			->addListener(
-				Argument::type('string'),
-				Argument::type('callable'),
-				Argument::type('integer'),
-				Argument::type('integer')
-			)
-			->will(function ($args) use ( $eventName ): bool {
-				Assert::assertSame( $eventName, $args[0], '' );
-				return true;
-			})
-			->shouldBeCalled();
+        $sut->removeListener($eventName, $listener);
+    }
 
-		$sut->addListener( $eventName, static function (object $event) {
-			//No called here
-		} );
-	}
+    /**
+     * @test
+     */
+    public function itShouldReturnBeforeRemoveListener()
+    {
 
-	/**
-	 * @test
-	 */
-	public function itShouldRemoveListener() {
+        global $wp_filter;
+        $eventObj = new stdClass();
+        $eventName = get_class($eventObj);
 
-		global $wp_filter;
-		$eventObj = new stdClass();
-		$eventName = get_class( $eventObj );
+        $listener = static function (object $event) {
+            //No called here
+        };
 
-		$listener = static function (object $event) {
-			//No called here
-		};
+        $listener_holder = $this->prophesize(ListenerHolderInterface::class);
+        $listener_holder->listener()->shouldNotBeCalled();
 
-		$listener_holder = $this->prophesize( ListenerHolderInterface::class );
-		$listener_holder->listener()->willReturn($listener)->shouldBeCalled();
-		$listener_holder->nullListener()->shouldBeCalled();
+        $wp_filter[$eventName][10] = null;
 
-		$wp_filter[$eventName][10][ uniqid()]['function'] = $listener_holder->reveal();
+        $sut = $this->makeInstance();
 
-		$sut = $this->getInstance();
+        $this->assertFalse($sut->removeListener($eventName, $listener), '');
+    }
 
-		$sut->removeListener( $eventName, $listener );
-	}
+    /**
+     * @test
+     */
+    public function itShouldThrownErrorOnRemoveListenerIfIsNotListenerHolderInterface()
+    {
 
-	/**
-	 * @test
-	 */
-	public function itShouldReturnBeforeRemoveListener() {
+        global $wp_filter;
+        $eventObj = new stdClass();
+        $eventName = get_class($eventObj);
 
-		global $wp_filter;
-		$eventObj = new stdClass();
-		$eventName = get_class( $eventObj );
+        $listener = static function (object $event) {
+            //No called here
+        };
 
-		$listener = static function (object $event) {
-			//No called here
-		};
+        $listener_holder = $this->prophesize(stdClass::class);
 
-		$listener_holder = $this->prophesize( ListenerHolderInterface::class );
-		$listener_holder->listener()->shouldNotBeCalled();
+        $wp_filter[$eventName][10][ uniqid()]['function'] = [
+            $listener_holder->reveal(),
+            'execute'
+        ];
 
-		$wp_filter[$eventName][10] = null;
+        $sut = $this->makeInstance();
 
-		$sut = $this->getInstance();
-
-		$this->assertFalse( $sut->removeListener( $eventName, $listener ), '' );
-	}
-
-	/**
-	 * @test
-	 */
-	public function itShouldThrownErrorOnRemoveListenerIfIsNotListenerHolderInterface() {
-
-		global $wp_filter;
-		$eventObj = new stdClass();
-		$eventName = get_class( $eventObj );
-
-		$listener = static function (object $event) {
-			//No called here
-		};
-
-		$listener_holder = $this->prophesize( stdClass::class );
-
-		$wp_filter[$eventName][10][ uniqid()]['function'] = [
-			$listener_holder->reveal(),
-			'execute'
-		];
-
-		$sut = $this->getInstance();
-
-		$this->expectException( RuntimeException::class );
-		$sut->removeListener( $eventName, $listener );
-	}
+        $this->expectException(RuntimeException::class);
+        $sut->removeListener($eventName, $listener);
+    }
 }

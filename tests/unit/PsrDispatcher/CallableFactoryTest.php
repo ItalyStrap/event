@@ -1,57 +1,26 @@
 <?php
+
 declare(strict_types=1);
 
-namespace ItalyStrap\Tests;
+namespace ItalyStrap\Tests\Unit\PsrDispatcher;
 
-use Codeception\Test\Unit;
+use ItalyStrap\Tests\UnitTestCase;
 use ItalyStrap\PsrDispatcher\CallableFactory;
-use UnitTester;
 
-/**
- * Class CallableFactoryTest
- * @package ItalyStrap\Tests
- */
-class CallableFactoryTest extends Unit {
+class CallableFactoryTest extends UnitTestCase
+{
+    private function makeInstance(): CallableFactory
+    {
+        return new CallableFactory();
+    }
 
-	/**
-	 * @var UnitTester
-	 */
-	protected $tester;
-
-	// phpcs:ignore -- Method from Codeception
-    protected function _before() {
-	}
-
-	// phpcs:ignore -- Method from Codeception
-    protected function _after() {
-	}
-
-	private function getInstance() {
-		$sut = new CallableFactory();
-		$this->assertInstanceOf( CallableFactory::class, $sut, '' );
-		return $sut;
-	}
-
-	/**
-	 * @test
-	 */
-	public function itShouldBeInstantiable() {
-		$sut = $this->getInstance();
-	}
-
-	/**
-	 * @test
-	 */
-	public function itShouldReturn() {
-		$sut = $this->getInstance();
-	}
-
-	/**
-	 * @test
-	 */
-	public function itShouldBuildCallable() {
-		$sut = $this->getInstance();
-		$sut->buildCallable( function () {
-		} );
-	}
+    /**
+     * @test
+     */
+    public function itShouldBuildCallable()
+    {
+        $sut = $this->makeInstance();
+        $sut->buildCallable(function () {
+        });
+    }
 }

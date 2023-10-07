@@ -29,15 +29,33 @@ Domain Path: Domain Path
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-if ( ! \function_exists( 'd_footer' ) ) {
-	function d_footer( ...$args ) {
-		\add_action( 'shutdown', function () use ( $args ) {
-			d( ...$args );
-		} );
-	}
-}
+add_action('plugins_loaded', function () {
+	require __DIR__ . '/vendor/autoload.php';
 
-add_action( 'plugins_loaded', function () {
-	require( __DIR__ . '/vendor/autoload.php' );
-//	require 'example.php';
-} );
+    $listenerProvider = new \ItalyStrap\Event\GlobalOrderedListenerProvider();
+    $state = new \ItalyStrap\Event\GlobalState();
+
+    $event = new \stdClass();
+
+    $listenerProvider->addListener(\stdClass::class, function (object $event) {
+        $event->name = 'Hello';
+    }, 10);
+
+    $listener = new class ($state) {
+        private $state;
+
+        public function __construct(\ItalyStrap\Event\GlobalState $state) {
+            $this->state = $state;
+        }
+        public function __invoke(object $event) {
+            $event->name .= ' World';
+            $event->currentState = $this->state->currentEventName();
+        }
+    };
+
+    $listenerProvider->addListener(\stdClass::class, $listener, 20);
+
+    $dispatcher = new \ItalyStrap\Event\Dispatcher($listenerProvider, $state);
+
+    $name = $dispatcher->dispatch($event)->name;
+});

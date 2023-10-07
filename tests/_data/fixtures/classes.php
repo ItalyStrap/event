@@ -8,7 +8,7 @@ use ItalyStrap\Event\EventDispatcherInterface;
 use ItalyStrap\Event\SubscriberInterface;
 
 class SomeCLass {
-	private $state = 0;
+	private int $state = 0;
 	public function doSomething() {
 		$this->state++;
 		return 'Test returned from: ' . __METHOD__ . ' with value: ' . $this->state;
@@ -19,10 +19,7 @@ class Subscriber implements SubscriberInterface {
 
 	public $check = 0;
 
-	/**
-	 * @var \stdClass
-	 */
-	private $stdClass;
+	private \stdClass $stdClass;
 
 	/**
 	 * Subscriber constructor.
@@ -46,21 +43,18 @@ class Subscriber implements SubscriberInterface {
 	}
 }
 
-class SubscriberServiceProvider extends Subscriber implements SubscriberInterface {
-	/**
-	 * @var Subscriber
-	 */
-	private $subscriber;
+class SubscriberServiceProvider extends SubscriberMock implements SubscriberInterface {
+	private \ItalyStrap\Tests\SubscriberMock $subscriber;
 
-	public function getSubscriberObj(): Subscriber {
+	public function getSubscriberObj(): SubscriberMock {
 		return $this->subscriber;
 	}
 
 	/**
 	 *  constructor.
-	 * @param Subscriber $subscriber
+	 * @param SubscriberMock $subscriber
 	 */
-	public function __construct( Subscriber $subscriber  ) {
+	public function __construct(SubscriberMock $subscriber  ) {
 		$this->subscriber = $subscriber;
 	}
 
@@ -76,15 +70,15 @@ class SubscriberServiceProvider extends Subscriber implements SubscriberInterfac
 	}
 }
 
-class SubscriberServiceProviderCallable extends Subscriber implements SubscriberInterface {
+class SubscriberServiceProviderCallable extends SubscriberMock implements SubscriberInterface {
 	/**
-	 * @var Subscriber
+	 * @var SubscriberMock
 	 */
 	private $subscriber;
 
 	/**
 	 *  constructor.
-	 * @param Subscriber $subscriber
+	 * @param SubscriberMock $subscriber
 	 */
 	public function __construct( callable $subscriber  ) {
 		$this->subscriber = $subscriber;
@@ -111,12 +105,9 @@ class Listener {
 
 class ClassWithDispatchDependency {
 
-	const EVENT_NAME = 'event_name';
+	public const EVENT_NAME = 'event_name';
 
-	/**
-	 * @var EventDispatcherInterface
-	 */
-	private $dispatcher;
+	private \ItalyStrap\Event\EventDispatcherInterface $dispatcher;
 
 	private $value = '';
 

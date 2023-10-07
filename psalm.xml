@@ -1,11 +1,13 @@
 <?xml version="1.0"?>
 <psalm
-    totallyTyped="false"
-    errorLevel="8"
-    resolveFromConfigFile="true"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="https://getpsalm.org/schema/config"
-    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+        totallyTyped="false"
+        errorLevel="1"
+        resolveFromConfigFile="true"
+        findUnusedBaselineEntry="true"
+        findUnusedCode="true"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="https://getpsalm.org/schema/config"
+        xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
     <projectFiles>
         <directory name="src" />
@@ -26,4 +28,12 @@
             </errorLevel>
         </UndefinedFunction>
     </issueHandlers>
+    <stubs>
+        <file name="vendor/inpsyde/wp-stubs/stubs/latest.php"/>
+    </stubs>
+    <globals>
+        <var name="wp_current_filter" type="array"/>
+        <var name="wp_actions" type="array"/>
+        <var name="wp_filters" type="array"/>
+    </globals>
 </psalm>

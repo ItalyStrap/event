@@ -1,12 +1,13 @@
+# Composer
 /vendor/
 
-/_others/
-
-*.local
+# Codeception
 codeception.yml
-*.lock
 
-c3.php
-infection.log
-infection-log.txt
-infection.json
+# Rector
+rector.php
+
+# Common File
+*.local
+*.lock
+*.phar
