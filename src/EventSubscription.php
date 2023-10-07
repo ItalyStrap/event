@@ -32,4 +32,9 @@ final class EventSubscription
     {
         return $this->eventSubscriber;
     }
+
+    public function __invoke(): array
+    {
+        return $this->eventSubscriber;
+    }
 }

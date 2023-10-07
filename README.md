@@ -8,9 +8,17 @@
 ![PHP from Packagist](https://img.shields.io/packagist/php-v/italystrap/event)
 ![Scrutinizer code quality (GitHub/Bitbucket)](https://img.shields.io/scrutinizer/quality/g/ItalyStrap/event?label=Scrutinizer)
 
-WordPress Hooks Events plus Psr-14 Events API the OOP way
+PSR-14 Event Dispatcher implementation for WordPress and wrappers around the WordPress Plugin API (Events aka Hooks)
 
 **It is still a WIP**
+
+Please, even if it works very well, also the PSR-14 implementation works very well, keep in mind that this is still a WIP until this package reach the version 1.x.x, for now it is a 0.x.x version (if you don't know what this means, please read the [SemVer](http://semver.org/) specification).
+
+Personally I'm very proud of this package (like I'm proud for all the others 😊), at the end it was not very complicated to implement the PSR-14 standard, but I needed to hack a little bit the WordPress Plugin API to make it work as expected.
+
+BTW, I'm using this package in production for my own projects and right now I have no issue, if you find some please, please, let me know opening an issue (or a PR if you want to fix it), here the link to the [issue tracker](https://github.com/ItalyStrap/event/issues).
+
+The naming convention I used is: when you encounter the word `Global*` means that it is something related to the WordPress only because WP use global variables under the hood and I didn't want to use some prefix WP related, even if it is also for WordPress I never like prefixing my code with something related to a word that contains some correlation with it.
 
 ## Table Of Contents
 
