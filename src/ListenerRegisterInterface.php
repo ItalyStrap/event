@@ -58,7 +58,7 @@ interface ListenerRegisterInterface
      * there's any callbacks registered to the event.
      *
      * @param string        $eventName               The name of the event name.
-     * @param array|callable|false|string $callback Optional. The callback to check for. Default false.
+     * @param callable|false $callback Optional. The callback to check for. Default false.
      * @return bool|int If $function_to_check is omitted, returns boolean for whether the event has
      *                   anything registered. When checking a specific function, the priority of that
      *                   event is returned, or false if the function is not attached. When using the
