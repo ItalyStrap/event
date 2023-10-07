@@ -199,9 +199,9 @@ Never ever dispatch an event inside a constructor of a class, this is a very bad
 
 ## Basic Usage
 
-The `\ItalyStrap\Event\GlobalDispatcher::class`, `\ItalyStrap\Event\GlobalOrderedListenerProvider::class` and `\ItalyStrap\Event\GlobalState::class` are wrappers around the (WordPress Plugin API)[https://developer.wordpress.org/plugins/hooks/]
+The `\ItalyStrap\Event\GlobalDispatcher::class`, `\ItalyStrap\Event\GlobalOrderedListenerProvider::class` and `\ItalyStrap\Event\GlobalState::class` are wrappers around the [WordPress Plugin API](https://developer.wordpress.org/plugins/hooks/)
 
-The `\ItalyStrap\Event\Dispatcher::class` and `\ItalyStrap\Event\GlobalOrderedListenerProvider::class` implement the (PSR-14)[https://www.php-fig.org/psr/psr-14/] Event Dispatcher.
+The `\ItalyStrap\Event\Dispatcher::class` and `\ItalyStrap\Event\GlobalOrderedListenerProvider::class` implement the [PSR-14](https://www.php-fig.org/psr/psr-14/) Event Dispatcher.
 
 ### Simple example for actions
 
@@ -428,7 +428,7 @@ class MyClassSubscriber implements Subscriber {
 }
 ```
 
-In case the subscriber has a lot of events to subscribe it is better to (separate)[https://en.wikipedia.org/wiki/Separation_of_concerns] the business logic from the
+In case the subscriber has a lot of events to subscribe it is better to [separate](https://en.wikipedia.org/wiki/Separation_of_concerns) the business logic from the
 subscriber in another class and then use the subscriber to do the registration of the other class like this:
 
 ```php
@@ -726,8 +726,8 @@ Example with pseudocode;
 \do_action('save_post', [$proxyObject, 'executeOnlyOnSavePost']);
 ```
 
-You can find more information about the (Empress\AurynConfig here)[https://github.com/ItalyStrap/empress]
-You can find an implementation in the (ItalyStrap Theme Framework)[https://github.com/ItalyStrap/italystrap]
+You can find more information about the [`Empress\AurynConfig` here](https://github.com/ItalyStrap/empress)
+You can find an implementation in the [ItalyStrap Theme Framework](https://github.com/ItalyStrap/italystrap)
 
 > TODO https://inpsyde.com/en/remove-wordpress-hooks/
 
