@@ -9,6 +9,7 @@ namespace ItalyStrap\Event;
  */
 final class EventSubscription
 {
+    /** @var array{'function_to_add':callable, 'priority':int, 'accepted_args':int} */
     private array $eventSubscriber;
 
     /**
@@ -28,11 +29,13 @@ final class EventSubscription
         ];
     }
 
+    /** @return array{'function_to_add':callable, 'priority':int, 'accepted_args':int} */
     public function toArray(): array
     {
         return $this->eventSubscriber;
     }
 
+    /** @return array{'function_to_add':callable, 'priority':int, 'accepted_args':int} */
     public function __invoke(): array
     {
         return $this->eventSubscriber;

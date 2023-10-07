@@ -64,7 +64,7 @@ trait LegacyEventDispatcherMethodsDeprecatedTrait
 
     /**
      * @param string $eventName
-     * @param array|callable|false|string $callback
+     * @param callable|false $callback
      * @return bool|int
      */
     public function hasListener(string $eventName, $callback = false)

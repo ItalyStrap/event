@@ -38,9 +38,10 @@ final class GlobalOrderedListenerProvider implements ListenerProviderInterface, 
         return \has_filter($eventName, $callback);
     }
 
+    /** @return iterable<callable> */
     public function getListenersForEvent(object $event): iterable
     {
-        /** @psalm-var array $wp_filter */
+        /** @psalm-var array<string, \WP_Hook> $wp_filter */
         global $wp_filter;
         $callbacks = [];
         $eventName = \get_class($event);
@@ -70,7 +71,7 @@ final class GlobalOrderedListenerProvider implements ListenerProviderInterface, 
          *        ],
          *     ],
          * ]
-         * @var array<int, array<string, array{function: callable, accepted_args: int}>> $callbacks
+         * @var array<string, array{function: callable, accepted_args: int}> $callbacks
          */
         foreach ($wp_filter[$eventName]->callbacks as $callbacks) {
             foreach ($callbacks as $callback) {

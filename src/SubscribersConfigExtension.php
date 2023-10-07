@@ -19,14 +19,16 @@ final class SubscribersConfigExtension implements Extension
     /** @var string */
     public const SUBSCRIBERS = 'subscribers';
 
-    private \ItalyStrap\Event\SubscriberRegister $subscriberRegister;
+    private SubscriberRegister $subscriberRegister;
 
-    private \ItalyStrap\Config\ConfigInterface $config;
+    /** @var ConfigInterface<array-key, mixed> */
+    private ConfigInterface $config;
 
     /**
      * EventResolverExtension constructor.
+     *
      * @param SubscriberRegister $subscriberRegister
-     * @param ConfigInterface $config
+     * @param ConfigInterface<array-key, mixed> $config
      */
     public function __construct(SubscriberRegister $subscriberRegister, ConfigInterface $config)
     {
