@@ -1,4 +1,4 @@
-# ItalyStrap PSR- 14 Event API integrations with WordPress and WordPress Plugin API implementation
+# ItalyStrap PSR-14 Event API integrations with WordPress and WordPress Plugin API implementation
 
 [![Tests Status](https://github.com/ItalyStrap/event/actions/workflows/test.yml/badge.svg)](https://github.com/ItalyStrap/event/actions)
 [![Latest Stable Version](https://img.shields.io/packagist/v/italystrap/event.svg)](https://packagist.org/packages/italystrap/event)
@@ -10,7 +10,8 @@
 
 PSR-14 Event Dispatcher implementation for WordPress and wrappers around the WordPress Plugin API (Events aka Hooks)
 
-**It is still a WIP**
+> [!IMPORTANT]
+> It is still a WIP
 
 Please, even if it works very well, also the PSR-14 implementation works very well, keep in mind that this is still a WIP until this package reach the version 1.x.x, for now it is a 0.x.x version (if you don't know what this means, please read the [SemVer](http://semver.org/) specification).
 
@@ -53,15 +54,19 @@ Advantages of Event-Driven Programming
 Event-driven programming offers several advantages that make it a valuable approach in various software development contexts:
 
 #### 1. Loose Coupling
+
 Events act as communication channels between different parts of a system, allowing them to interact without tight dependencies. This loose coupling enhances code reusability and promotes the separation of concerns.
 
 #### 2. Scalability
+
 Event-driven systems can effectively handle a large number of concurrent events, ensuring that the system remains responsive and adaptable to varying workloads.
 
 #### 3. Flexibility
+
 Event-driven architectures are flexible and extensible. New functionality can be added by introducing new events and listeners without major changes to existing code.
 
 #### 4. Testability
+
 Isolating event listeners allows for easier unit testing, as you can focus on testing individual components without the need for complex integration testing.
 
 In the following sections of this documentation, we will delve deeper into the specifics of event-driven programming within the PHP ecosystem. We will explore how to work with events in WordPress, the core APIs for event handling, and how to seamlessly integrate the PSR-14 standard into your projects.
@@ -589,6 +594,7 @@ $dispatcher->trigger('event');
 
 // $dispatcher will be the same instance because you have shared it in the above code
 ```
+
 ### Lazy Loading a subscriber
 
 To lazy load a subscriber you can simply add in the AurynConfig configuration a new value
@@ -745,11 +751,11 @@ This code is licensed under the [MIT](LICENSE).
 
 ### For the Event implementation
 
-* (Carl Alexander)[https://carlalexander.ca/designing-system-wordpress-event-management/]
-* (Carl Alexander)[https://carlalexander.ca/mediator-pattern-wordpress/]
+* [Carl Alexander](https://carlalexander.ca/designing-system-wordpress-event-management/)
+* [Carl Alexander](https://carlalexander.ca/mediator-pattern-wordpress/)
 
 ### For the PsrDispatcher implementation
 
-* (Symfony)[https://symfony.com/doc/current/components/event_dispatcher.html]
-* (Larry Garfield)[https://github.com/Crell/Tukio]
-* (Timothy Jacobs)[https://github.com/iron-bound-designs/psr-14-wp]
+* [Symfony](https://symfony.com/doc/current/components/event_dispatcher.html)
+* [Larry Garfield](https://github.com/Crell/Tukio)
+* [Timothy Jacobs](https://github.com/iron-bound-designs/psr-14-wp)
