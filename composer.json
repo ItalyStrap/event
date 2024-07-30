@@ -22,20 +22,15 @@
         "lucatume/function-mocker-le": "^1.0",
         "codeception/module-asserts": "^1.0",
         "phpspec/prophecy-phpunit": "^2.0",
-
         "squizlabs/php_codesniffer": "^3.7",
         "phpcompatibility/php-compatibility": "^9.3",
         "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
-
         "vimeo/psalm": "^5.6",
         "humanmade/psalm-plugin-wordpress": "^3.0.0-alpha1",
-
         "phpbench/phpbench": "^1.2",
         "phpmetrics/phpmetrics": "^2.8",
-
         "infection/infection": "^0.26.6",
         "infection/codeception-adapter": "^0.4.1",
-
         "rector/rector": "^0.15.17",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
@@ -79,10 +74,10 @@
     },
     "scripts": {
         "cs": [
-            "@php vendor/bin/phpcs -p"
+            "@php ./vendor/bin/phpcs -p"
         ],
         "cs:fix": [
-            "@php vendor/bin/phpcbf -p"
+            "@php ./vendor/bin/phpcbf -p"
         ],
         "psalm": [
             "@php ./vendor/bin/psalm --no-cache"
@@ -124,7 +119,7 @@
             "@php ./vendor/bin/rector process"
         ]
     },
-    "support"    : {
+    "support": {
         "issues": "https://github.com/ItalyStrap/event/issues",
         "source": "https://github.com/ItalyStrap/event"
     },
