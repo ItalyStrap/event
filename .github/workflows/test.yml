@@ -22,7 +22,6 @@ on:
 
 
 jobs:
-
   tests:
     name: 🐘 Tests on PHP ${{matrix.php_versions}} & APP version ${{matrix.app_versions}}
 
@@ -36,7 +35,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, '--skip ci') && !github.event.pull_request.draft"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -67,7 +66,7 @@ jobs:
           wp core update-db
           cp -r $GITHUB_WORKSPACE ${{env.APP_FOLDER_PATH}}/wp-content/${{env.PROJECT_KIND}}/${{ github.event.repository.name }}
 
-      - uses: "ramsey/composer-install@v2"
+      - uses: ramsey/composer-install@v3
         with:
           working-directory: "${{env.APP_FOLDER_PATH}}/wp-content/${{env.PROJECT_KIND}}/${{ github.event.repository.name }}"
 
