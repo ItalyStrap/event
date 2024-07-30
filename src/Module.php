@@ -11,6 +11,7 @@ use Psr\EventDispatcher\ListenerProviderInterface;
  */
 final class Module
 {
+    /** @return array{'aliases':array<class-string, class-string>, 'sharing':list<class-string>} */
     public function __invoke(): array
     {
         return [
