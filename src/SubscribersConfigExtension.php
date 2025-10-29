@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Event;
 
+use Auryn\Injector;
 use Auryn\ConfigException;
 use Auryn\InjectionException;
 use ItalyStrap\Config\ConfigInterface;
 use ItalyStrap\Empress\AurynConfigInterface;
 use ItalyStrap\Empress\Extension;
-use ItalyStrap\Empress\Injector;
 
 /**
  * @psalm-api
