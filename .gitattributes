@@ -1,0 +1,17 @@
+
+## Directories to ignore when exporting the package
+.docker/ export-ignore
+.github/ export-ignore
+tests/ export-ignore
+
+## Files to ignore when exporting the package
+/.env export-ignore
+/.gitattributes export-ignore
+/codeception.* export-ignore
+/codeception.yml export-ignore
+/infection.json.dist export-ignore
+/Makefile export-ignore
+/phpbench.xml export-ignore
+/phpcs.xml export-ignore
+/psalm.xml export-ignore
+/rector.php export-ignore
