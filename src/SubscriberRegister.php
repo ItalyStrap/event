@@ -110,7 +110,7 @@ class SubscriberRegister implements SubscriberRegisterInterface
         if (
             isset($parameters[Subscriber::CALLBACK])
             && is_string($parameters[Subscriber::CALLBACK])
-            && method_exists($subscriber, $parameters[Subscriber::CALLBACK])
+            && method_exists($subscriber, (string)$parameters[Subscriber::CALLBACK])
         ) {
             return [$subscriber, $parameters[Subscriber::CALLBACK]];
         }
