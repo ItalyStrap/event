@@ -58,13 +58,10 @@ class GlobalOrderedListenerProviderTest extends UnitTestCase
         $calls = 0;
 
         // phpcs:ignore -- Method from Codeception
-        FunctionMockerLe\define(
-            'remove_filter',
-            function ($hook_name, $callback, $priority = 10) use (&$calls) {
-                $calls++;
-                return true;
-            }
-        );
+        FunctionMockerLe\define('remove_filter', function ($hook_name, $callback, $priority = 10) use (&$calls) {
+            $calls++;
+            return true;
+        });
 
         $sut->removeListener(...$args);
 

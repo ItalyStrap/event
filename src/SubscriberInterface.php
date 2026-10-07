@@ -18,14 +18,14 @@ interface SubscriberInterface
      * the WordPress plugin API.
      *
      * @return iterable<string, int|string|object|callable|array{
-     *         callback: callable,
+     *         function_to_add: callable|string,
      *         priority?: int,
      *         accepted_args?: int
      *     }|array{
      *         0: object,
      *         1: string,
      *     }|list<array{
-     *         callback: callable,
+     *         function_to_add: callable|string,
      *         priority?: int,
      *         accepted_args?: int
      *     }>>

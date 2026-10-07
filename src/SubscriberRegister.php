@@ -98,12 +98,21 @@ class SubscriberRegister implements SubscriberRegisterInterface
      */
     private function buildCallable(Subscriber $subscriber, $parameters): callable
     {
+        // A subscriber method wins over a global function with the same name, like link() or filter().
+        if (is_string($parameters) && method_exists($subscriber, $parameters)) {
+            return [$subscriber, $parameters];
+        }
+
         if (is_callable($parameters)) {
             return $parameters;
         }
 
-        if (is_string($parameters) && method_exists($subscriber, $parameters)) {
-            return [$subscriber, $parameters];
+        if (
+            isset($parameters[Subscriber::CALLBACK])
+            && is_string($parameters[Subscriber::CALLBACK])
+            && method_exists($subscriber, (string)$parameters[Subscriber::CALLBACK])
+        ) {
+            return [$subscriber, $parameters[Subscriber::CALLBACK]];
         }
 
         if (
@@ -111,13 +120,6 @@ class SubscriberRegister implements SubscriberRegisterInterface
             && is_callable($parameters[Subscriber::CALLBACK])
         ) {
             return $parameters[Subscriber::CALLBACK];
-        }
-
-        if (
-            isset($parameters[Subscriber::CALLBACK])
-            && method_exists($subscriber, (string)$parameters[Subscriber::CALLBACK])
-        ) {
-            return [$subscriber, $parameters[Subscriber::CALLBACK]];
         }
 
         throw new RuntimeException(sprintf(

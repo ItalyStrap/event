@@ -131,7 +131,8 @@ D_MESSAGE;
             '\ItalyStrap\Event\GlobalState::' . __FUNCTION__
         );
 
-        return current_filter();
+        // current_filter() returns false outside a hook, see GlobalState::currentEventName().
+        return (string) current_filter();
     }
 
     /**
