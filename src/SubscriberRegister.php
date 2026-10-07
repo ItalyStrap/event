@@ -107,14 +107,19 @@ class SubscriberRegister implements SubscriberRegisterInterface
             return $parameters;
         }
 
-        $callback = is_array($parameters) ? ($parameters[Subscriber::CALLBACK] ?? null) : null;
-
-        if (is_string($callback) && method_exists($subscriber, $callback)) {
-            return [$subscriber, $callback];
+        if (
+            isset($parameters[Subscriber::CALLBACK])
+            && is_string($parameters[Subscriber::CALLBACK])
+            && method_exists($subscriber, $parameters[Subscriber::CALLBACK])
+        ) {
+            return [$subscriber, $parameters[Subscriber::CALLBACK]];
         }
 
-        if (is_callable($callback)) {
-            return $callback;
+        if (
+            isset($parameters[Subscriber::CALLBACK])
+            && is_callable($parameters[Subscriber::CALLBACK])
+        ) {
+            return $parameters[Subscriber::CALLBACK];
         }
 
         throw new RuntimeException(sprintf(

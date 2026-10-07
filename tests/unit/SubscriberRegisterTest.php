@@ -105,8 +105,15 @@ class SubscriberRegisterTest extends UnitTestCase
     public function testItShouldPreferTheSubscriberMethodOverAGlobalFunction($parameters): void
     {
         $subscriber = new class ($parameters) implements SubscriberInterface {
-            public function __construct(private $parameters)
+            /** @var mixed */
+            private $parameters;
+
+            /**
+             * @param mixed $parameters
+             */
+            public function __construct($parameters)
             {
+                $this->parameters = $parameters;
             }
 
             public function getSubscribedEvents(): iterable
