@@ -98,26 +98,23 @@ class SubscriberRegister implements SubscriberRegisterInterface
      */
     private function buildCallable(Subscriber $subscriber, $parameters): callable
     {
-        if (is_callable($parameters)) {
-            return $parameters;
-        }
-
+        // A subscriber method wins over a global function with the same name, like link() or filter().
         if (is_string($parameters) && method_exists($subscriber, $parameters)) {
             return [$subscriber, $parameters];
         }
 
-        if (
-            isset($parameters[Subscriber::CALLBACK])
-            && is_callable($parameters[Subscriber::CALLBACK])
-        ) {
-            return $parameters[Subscriber::CALLBACK];
+        if (is_callable($parameters)) {
+            return $parameters;
         }
 
-        if (
-            isset($parameters[Subscriber::CALLBACK])
-            && method_exists($subscriber, (string)$parameters[Subscriber::CALLBACK])
-        ) {
-            return [$subscriber, $parameters[Subscriber::CALLBACK]];
+        $callback = is_array($parameters) ? ($parameters[Subscriber::CALLBACK] ?? null) : null;
+
+        if (is_string($callback) && method_exists($subscriber, $callback)) {
+            return [$subscriber, $callback];
+        }
+
+        if (is_callable($callback)) {
+            return $callback;
         }
 
         throw new RuntimeException(sprintf(

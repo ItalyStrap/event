@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Tests\Unit;
 
+use ItalyStrap\Event\SubscriberInterface;
 use ItalyStrap\Event\SubscriberRegister;
 use ItalyStrap\Tests\SubscriberMock;
 use ItalyStrap\Tests\SubscriberRegisterTestTrait;
@@ -85,5 +86,46 @@ class SubscriberRegisterTest extends UnitTestCase
 
         $this->expectException(\RuntimeException::class);
         $sut->addSubscriber($this->makeSubscriber());
+    }
+
+    /**
+     * @return iterable<string, array{mixed}>
+     */
+    public static function globalFunctionNamesProvider(): iterable
+    {
+        yield 'method name' => ['link'];
+        yield 'method name as callback' => [
+            [SubscriberInterface::CALLBACK => 'link', SubscriberInterface::PRIORITY => 99],
+        ];
+    }
+
+    /**
+     * @dataProvider globalFunctionNamesProvider()
+     */
+    public function testItShouldPreferTheSubscriberMethodOverAGlobalFunction($parameters): void
+    {
+        $subscriber = new class ($parameters) implements SubscriberInterface {
+            public function __construct(private $parameters)
+            {
+            }
+
+            public function getSubscribedEvents(): iterable
+            {
+                yield 'wp_footer' => $this->parameters;
+            }
+
+            public function link(): void
+            {
+            }
+        };
+
+        $this->listenerRegister->addListener(
+            'wp_footer',
+            [$subscriber, 'link'],
+            Argument::type('int'),
+            Argument::type('int')
+        )->willReturn(true)->shouldBeCalled();
+
+        $this->makeInstance()->addSubscriber($subscriber);
     }
 }
