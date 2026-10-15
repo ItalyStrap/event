@@ -20,7 +20,7 @@ final class Dispatcher implements EventDispatcherInterface
 
     public function __construct(
         ListenerProviderInterface $listenerProvider,
-        StateInterface $state = null
+        ?StateInterface $state = null
     ) {
         $this->listenerProvider = $listenerProvider;
         $this->state = $state ?? new NullState();
