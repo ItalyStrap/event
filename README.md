@@ -733,6 +733,25 @@ You can find an implementation in the [ItalyStrap Theme Framework](https://githu
 
 [🆙](#table-of-contents)
 
+### Deprecated event names
+
+When a plugin or a theme no longer uses an event name, the `DeprecatedEventsSubscriber` warns the developers who still listen to it, with the notice of WordPress. It warns only when the event has listeners.
+
+```php
+use ItalyStrap\Event\DeprecatedEvent;
+use ItalyStrap\Event\DeprecatedEventsSubscriber;
+
+$subscriber = new DeprecatedEventsSubscriber([
+    new DeprecatedEvent('my_old_filter', '3.0.0', 'my_new_filter'),
+    new DeprecatedEvent('my_old_action', '3.0.0', '', 'It is no longer needed.'),
+]);
+$subscriberRegister->addSubscriber($subscriber);
+```
+
+A filter and an action are stored the same way, so both are warned with `do_action_deprecated()`: the listeners run with the arguments of the event, the last argument of `DeprecatedEvent`, and what a filter returns is ignored. Give one argument for each argument the listeners take. The warnings run on `init`, the second argument of the subscriber changes the event.
+
+[🆙](#table-of-contents)
+
 ## Contributing
 
 All feedback / bug reports / pull requests are welcome.
