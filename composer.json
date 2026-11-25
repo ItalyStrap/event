@@ -40,7 +40,6 @@
         "inpsyde/object-hooks-remover": "^0.1",
         "italystrap/config": "^2.2",
         "italystrap/debug": "dev-master",
-        "italystrap/empress": "dev-master#149a7b25a83fb97564eff0b58b3997ae9e3b3f9b",
         "inpsyde/wp-stubs": "dev-main"
     },
     "autoload": {
