@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace ItalyStrap\Tests\Integration;
 
-use ItalyStrap\Event\DeprecatedEvent;
-use ItalyStrap\Event\DeprecatedEventsSubscriber;
+use ItalyStrap\Event\GlobalDeprecatedEvent;
+use ItalyStrap\Event\GlobalDeprecatedEventsSubscriber;
 use ItalyStrap\Tests\IntegrationTestCase;
 
-class DeprecatedEventsSubscriberTest extends IntegrationTestCase
+class GlobalDeprecatedEventsSubscriberTest extends IntegrationTestCase
 {
     public function testItListensToInitByDefault(): void
     {
-        $sut = new DeprecatedEventsSubscriber([]);
+        $sut = new GlobalDeprecatedEventsSubscriber([]);
 
         $this->assertSame(['init' => 'warn'], \iterator_to_array($sut->getSubscribedEvents()));
     }
 
     public function testItListensToTheGivenEvent(): void
     {
-        $sut = new DeprecatedEventsSubscriber([], 'plugins_loaded');
+        $sut = new GlobalDeprecatedEventsSubscriber([], 'plugins_loaded');
 
         $this->assertSame(['plugins_loaded' => 'warn'], \iterator_to_array($sut->getSubscribedEvents()));
     }
@@ -33,9 +33,9 @@ class DeprecatedEventsSubscriberTest extends IntegrationTestCase
             return $value;
         });
 
-        $sut = new DeprecatedEventsSubscriber([
-            new DeprecatedEvent('old_filter', '3.0.0', 'new_filter', 'Use the new filter.', [['a']]),
-            new DeprecatedEvent('old_action', '3.0.0'),
+        $sut = new GlobalDeprecatedEventsSubscriber([
+            new GlobalDeprecatedEvent('old_filter', '3.0.0', 'new_filter', 'Use the new filter.', [['a']]),
+            new GlobalDeprecatedEvent('old_action', '3.0.0'),
         ]);
         $sut->warn();
 
@@ -44,7 +44,7 @@ class DeprecatedEventsSubscriberTest extends IntegrationTestCase
 
     public function testItIsSilentWithoutListeners(): void
     {
-        $sut = new DeprecatedEventsSubscriber([new DeprecatedEvent('old_action', '3.0.0')]);
+        $sut = new GlobalDeprecatedEventsSubscriber([new GlobalDeprecatedEvent('old_action', '3.0.0')]);
         $sut->warn();
 
         $this->assertSame(0, \did_action('deprecated_hook_run'));
@@ -52,7 +52,7 @@ class DeprecatedEventsSubscriberTest extends IntegrationTestCase
 
     public function testTheEventKeepsItsValues(): void
     {
-        $event = new DeprecatedEvent('old_filter', '3.0.0', 'new_filter', 'Use the new filter.', [['a']]);
+        $event = new GlobalDeprecatedEvent('old_filter', '3.0.0', 'new_filter', 'Use the new filter.', [['a']]);
 
         $this->assertSame('old_filter', $event->name());
         $this->assertSame('3.0.0', $event->version());

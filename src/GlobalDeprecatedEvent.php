@@ -9,7 +9,7 @@ namespace ItalyStrap\Event;
  *
  * @psalm-api
  */
-final class DeprecatedEvent
+final class GlobalDeprecatedEvent
 {
     private string $name;
     private string $version;

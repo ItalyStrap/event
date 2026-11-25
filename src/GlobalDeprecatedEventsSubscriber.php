@@ -12,19 +12,19 @@ namespace ItalyStrap\Event;
  *
  * @psalm-api
  */
-final class DeprecatedEventsSubscriber implements SubscriberInterface
+final class GlobalDeprecatedEventsSubscriber implements SubscriberInterface
 {
     private const DEFAULT_EVENT = 'init';
 
     /**
-     * @var iterable<DeprecatedEvent>
+     * @var iterable<GlobalDeprecatedEvent>
      */
     private iterable $events;
 
     private string $eventName;
 
     /**
-     * @param iterable<DeprecatedEvent> $events The event names no longer used.
+     * @param iterable<GlobalDeprecatedEvent> $events The event names no longer used.
      * @param string $eventName The event that triggers the warnings, after the listeners are added.
      */
     public function __construct(iterable $events, string $eventName = self::DEFAULT_EVENT)
