@@ -117,7 +117,11 @@ class UnitTestCase extends Unit
         $this->subscriber = $this->prophesize(SubscriberInterface::class);
         $this->subscriberMock = $this->prophesize(SubscriberMock::class);
 
-        $this->fake_injector = $this->prophesize(Injector::class);
+        // Empress needs PHP 8.2, the package tests run without it on PHP 7.4.
+        if (\class_exists(Injector::class)) {
+            $this->fake_injector = $this->prophesize(Injector::class);
+        }
+
         $this->subscriberRegister = $this->prophesize(SubscriberRegister::class);
         $this->config = $this->prophesize(Config::class);
 

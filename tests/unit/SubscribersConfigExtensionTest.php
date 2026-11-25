@@ -13,6 +13,17 @@ use Prophecy\Argument;
 
 class SubscribersConfigExtensionTest extends UnitTestCase
 {
+    // phpcs:ignore -- Method from Codeception
+    protected function _before()
+    {
+        // Empress needs PHP 8.2, the package tests run without it on PHP 7.4.
+        if (!\interface_exists(Extension::class)) {
+            $this->markTestSkipped('Empress is not installed.');
+        }
+
+        parent::_before();
+    }
+
     protected function makeInstance(): SubscribersConfigExtension
     {
         $sut = new SubscribersConfigExtension($this->makeSubscriberRegister(), $this->makeConfig());

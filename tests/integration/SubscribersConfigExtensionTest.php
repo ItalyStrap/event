@@ -18,6 +18,15 @@ use ItalyStrap\Tests\SubscriberMock;
 
 class SubscribersConfigExtensionTest extends IntegrationTestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+        // Empress needs PHP 8.2, the package tests run without it on PHP 7.4.
+        if (!\class_exists(Injector::class)) {
+            $this->markTestSkipped('Empress is not installed.');
+        }
+    }
+
     public function testItShouldConfigureSubscribersExtension()
     {
 
